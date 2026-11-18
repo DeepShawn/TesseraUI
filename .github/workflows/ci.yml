@@ -46,3 +46,15 @@ jobs:
         run: gradle :tessera:compileDebugKotlin
       - name: 截图对比（Paparazzi）
         run: gradle :tessera:verifyPaparazziDebug
+
+  apple:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: platforms/apple
+    steps:
+      - uses: actions/checkout@v4
+      - name: 编译（macOS）
+        run: swift build
+      - name: 编译（iOS 模拟器）
+        run: xcodebuild -scheme TesseraUI -destination 'generic/platform=iOS Simulator' -skipPackagePluginValidation build | tail -20

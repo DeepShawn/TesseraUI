@@ -70,6 +70,9 @@ for (const [name, def] of Object.entries(icons)) {
 }
 const pascalName = (n) => n.split('-').map((p) => p[0].toUpperCase() + p.slice(1)).join('');
 const camelName = (n) => { const p = pascalName(n); return p[0].toLowerCase() + p.slice(1); };
+// Swift 关键字做标识符时要加反引号
+const SWIFT_KEYWORDS = new Set(['repeat', 'return', 'import', 'case', 'default', 'in', 'for', 'while', 'switch', 'if', 'else', 'do', 'catch', 'try', 'throw', 'func', 'class', 'struct', 'enum', 'protocol', 'extension', 'let', 'var', 'self', 'super', 'init', 'deinit', 'operator', 'where', 'guard', 'defer', 'break', 'continue', 'fallthrough', 'is', 'as', 'nil', 'true', 'false', 'static', 'public', 'private', 'internal', 'subscript', 'typealias', 'inout', 'any', 'some']);
+const swiftId = (n) => (SWIFT_KEYWORDS.has(n) ? `\`${n}\`` : n);
 const GEN = '由 scripts/build-icons.mjs 从 icons/source.mjs 生成，请勿手改。';
 const write = (rel, content) => { const f = join(ROOT, rel); mkdirSync(join(f, '..'), { recursive: true }); writeFileSync(f, content); };
 
@@ -107,7 +110,7 @@ const write = (rel, content) => { const f = join(ROOT, rel); mkdirSync(join(f, '
   const swift = [`// ${GEN}`, 'import SwiftUI', '',
     '/** TesseraUI 图标名称。用法：TesseraIcon(.home) 或 Image(tessera: .homeFill) */',
     'public enum TesseraIconName: String, CaseIterable, Sendable {',
-    ...Object.keys(all).map((n) => `    case ${camelName(n)} = "${n}"`), '}', ''];
+    ...Object.keys(all).map((n) => `    case ${swiftId(camelName(n))} = "${n}"`), '}', ''];
   write('platforms/apple/Sources/TesseraUI/Generated/TesseraIconName.swift', swift.join('\n'));
 }
 
