@@ -153,6 +153,8 @@ export function indexBar(container) {
   if (!groups.length) return;
   // 分组标题是吸顶元素，吸住时 offsetTop 会变；在每个标题前放一个不吸顶的标记，用它的位置来跳转
   if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+  // 字母索引就是这个列表的导航，滚动条多余，隐藏（仍可滑动）
+  container.classList.add('ts-has-indexbar');
   const marks = groups.map((g) => { const m = document.createElement('span'); m.style.cssText = 'display:block;height:0'; m.setAttribute('aria-hidden', 'true'); g.before(m); return m; });
   const host = container.parentElement;
   if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
