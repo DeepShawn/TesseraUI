@@ -1416,17 +1416,35 @@ th[aria-sort="ascending"] .ts-sort .ts-icon, th[aria-sort="descending"] .ts-sort
 .ts-table-loading td .ts-skeleton { height: 12px; }
 
 /* 工具栏、批量操作栏、底部分页 */
-.ts-table-toolbar { display: flex; align-items: center; gap: var(--ts-space-3); margin-bottom: var(--ts-space-3); flex-wrap: wrap; min-height: var(--ts-size-md); }
+/* 工具栏：左侧筛选，中间视图选项，右侧操作；按自身宽度自适应 */
+.ts-table-toolbar-wrap { container-type: inline-size; margin-bottom: var(--ts-space-3); }
+.ts-table-toolbar { position: relative; display: flex; align-items: center; gap: var(--ts-space-2); flex-wrap: wrap; min-height: var(--ts-size-md); }
+.ts-table-toolbar > .ts-table-search { flex: 1 1 220px; max-width: 320px; min-width: 0; }
+.ts-table-toolbar > .ts-spacer { flex: 1 0 0; }
+.ts-table-toolbar > :not(.ts-table-search):not(.ts-spacer):not(.ts-table-bulk) { flex: none; }
+/* 批量操作栏：选中行时盖在工具栏第一行上，不挤压、不跳动 */
 .ts-table-bulk {
-  display: flex; align-items: center; gap: var(--ts-space-2); flex: 1; min-height: var(--ts-size-md); padding: 0 6px 0 14px; border-radius: var(--ts-radius-md);
-  background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font: var(--ts-font-label);
-  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  position: absolute; z-index: 2; left: 0; right: 0; top: 0; height: var(--ts-size-md);
+  display: flex; align-items: center; gap: var(--ts-space-1); padding: 0 5px 0 14px; border-radius: var(--ts-radius-md);
+  background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font: var(--ts-font-label); white-space: nowrap;
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); box-shadow: var(--ts-shadow-1);
   animation: ts-settle var(--ts-spring-snappy-duration) var(--ts-spring-snappy);
 }
 .ts-table-bulk[hidden] { display: none; }
-.ts-table-bulk > span { flex: 1; }
-.ts-table-bulk .ts-button { --_h: 30px; background-color: rgb(255 255 255 / .12); color: inherit; background-image: none; box-shadow: none; }
+.ts-table-bulk > .ts-bulk-count { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.ts-table-bulk .ts-button { --_h: 30px; --_px: 10px; border-radius: 9px; background-color: rgb(255 255 255 / .12); color: inherit; background-image: none; box-shadow: none; }
+.ts-table-bulk .ts-icon-button { width: 30px; height: 30px; border-radius: 9px; color: inherit; }
 :root[data-theme="dark"] .ts-table-bulk .ts-button { background-color: rgb(0 0 0 / .1); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ts-table-bulk .ts-button { background-color: rgb(0 0 0 / .1); } }
+/* 窄：筛选框独占一行；更窄：批量按钮只留图标，按钮上的文字交给读屏 */
+@container (max-width: 560px) {
+  .ts-table-toolbar > .ts-table-search { flex-basis: 100%; max-width: none; }
+}
+@container (max-width: 400px) {
+  .ts-table-bulk .ts-button .ts-btn-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .ts-table-bulk .ts-button { --_px: 7px; }
+}
+
 .ts-table-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--ts-space-3); flex-wrap: wrap; margin-top: var(--ts-space-3); font: var(--ts-font-caption); color: var(--ts-text-secondary); }
 
 /* 窄容器：每行变成一张卡片（列名在左、值在右），不必横向滚动 */

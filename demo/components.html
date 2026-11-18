@@ -219,17 +219,22 @@
       <div class="demo-grid">
         <div class="demo wide" id="table-demo">
           <div class="demo-name"><h3 class="ts-title-3">表格</h3><code>Table</code></div>
-          <div class="ts-table-toolbar">
-            <div class="ts-input ts-sm" style="width:220px"><i data-icon="search"></i><input id="tbl-filter" placeholder="筛选项目、负责人…" aria-label="筛选表格"></div>
+          <div class="ts-table-toolbar-wrap"><div class="ts-table-toolbar">
+            <div class="ts-input ts-sm ts-table-search"><i data-icon="search"></i><input id="tbl-filter" placeholder="筛选项目、负责人…" aria-label="筛选表格"></div>
             <div class="ts-segmented ts-sm" role="radiogroup" aria-label="行高" id="tbl-density">
               <label><input type="radio" name="density" value="compact"><span>紧凑</span></label>
               <label><input type="radio" name="density" value="" checked><span>标准</span></label>
               <label><input type="radio" name="density" value="comfortable"><span>宽松</span></label>
             </div>
-            <span class="ts-spacer" style="flex:1"></span>
+            <span class="ts-spacer"></span>
             <button class="ts-button ts-sm ts-pressable ts-state" id="tbl-reload"><i data-icon="refresh"></i>刷新</button>
-            <div class="ts-table-bulk" id="tbl-bulk" hidden><span>已选 <b data-bulk-count>0</b> 项</span><button class="ts-button ts-sm ts-pressable" id="tbl-export"><i data-icon="download"></i>导出</button><button class="ts-button ts-sm ts-pressable" id="tbl-del"><i data-icon="trash"></i>删除</button><button class="ts-icon-button ts-sm ts-pressable" id="tbl-clear" aria-label="取消选择" style="color:inherit"><i data-icon="close"></i></button></div>
-          </div>
+            <div class="ts-table-bulk" id="tbl-bulk" role="toolbar" aria-label="批量操作" hidden>
+              <span class="ts-bulk-count">已选 <b data-bulk-count>0</b> 项</span>
+              <button class="ts-button ts-sm ts-pressable" id="tbl-export"><i data-icon="download"></i><span class="ts-btn-text">导出</span></button>
+              <button class="ts-button ts-sm ts-pressable" id="tbl-del"><i data-icon="trash"></i><span class="ts-btn-text">删除</span></button>
+              <button class="ts-icon-button ts-sm ts-pressable" id="tbl-clear" aria-label="取消选择"><i data-icon="close"></i></button>
+            </div>
+          </div></div>
           <div class="ts-table-wrap" style="max-height:420px">
             <table class="ts-table" id="tbl" data-filter="tbl-filter" data-selectable data-sticky-first data-responsive data-page-size="6" data-bulk="tbl-bulk">
               <thead><tr><th data-sortable>项目</th><th data-sortable>负责人</th><th data-sortable>状态</th><th data-sortable class="ts-num">进度</th><th data-sortable class="ts-num">预算（元）</th><th data-sortable>截止日期</th><th>备注</th><th class="ts-num ts-actions-col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">操作</span></th></tr></thead>
