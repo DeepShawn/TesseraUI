@@ -6,6 +6,8 @@
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
+    <!-- CsWinRT 的 AOT 源生成器会生成 unsafe 代码 -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RootNamespace>TesseraUI</RootNamespace>
     <Platforms>x86;x64;ARM64</Platforms>
     <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
