@@ -152,12 +152,23 @@ export function segmented(root) {
   const indicator = document.createElement('div');
   indicator.className = 'ts-segmented-indicator';
   indicator.setAttribute('aria-hidden', 'true');
-  root.prepend(indicator);
+  // 砖面单独画一层：选中砖滑过时盖在砖面上，文字在最上层
+  const tiles = document.createElement('div');
+  tiles.className = 'ts-segmented-tiles';
+  tiles.setAttribute('aria-hidden', 'true');
+  tiles.innerHTML = '<i></i>'.repeat(root.querySelectorAll('label').length);
+  root.prepend(tiles, indicator);
   // offsetLeft 和绝对定位的 left 都以容器的内边距边为基准
   const moveTo = edgeIndicator(root, indicator, (label) => ({ l: label.offsetLeft, r: label.offsetLeft + label.offsetWidth }));
+  const labels = [...root.querySelectorAll('label')];
   const sync = (animate) => {
     const cur = root.querySelector('input:checked');
-    if (cur) moveTo(cur.closest('label'), animate);
+    if (!cur) return;
+    const label = cur.closest('label');
+    // 选中砖的圆角跟随落脚的那块砖：首尾两块外角大
+    const i = labels.indexOf(label), o = 'var(--_outer)', g = 'var(--ts-radius-grout)';
+    indicator.style.borderRadius = labels.length === 1 ? o : i === 0 ? `${o} ${g} ${g} ${o}` : i === labels.length - 1 ? `${g} ${o} ${o} ${g}` : g;
+    moveTo(label, animate);
   };
   root.addEventListener('change', () => sync(true));
   sync(false);

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { ROOT, THEMES, loadTokens, resolveSemanticColors, springParams, simulateSpring, contrast, parseHex } from '../scripts/lib.mjs';
+import { ROOT, THEMES, loadTokens, resolveSemanticColors, springParams, simulateSpring, contrast } from '../scripts/lib.mjs';
 
 const tokens = loadTokens();
 const colors = resolveSemanticColors(tokens);
@@ -59,7 +59,20 @@ test('产物版本号与 package.json 一致', () => {
   assert.ok(read('platforms/windows/TesseraUI/TesseraUI.csproj').includes(`<Version>${tokens.version}</Version>`));
 });
 
-test('深色模式下浅色值未被误用：bg.canvas 深色是深色', () => {
-  assert.ok(parseHex('#111113').r === colors['bg.canvas'].dark.r);
+test('深色模式越靠前的层越亮', () => {
+  const L = (n) => colors[n].dark.r + colors[n].dark.g + colors[n].dark.b;
+  assert.ok(L('bg.canvas') < L('bg.surface') && L('bg.surface') < L('bg.elevated') && L('bg.elevated') < L('bg.elevated-2'));
   assert.ok(existsSync(join(ROOT, 'icons/svg/heart-fill.svg')));
+});
+
+test('标题用衬线、正文用无衬线', () => {
+  const st = tokens.foundation.font.style;
+  for (const k of ['display', 'title-1', 'title-2', 'title-3']) assert.equal(st[k].family, 'display', k);
+  for (const k of ['body', 'body-sm', 'label', 'caption']) assert.equal(st[k].family, 'text', k);
+});
+
+test('拼贴规则：内角小于外角', () => {
+  const r = tokens.foundation.radius;
+  assert.ok(r.grout < r.md && r.md < r.lg);
+  assert.ok(tokens.foundation.tile.grout > 0 && tokens.foundation.tile.edge > 0);
 });

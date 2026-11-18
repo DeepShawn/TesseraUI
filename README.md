@@ -1,8 +1,10 @@
 # TesseraUI
 
-干净、圆润、流畅的 UI 设计标准库，一套 token 同时用于 **Apple、Android、Windows、Web** 四端。
+一套有自己面貌的 UI 设计标准库，一份 token 同时用于 **Apple、Android、Windows、Web** 四端。
 
-> Tessera：拼成马赛克的小石片。每一块都打磨得圆润顺手，拼起来才是完整的画面。
+> Tessera：马赛克镶嵌用的小石片。每个控件都是一块打磨圆润的釉面砖，成组时留出砖缝，按下去会微微下沉。
+
+四个识别要素：**拼贴**（成组的砖之间留 3px 缝，不用分割线）、**釉面砖**（凸起的按、凹下的填，按下会沉）、**软衬线**（Fraunces + 思源宋体做标题）、**矿物色**（石灰白底、孔雀釉主色、五种颜料）。详见 [设计规范第 0 节](docs/spec.md#0-设计语言)。
 
 **状态：v0.1.0 预览版，尚未发布。**
 
@@ -36,6 +38,7 @@ npm run demo            # 构建并在 http://localhost:5173/demo/ 打开预览�
 ```html
 <link rel="stylesheet" href="platforms/web/dist/tessera.css">
 <button class="ts-button ts-primary ts-pressable ts-state">保存</button>
+<ul class="ts-list"><li><div class="ts-list-item">一块砖</div></li><li><div class="ts-list-item">又一块砖</div></li></ul>
 <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch">Wi-Fi</label>
 
 <script type="module">

@@ -19,10 +19,14 @@ namespace TesseraUI
         public static readonly (Vector2 P1, Vector2 P2) EaseStandard = (new(0.2f, 0f), new(0f, 1f));
         public static readonly (Vector2 P1, Vector2 P2) EaseEnter = (new(0.05f, 0.7f), new(0.1f, 1f));
         public static readonly (Vector2 P1, Vector2 P2) EaseExit = (new(0.3f, 0f), new(0.8f, 0.15f));
-        public const float PressScale = 0.97f;
+        /// <summary>按下时砖往下沉的距离（epx）</summary>
+        public const float PressSink = 1f;
+        public const int PressDurationMs = 80;
+        public const float SettleLift = 6f;
+        public const float SettleScale = 1.015f;
         public const float FlingVelocity = 500f;
         public const int StaggerStepMs = 30;
-        public const int StaggerMaxItems = 6;
+        public const int StaggerMaxItems = 8;
         public const int ToastDurationMs = 3000;
         public const int ToastDurationWithActionMs = 5000;
     }

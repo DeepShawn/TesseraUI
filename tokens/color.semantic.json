@@ -1,47 +1,412 @@
 {
-  "$description": "语义颜色。组件只引用这一层。值可以是 {色板引用}，或 {color, alpha} 表示带不透明度的颜色。light/dark 必填；light-hc/dark-hc 只写与普通模式不同的项（增强对比度）。",
-  "bg.canvas":        { "light": "{gray.50}",  "dark": "{gray.950}" },
-  "bg.surface":       { "light": "{gray.0}",   "dark": "{gray.925}" },
-  "bg.elevated":      { "light": "{gray.0}",   "dark": "{gray.850}" },
-  "bg.elevated-2":    { "light": "{gray.0}",   "dark": "{gray.800}" },
-  "bg.scrim":         { "light": { "color": "{black}", "alpha": 0.32 }, "dark": { "color": "{black}", "alpha": 0.56 } },
-  "fill.control-off": { "$description": "开关关闭时的轨道", "light": "{gray.300}", "dark": "{gray.700}", "light-hc": "{gray.500}", "dark-hc": "{gray.500}" },
-  "fill.default":     { "light": { "color": "{black}", "alpha": 0.05 }, "dark": { "color": "{white}", "alpha": 0.08 } },
-
-  "text.primary":     { "light": "{gray.900}", "dark": "{gray.100}" },
-  "text.secondary":   { "light": "{gray.600}", "dark": "{gray.400}", "light-hc": "{gray.700}", "dark-hc": "{gray.300}" },
-  "text.tertiary":    { "light": "{gray.500}", "dark": "{gray.600}", "light-hc": "{gray.600}", "dark-hc": "{gray.400}" },
-  "text.on-solid":    { "light": "{white}",    "dark": "{white}" },
-
-  "border.subtle":    { "light": { "color": "{black}", "alpha": 0.06 }, "dark": { "color": "{white}", "alpha": 0.08 }, "light-hc": { "color": "{black}", "alpha": 0.24 }, "dark-hc": { "color": "{white}", "alpha": 0.28 } },
-  "border.strong":    { "light": { "color": "{black}", "alpha": 0.48 }, "dark": { "color": "{white}", "alpha": 0.48 } },
-  "border.surface":   { "$description": "卡片、浮层的外描边：浅色没有，深色用 subtle，增强对比度用 strong", "light": "transparent", "dark": { "color": "{white}", "alpha": 0.08 }, "light-hc": { "color": "{black}", "alpha": 0.48 }, "dark-hc": { "color": "{white}", "alpha": 0.48 } },
-  "border.field":     { "$description": "输入框描边：平时没有，增强对比度时补上", "light": "transparent", "dark": "transparent", "light-hc": { "color": "{black}", "alpha": 0.48 }, "dark-hc": { "color": "{white}", "alpha": 0.48 } },
-
-  "accent.solid":     { "light": "{indigo.500}", "dark": "{indigo.500}" },
-  "accent.text":      { "light": "{indigo.600}", "dark": "{indigo.400}" },
-  "accent.control":   { "$description": "非文字的实色控件：开关开启、复选框和单选选中、滑块轨道。深色下调亮，保证对底色 ≥ 3:1", "light": "{indigo.500}", "dark": "{indigo.450}" },
-  "accent.subtle":    { "light": { "color": "{indigo.500}", "alpha": 0.10 }, "dark": { "color": "{indigo.500}", "alpha": 0.20 } },
-
-  "danger.solid":     { "light": "{red.600}",    "dark": "{red.600}" },
-  "danger.text":      { "light": "{red.600}",    "dark": "{red.400}" },
-  "danger.subtle":    { "light": { "color": "{red.600}", "alpha": 0.10 }, "dark": { "color": "{red.600}", "alpha": 0.20 } },
-  "success.solid":    { "light": "{green.700}",  "dark": "{green.700}" },
-  "success.text":     { "light": "{green.700}",  "dark": "{green.400}" },
-  "success.subtle":   { "light": { "color": "{green.700}", "alpha": 0.10 }, "dark": { "color": "{green.700}", "alpha": 0.20 } },
-  "warning.solid":    { "light": "{orange.700}", "dark": "{orange.700}" },
-  "warning.text":     { "light": "{orange.700}", "dark": "{orange.400}" },
-  "warning.subtle":   { "light": { "color": "{orange.700}", "alpha": 0.10 }, "dark": { "color": "{orange.700}", "alpha": 0.20 } },
-
-  "focus.glow":       { "light": { "color": "{indigo.500}", "alpha": 0.25 }, "dark": { "color": "{indigo.500}", "alpha": 0.40 } },
-  "focus.ring":       { "light": "{indigo.600}", "dark": "{indigo.400}" },
-  "selection":        { "light": { "color": "{indigo.500}", "alpha": 0.20 }, "dark": { "color": "{indigo.500}", "alpha": 0.20 } },
-
-  "state.hover":         { "light": { "color": "{black}", "alpha": 0.06 }, "dark": { "color": "{white}", "alpha": 0.06 } },
-  "state.pressed":       { "light": { "color": "{black}", "alpha": 0.10 }, "dark": { "color": "{white}", "alpha": 0.10 } },
-  "state.solid-hover":   { "light": { "color": "{white}", "alpha": 0.08 }, "dark": { "color": "{white}", "alpha": 0.08 } },
-  "state.solid-pressed": { "light": { "color": "{black}", "alpha": 0.08 }, "dark": { "color": "{black}", "alpha": 0.08 } },
-
-  "material.glass":   { "light": { "color": "{white}", "alpha": 0.72 }, "dark": { "color": "{gray.925}", "alpha": 0.72 } },
-  "shadow.color":     { "light": "{black}", "dark": "{black}" }
+  "$description": "语义颜色。组件只引用这一层。值可以是 {色板引用}，或 {color, alpha}。light/dark 必填；light-hc/dark-hc 只写与普通模式不同的项。",
+  "bg.canvas": {
+    "light": "{stone.100}",
+    "dark": "{stone.950}",
+    "$description": "页面底，也是“砖缝”的颜色"
+  },
+  "bg.surface": {
+    "light": "{stone.25}",
+    "dark": "{stone.900}",
+    "$description": "卡片、砖面"
+  },
+  "bg.elevated": {
+    "light": "{white}",
+    "dark": "{stone.850}",
+    "$description": "浮层"
+  },
+  "bg.elevated-2": {
+    "light": "{white}",
+    "dark": "{stone.800}",
+    "$description": "浮层上的浮层"
+  },
+  "bg.inverse": {
+    "light": "{ink}",
+    "dark": "{stone.975}",
+    "$description": "反色砖：提示消息、工具提示"
+  },
+  "bg.scrim": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.36
+    },
+    "dark": {
+      "color": "{black}",
+      "alpha": 0.6
+    }
+  },
+  "fill.default": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.06
+    },
+    "dark": {
+      "color": "{stone.975}",
+      "alpha": 0.08
+    },
+    "$description": "输入框、次要控件的底"
+  },
+  "fill.control-off": {
+    "light": "{stone.200}",
+    "dark": "{stone.700}",
+    "light-hc": "{stone.500}",
+    "dark-hc": "{stone.500}",
+    "$description": "开关关闭时的轨道"
+  },
+  "text.primary": {
+    "light": "{ink}",
+    "dark": "{stone.975}"
+  },
+  "text.secondary": {
+    "light": "{stone.600}",
+    "dark": "{stone.400}",
+    "light-hc": "{stone.700}",
+    "dark-hc": "{stone.300}"
+  },
+  "text.tertiary": {
+    "light": "{stone.550}",
+    "dark": "{stone.500}",
+    "light-hc": "{stone.600}",
+    "dark-hc": "{stone.400}"
+  },
+  "text.on-solid": {
+    "light": "{white}",
+    "dark": "{white}"
+  },
+  "text.inverse": {
+    "light": "{stone.975}",
+    "dark": "{ink}"
+  },
+  "border.subtle": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.08
+    },
+    "dark": {
+      "color": "{stone.975}",
+      "alpha": 0.08
+    },
+    "light-hc": {
+      "color": "{ink}",
+      "alpha": 0.28
+    },
+    "dark-hc": {
+      "color": "{stone.975}",
+      "alpha": 0.3
+    }
+  },
+  "border.strong": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.45
+    },
+    "dark": {
+      "color": "{stone.975}",
+      "alpha": 0.45
+    }
+  },
+  "border.surface": {
+    "light": "transparent",
+    "dark": {
+      "color": "{stone.975}",
+      "alpha": 0.06
+    },
+    "light-hc": {
+      "color": "{ink}",
+      "alpha": 0.5
+    },
+    "dark-hc": {
+      "color": "{stone.975}",
+      "alpha": 0.5
+    },
+    "$description": "卡片、浮层外描边：浅色没有，深色很淡，增强对比度时为实线"
+  },
+  "border.field": {
+    "light": "transparent",
+    "dark": "transparent",
+    "light-hc": {
+      "color": "{ink}",
+      "alpha": 0.5
+    },
+    "dark-hc": {
+      "color": "{stone.975}",
+      "alpha": 0.5
+    },
+    "$description": "输入框描边：只在增强对比度时出现"
+  },
+  "edge.solid": {
+    "light": {
+      "color": "{black}",
+      "alpha": 0.22
+    },
+    "dark": {
+      "color": "{black}",
+      "alpha": 0.32
+    },
+    "$description": "实色砖底部的砖厚"
+  },
+  "edge.soft": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.1
+    },
+    "dark": {
+      "color": "{black}",
+      "alpha": 0.4
+    },
+    "$description": "浅色砖底部的砖厚"
+  },
+  "sheen": {
+    "light": {
+      "color": "{white}",
+      "alpha": 0.16
+    },
+    "dark": {
+      "color": "{white}",
+      "alpha": 0.1
+    },
+    "$description": "釉面顶部的一道高光"
+  },
+  "accent.solid": {
+    "light": "{glaze.600}",
+    "dark": "{glaze.600}",
+    "$description": "主按钮底（孔雀釉）"
+  },
+  "accent.control": {
+    "light": "{glaze.600}",
+    "dark": "{glaze.500}",
+    "$description": "非文字实色控件：开关开启、复选框和单选选中"
+  },
+  "accent.text": {
+    "light": "{glaze.600}",
+    "dark": "{glaze.300}"
+  },
+  "accent.subtle": {
+    "light": {
+      "color": "{glaze.600}",
+      "alpha": 0.1
+    },
+    "dark": {
+      "color": "{glaze.500}",
+      "alpha": 0.2
+    }
+  },
+  "danger.solid": {
+    "light": "{red.600}",
+    "dark": "{red.600}"
+  },
+  "danger.text": {
+    "light": "{red.600}",
+    "dark": "{red.400}"
+  },
+  "danger.subtle": {
+    "light": {
+      "color": "{red.600}",
+      "alpha": 0.1
+    },
+    "dark": {
+      "color": "{red.600}",
+      "alpha": 0.22
+    }
+  },
+  "success.solid": {
+    "light": "{green.600}",
+    "dark": "{green.600}"
+  },
+  "success.text": {
+    "light": "{green.600}",
+    "dark": "{green.400}"
+  },
+  "success.subtle": {
+    "light": {
+      "color": "{green.600}",
+      "alpha": 0.1
+    },
+    "dark": {
+      "color": "{green.600}",
+      "alpha": 0.22
+    }
+  },
+  "warning.solid": {
+    "light": "{amber.600}",
+    "dark": "{amber.600}"
+  },
+  "warning.text": {
+    "light": "{amber.600}",
+    "dark": "{amber.400}"
+  },
+  "warning.subtle": {
+    "light": {
+      "color": "{amber.600}",
+      "alpha": 0.1
+    },
+    "dark": {
+      "color": "{amber.600}",
+      "alpha": 0.22
+    }
+  },
+  "focus.glow": {
+    "light": {
+      "color": "{glaze.600}",
+      "alpha": 0.22
+    },
+    "dark": {
+      "color": "{glaze.500}",
+      "alpha": 0.38
+    }
+  },
+  "focus.ring": {
+    "light": "{glaze.600}",
+    "dark": "{glaze.300}"
+  },
+  "selection": {
+    "light": {
+      "color": "{glaze.500}",
+      "alpha": 0.22
+    },
+    "dark": {
+      "color": "{glaze.500}",
+      "alpha": 0.32
+    }
+  },
+  "state.hover": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.05
+    },
+    "dark": {
+      "color": "{stone.975}",
+      "alpha": 0.06
+    }
+  },
+  "state.pressed": {
+    "light": {
+      "color": "{ink}",
+      "alpha": 0.09
+    },
+    "dark": {
+      "color": "{stone.975}",
+      "alpha": 0.1
+    }
+  },
+  "state.solid-hover": {
+    "light": {
+      "color": "{white}",
+      "alpha": 0.08
+    },
+    "dark": {
+      "color": "{white}",
+      "alpha": 0.08
+    }
+  },
+  "state.solid-pressed": {
+    "light": {
+      "color": "{black}",
+      "alpha": 0.1
+    },
+    "dark": {
+      "color": "{black}",
+      "alpha": 0.1
+    }
+  },
+  "shadow.color": {
+    "light": "{ink}",
+    "dark": "{black}",
+    "$description": "阴影带石色暖调，不用纯黑"
+  },
+  "pigment.cinnabar": {
+    "light": "{cinnabar.500}",
+    "dark": "{cinnabar.500}",
+    "$description": "矿物颜料：只用于头像、分类、插图，不表示状态"
+  },
+  "pigment.cinnabar-subtle": {
+    "light": {
+      "color": "{cinnabar.500}",
+      "alpha": 0.14
+    },
+    "dark": {
+      "color": "{cinnabar.500}",
+      "alpha": 0.26
+    }
+  },
+  "pigment.cinnabar-text": {
+    "light": "{cinnabar.700}",
+    "dark": "{cinnabar.300}"
+  },
+  "pigment.ochre": {
+    "light": "{ochre.500}",
+    "dark": "{ochre.500}",
+    "$description": "矿物颜料：只用于头像、分类、插图，不表示状态"
+  },
+  "pigment.ochre-subtle": {
+    "light": {
+      "color": "{ochre.500}",
+      "alpha": 0.14
+    },
+    "dark": {
+      "color": "{ochre.500}",
+      "alpha": 0.26
+    }
+  },
+  "pigment.ochre-text": {
+    "light": "{ochre.700}",
+    "dark": "{ochre.300}"
+  },
+  "pigment.lapis": {
+    "light": "{lapis.500}",
+    "dark": "{lapis.500}",
+    "$description": "矿物颜料：只用于头像、分类、插图，不表示状态"
+  },
+  "pigment.lapis-subtle": {
+    "light": {
+      "color": "{lapis.500}",
+      "alpha": 0.14
+    },
+    "dark": {
+      "color": "{lapis.500}",
+      "alpha": 0.26
+    }
+  },
+  "pigment.lapis-text": {
+    "light": "{lapis.700}",
+    "dark": "{lapis.300}"
+  },
+  "pigment.amethyst": {
+    "light": "{amethyst.500}",
+    "dark": "{amethyst.500}",
+    "$description": "矿物颜料：只用于头像、分类、插图，不表示状态"
+  },
+  "pigment.amethyst-subtle": {
+    "light": {
+      "color": "{amethyst.500}",
+      "alpha": 0.14
+    },
+    "dark": {
+      "color": "{amethyst.500}",
+      "alpha": 0.26
+    }
+  },
+  "pigment.amethyst-text": {
+    "light": "{amethyst.700}",
+    "dark": "{amethyst.300}"
+  },
+  "pigment.olive": {
+    "light": "{olive.500}",
+    "dark": "{olive.500}",
+    "$description": "矿物颜料：只用于头像、分类、插图，不表示状态"
+  },
+  "pigment.olive-subtle": {
+    "light": {
+      "color": "{olive.500}",
+      "alpha": 0.14
+    },
+    "dark": {
+      "color": "{olive.500}",
+      "alpha": 0.26
+    }
+  },
+  "pigment.olive-text": {
+    "light": "{olive.700}",
+    "dark": "{olive.300}"
+  }
 }

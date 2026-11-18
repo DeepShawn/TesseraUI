@@ -21,5 +21,5 @@ withAnimation(TesseraMotion.smooth) { isOpen.toggle() }
 
 - `Sources/TesseraUI/Generated/` 由 `npm run build` 生成，不要手改。
 - 颜色自动跟随浅色 / 深色 / 增强对比度（系统“设置 › 辅助功能 › 增强对比度”）。
-- 字体：把 Plus Jakarta Sans 字体文件加入 App 并在 Info.plist 的 `UIAppFonts` 注册；中文自动回退到苹方。
+- 字体：把 Fraunces（标题，可变字体）和 Instrument Sans（正文）加入 App 并在 Info.plist 的 `UIAppFonts` 注册；标题中文回退到宋体，正文中文回退到苹方。
 - v0.1 状态：只含 token 与按钮样式的参考实现，**尚未在 Xcode 中编译验证**。

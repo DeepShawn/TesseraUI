@@ -1,21 +1,74 @@
 {
   "$description": "动效 token。弹簧以“时长 + 回弹”为准，刚度和阻尼由构建脚本按 刚度 = (2π ÷ 时长)²、阻尼 = 4π × (1 − 回弹) ÷ 时长 算出（质量 1）。",
   "spring": {
-    "snappy": { "duration": 300, "bounce": 0.15 },
-    "smooth": { "duration": 400, "bounce": 0, "default": true },
-    "bouncy": { "duration": 500, "bounce": 0.25 }
+    "snappy": {
+      "duration": 300,
+      "bounce": 0.15
+    },
+    "smooth": {
+      "duration": 400,
+      "bounce": 0,
+      "default": true
+    },
+    "bouncy": {
+      "duration": 500,
+      "bounce": 0.25
+    }
   },
-  "duration": { "instant": 100, "fast": 150, "normal": 250, "slow": 350 },
+  "duration": {
+    "instant": 100,
+    "fast": 150,
+    "normal": 250,
+    "slow": 350
+  },
   "ease": {
-    "standard": [0.2, 0, 0, 1],
-    "enter":    [0.05, 0.7, 0.1, 1],
-    "exit":     [0.3, 0, 0.8, 0.15],
-    "linear":   "linear"
+    "standard": [
+      0.2,
+      0,
+      0,
+      1
+    ],
+    "enter": [
+      0.05,
+      0.7,
+      0.1,
+      1
+    ],
+    "exit": [
+      0.3,
+      0,
+      0.8,
+      0.15
+    ],
+    "linear": "linear"
   },
-  "press": { "scale": 0.97, "duration": 100 },
-  "gesture": { "flingVelocity": 500, "rubberBand": 0.55 },
-  "stagger": { "step": 30, "maxItems": 6 },
-  "toast": { "duration": 3000, "durationWithAction": 5000 },
-  "skeleton": { "period": 1500 },
-  "reducedMotion": { "duration": 150 }
+  "press": {
+    "sink": 1,
+    "duration": 80,
+    "$description": "按下：砖往下沉 1px、砖厚变薄；松手用 snappy 弹回"
+  },
+  "gesture": {
+    "flingVelocity": 500,
+    "rubberBand": 0.55
+  },
+  "stagger": {
+    "step": 30,
+    "maxItems": 8,
+    "$description": "铺砖：网格按对角线顺序依次出现"
+  },
+  "toast": {
+    "duration": 3000,
+    "durationWithAction": 5000
+  },
+  "skeleton": {
+    "period": 1500
+  },
+  "reducedMotion": {
+    "duration": 150
+  },
+  "settle": {
+    "lift": 6,
+    "scale": 1.015,
+    "$description": "落砖：进场时从上方 6px、放大 1.5% 落到位，smooth"
+  }
 }

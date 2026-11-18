@@ -2,51 +2,263 @@
   "$description": "非颜色基础 token。单位：长度为 px（iOS pt / Android dp / Windows epx 按 1:1 换算），时间为 ms。",
   "font": {
     "family": {
-      "latin": ["Plus Jakarta Sans"],
+      "display": [
+        "Fraunces"
+      ],
+      "latin": [
+        "Instrument Sans"
+      ],
+      "cjkSerif": {
+        "apple": [
+          "Songti SC"
+        ],
+        "android": [
+          "Noto Serif CJK SC"
+        ],
+        "windows": [
+          "Source Han Serif SC",
+          "Microsoft YaHei UI"
+        ],
+        "web": [
+          "Noto Serif SC",
+          "Source Han Serif SC",
+          "Songti SC",
+          "STSong"
+        ]
+      },
       "cjk": {
-        "apple":   ["PingFang SC"],
-        "android": ["Noto Sans CJK SC", "Source Han Sans SC"],
-        "windows": ["Microsoft YaHei UI"],
-        "web":     ["PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei UI", "Microsoft YaHei"]
+        "apple": [
+          "PingFang SC"
+        ],
+        "android": [
+          "Noto Sans CJK SC"
+        ],
+        "windows": [
+          "Microsoft YaHei UI"
+        ],
+        "web": [
+          "PingFang SC",
+          "Source Han Sans SC",
+          "Noto Sans CJK SC",
+          "Microsoft YaHei UI",
+          "Microsoft YaHei"
+        ]
       },
       "fallback": {
-        "apple":   "system-ui",
+        "apple": "system-ui",
         "android": "sans-serif",
         "windows": "Segoe UI Variable",
-        "web":     ["system-ui", "-apple-system", "Segoe UI Variable", "Segoe UI", "Roboto", "sans-serif"]
+        "web": [
+          "system-ui",
+          "-apple-system",
+          "Segoe UI Variable",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif"
+        ]
       },
-      "mono": ["JetBrains Mono", "SF Mono", "Cascadia Code", "Menlo", "Consolas", "monospace"]
+      "displayFallback": {
+        "web": [
+          "Georgia",
+          "serif"
+        ]
+      },
+      "mono": [
+        "JetBrains Mono",
+        "SF Mono",
+        "Cascadia Code",
+        "Menlo",
+        "Consolas",
+        "monospace"
+      ]
     },
-    "weight": { "regular": 400, "semibold": 600 },
+    "displayAxes": {
+      "SOFT": 100,
+      "WONK": 0,
+      "$description": "Fraunces 的可变轴：SOFT 100 把衬线磨圆"
+    },
+    "weight": {
+      "regular": 400,
+      "semibold": 600
+    },
     "style": {
-      "display": { "size": 40, "lineHeight": 48, "weight": "semibold" },
-      "title-1": { "size": 32, "lineHeight": 40, "weight": "semibold" },
-      "title-2": { "size": 24, "lineHeight": 32, "weight": "semibold" },
-      "title-3": { "size": 20, "lineHeight": 28, "weight": "semibold" },
-      "body":    { "size": 16, "lineHeight": 26, "weight": "regular" },
-      "body-sm": { "size": 14, "lineHeight": 22, "weight": "regular" },
-      "label":   { "size": 14, "lineHeight": 20, "weight": "semibold" },
-      "caption": { "size": 12, "lineHeight": 18, "weight": "regular" }
+      "display": {
+        "size": 44,
+        "lineHeight": 52,
+        "weight": "semibold",
+        "family": "display",
+        "tracking": -0.02
+      },
+      "title-1": {
+        "size": 32,
+        "lineHeight": 40,
+        "weight": "semibold",
+        "family": "display",
+        "tracking": -0.015
+      },
+      "title-2": {
+        "size": 24,
+        "lineHeight": 32,
+        "weight": "semibold",
+        "family": "display",
+        "tracking": -0.01
+      },
+      "title-3": {
+        "size": 19,
+        "lineHeight": 26,
+        "weight": "semibold",
+        "family": "display",
+        "tracking": 0
+      },
+      "body": {
+        "size": 16,
+        "lineHeight": 26,
+        "weight": "regular",
+        "family": "text",
+        "tracking": 0
+      },
+      "body-sm": {
+        "size": 14,
+        "lineHeight": 22,
+        "weight": "regular",
+        "family": "text",
+        "tracking": 0
+      },
+      "label": {
+        "size": 14,
+        "lineHeight": 20,
+        "weight": "semibold",
+        "family": "text",
+        "tracking": 0
+      },
+      "caption": {
+        "size": 12,
+        "lineHeight": 18,
+        "weight": "regular",
+        "family": "text",
+        "tracking": 0
+      },
+      "overline": {
+        "size": 11,
+        "lineHeight": 16,
+        "weight": "semibold",
+        "family": "text",
+        "tracking": 0.12
+      }
     },
     "readingLineHeight": 1.75
   },
-  "space": { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "8": 32, "10": 40, "12": 48, "16": 64 },
-  "size": { "sm": 32, "md": 40, "lg": 48, "touch-min": 44 },
-  "radius": { "xs": 6, "sm": 8, "md": 12, "lg": 16, "xl": 20, "2xl": 28, "full": 9999 },
-  "border": { "width": 1 },
-  "focus": { "ringWidth": 2, "ringOffset": 2, "glowWidth": 3 },
-  "opacity": { "disabled": 0.4 },
-  "shadow": {
-    "1": [ { "y": 1, "blur": 2,  "alpha": 0.04 }, { "y": 4,  "blur": 12, "alpha": 0.04 } ],
-    "2": [ { "y": 2, "blur": 6,  "alpha": 0.06 }, { "y": 12, "blur": 32, "alpha": 0.08 } ],
-    "3": [ { "y": 4, "blur": 12, "alpha": 0.08 }, { "y": 24, "blur": 64, "alpha": 0.12 } ],
-    "$darkAlpha": 0.4
+  "space": {
+    "0": 0,
+    "1": 4,
+    "2": 8,
+    "3": 12,
+    "4": 16,
+    "5": 20,
+    "6": 24,
+    "8": 32,
+    "10": 40,
+    "12": 48,
+    "16": 64
   },
-  "material": { "glass": { "blur": 20, "saturation": 1.8 } },
-  "z": { "sticky": 100, "overlay": 200, "modal": 300, "popover": 400, "toast": 500, "tooltip": 600 },
+  "size": {
+    "sm": 32,
+    "md": 40,
+    "lg": 48,
+    "touch-min": 44
+  },
+  "radius": {
+    "grout": 4,
+    "sm": 6,
+    "md": 10,
+    "lg": 14,
+    "xl": 20,
+    "2xl": 28,
+    "full": 9999
+  },
+  "border": {
+    "width": 1
+  },
+  "focus": {
+    "ringWidth": 2,
+    "ringOffset": 2,
+    "glowWidth": 3
+  },
+  "opacity": {
+    "disabled": 0.4
+  },
+  "shadow": {
+    "1": [
+      {
+        "y": 1,
+        "blur": 2,
+        "alpha": 0.05
+      },
+      {
+        "y": 4,
+        "blur": 14,
+        "alpha": 0.05
+      }
+    ],
+    "2": [
+      {
+        "y": 2,
+        "blur": 6,
+        "alpha": 0.07
+      },
+      {
+        "y": 14,
+        "blur": 36,
+        "alpha": 0.1
+      }
+    ],
+    "3": [
+      {
+        "y": 4,
+        "blur": 12,
+        "alpha": 0.09
+      },
+      {
+        "y": 28,
+        "blur": 72,
+        "alpha": 0.16
+      }
+    ],
+    "$darkAlpha": 0.4,
+    "$color": "shadow.color"
+  },
+  "z": {
+    "sticky": 100,
+    "overlay": 200,
+    "modal": 300,
+    "popover": 400,
+    "toast": 500,
+    "tooltip": 600
+  },
   "breakpoint": {
-    "phone":   { "max": 639,  "columns": 4,  "gutter": 16, "margin": 16 },
-    "tablet":  { "min": 640,  "max": 1024, "columns": 8, "gutter": 24, "margin": 32 },
-    "desktop": { "min": 1025, "columns": 12, "gutter": 24, "maxContent": 1200 }
+    "phone": {
+      "max": 639,
+      "columns": 4,
+      "gutter": 16,
+      "margin": 16
+    },
+    "tablet": {
+      "min": 640,
+      "max": 1024,
+      "columns": 8,
+      "gutter": 24,
+      "margin": 32
+    },
+    "desktop": {
+      "min": 1025,
+      "columns": 12,
+      "gutter": 24,
+      "maxContent": 1200
+    }
+  },
+  "tile": {
+    "grout": 3,
+    "edge": 2,
+    "$description": "grout：成组的砖之间的缝宽；edge：实色砖底部的砖厚"
   }
 }

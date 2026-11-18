@@ -22,7 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.tesseraui.TesseraRadius
+import com.tesseraui.TesseraTile
 import com.tesseraui.Tessera
 import com.tesseraui.TesseraMotion
 import com.tesseraui.TesseraSize
@@ -30,11 +36,11 @@ import com.tesseraui.TesseraSpace
 import com.tesseraui.TesseraType
 
 enum class TesseraButtonVariant { Primary, Secondary, Text, Danger }
-enum class TesseraButtonSize(val height: Dp, val padding: Dp) {
-    Sm(TesseraSize.sm, TesseraSpace.s3), Md(TesseraSize.md, TesseraSpace.s4), Lg(TesseraSize.lg, TesseraSpace.s6)
+enum class TesseraButtonSize(val height: Dp, val padding: Dp, val radius: Dp) {
+    Sm(TesseraSize.sm, TesseraSpace.s3, 8.dp), Md(TesseraSize.md, TesseraSpace.s4, TesseraRadius.md), Lg(TesseraSize.lg, TesseraSpace.s6, 12.dp)
 }
 
-/** 按钮：胶囊形；按下 100ms 缩到 0.97，松手用 snappy 弹回。 */
+/** 按钮：圆角方砖。实色砖顶部一道釉光、底部 2dp 砖厚；按下时下沉 1dp、砖厚变薄，松手用 snappy 弹回。 */
 @Composable
 fun TesseraButton(
     text: String,
@@ -47,9 +53,9 @@ fun TesseraButton(
     val c = Tessera.colors
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (pressed) TesseraMotion.PRESS_SCALE else 1f,
-        animationSpec = if (pressed) tween(TesseraMotion.DURATION_INSTANT) else TesseraMotion.snappy(),
+    val sink by animateFloatAsState(
+        targetValue = if (pressed) TesseraMotion.PRESS_SINK_DP else 0f,
+        animationSpec = if (pressed) tween(TesseraMotion.PRESS_DURATION) else TesseraMotion.snappy(),
         label = "press",
     )
     val solid = variant == TesseraButtonVariant.Primary || variant == TesseraButtonVariant.Danger
@@ -65,8 +71,10 @@ fun TesseraButton(
         TesseraButtonVariant.Text -> c.accentText
     }
     val overlay = if (pressed) (if (solid) c.stateSolidPressed else c.statePressed) else Color.Transparent
-    // 注：Compose 没有连续曲率圆角，胶囊形用 50% 圆角；squircle Shape 计划在 v0.2 提供。
-    val shape = RoundedCornerShape(percent = 50)
+    val edgeColor = if (solid) c.edgeSolid else c.edgeSoft
+    val edge = if (pressed) 1.dp else TesseraTile.edge
+    // 注：Compose 没有连续曲率圆角，v0.1 先用普通圆角；squircle Shape 计划在 v0.2 提供。
+    val shape = RoundedCornerShape(size.radius)
 
     Box(
         modifier = modifier
@@ -76,13 +84,22 @@ fun TesseraButton(
     ) {
         Box(
             modifier = Modifier
-                .graphicsLayer { scaleX = scale; scaleY = scale }
+                .graphicsLayer { translationY = sink * density }
                 .alpha(if (enabled) 1f else 0.4f)
                 .height(size.height)
                 .clip(shape)
                 .background(bg)
+                .drawBehind {
+                    if (variant != TesseraButtonVariant.Text) {
+                        // 砖厚：底部深色带
+                        drawRect(edgeColor, topLeft = Offset(0f, this.size.height - edge.toPx()), size = Size(this.size.width, edge.toPx()))
+                        // 釉光：顶部 1dp 高光
+                        if (solid) drawRect(c.sheen, size = Size(this.size.width, 1.dp.toPx()))
+                    }
+                }
                 .background(overlay)
-                .padding(horizontal = size.padding),
+                .padding(horizontal = size.padding)
+                .padding(bottom = if (variant == TesseraButtonVariant.Text) 0.dp else 1.dp),
             contentAlignment = Alignment.Center,
         ) {
             BasicText(text, style = TesseraType.label.copy(color = fg))

@@ -31,6 +31,15 @@ for (const theme of THEMES) {
       add(theme, `${st}.text`, `${st}.subtle on ${s}`, contrast(get(`${st}.text`, theme), bg), AA);
     }
   }
+  // 2b. 颜料文字 × 颜料浅底（头像、分类标签）
+  for (const pg of ['cinnabar', 'ochre', 'lapis', 'amethyst', 'olive']) {
+    for (const s of ['bg.surface', 'bg.elevated']) {
+      const bg = composite(get(`pigment.${pg}-subtle`, theme), get(s, theme));
+      add(theme, `pigment.${pg}-text`, `pigment.${pg}-subtle on ${s}`, contrast(get(`pigment.${pg}-text`, theme), bg), AA);
+    }
+  }
+  // 2c. 反色砖（提示消息、工具提示）
+  add(theme, 'text.inverse', 'bg.inverse', contrast(get('text.inverse', theme), get('bg.inverse', theme)), AA);
   // 3. 文字放在输入框底色上（输入框底色叠在卡片和页面底上）
   for (const s of ['bg.canvas', 'bg.surface', 'bg.elevated']) {
     const bg = composite(get('fill.default', theme), get(s, theme));

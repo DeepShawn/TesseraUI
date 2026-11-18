@@ -25,7 +25,8 @@ private struct TesseraTextModifier: ViewModifier {
         let size = style.size * scale
         // SwiftUI 没有“行高”，用 lineSpacing 近似：行高 − 字体默认行高（约 1.2 倍字号）。
         content
-            .font(.custom(TesseraFontFamily.latin, fixedSize: size).weight(style.weight))
+            .font(.custom(style.family == .display ? TesseraFontFamily.display : TesseraFontFamily.text, fixedSize: size).weight(style.weight))
+            .tracking(style.tracking * size)
             .lineSpacing(max(0, (style.lineHeight - style.size * 1.2) * scale))
     }
 }
@@ -37,7 +38,8 @@ private struct TesseraShadowModifier: ViewModifier {
     func body(content: Content) -> some View {
         shadow.layers.reduce(AnyView(content)) { view, layer in
             AnyView(view.shadow(
-                color: .black.opacity(scheme == .dark ? layer.darkOpacity : layer.lightOpacity),
+                // 阴影带石色暖调（浅色用墨色 #1F1B16，深色用黑）
+                color: TesseraColor.shadowColor.opacity(scheme == .dark ? layer.darkOpacity : layer.lightOpacity),
                 radius: layer.blur / 2, // CSS 的 blur 约等于 SwiftUI radius 的 2 倍
                 x: 0, y: layer.y
             ))

@@ -24,4 +24,5 @@ Windows App SDK 1.6，.NET 8。
 - 弹簧：Composition API 的 `SpringVector3NaturalMotionAnimation` 用 `DampingRatio` + `Period`，直接取 `TesseraMotion.Snappy` 等常量；XAML Storyboard 没有弹簧，用 `BackEase` 近似。
 - 材质：毛玻璃在 Windows 上对应 Acrylic（浮层）和 Mica（窗口底）。
 - 圆角：WinUI 的 `CornerRadius` 没有连续曲率，v0.1 先用普通圆角。
+- 字体：标题需随应用打包 Fraunces 和思源宋体（`TesseraDisplayFontFamily`），不打包时回退微软雅黑；正文用 Instrument Sans + 微软雅黑。
 - v0.1 状态：只含 token 和按钮样式的参考实现，**尚未在 Visual Studio 中编译验证**。

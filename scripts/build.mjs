@@ -39,11 +39,16 @@ function buildWeb() {
       .join('\n');
   const shadowBlock = (theme) =>
     SHADOW_LEVELS.map(
-      (lv) => `  --ts-shadow-${lv}: ${shadowLayers(lv, theme).map((l) => `0 ${l.y}px ${l.blur}px rgb(0 0 0 / ${l.alpha})`).join(', ')};`,
+      (lv) => {
+        const c = colors['shadow.color'][theme];
+        return `  --ts-shadow-${lv}: ${shadowLayers(lv, theme).map((l) => `0 ${l.y}px ${l.blur}px rgb(${c.r} ${c.g} ${c.b} / ${l.alpha})`).join(', ')};`;
+      },
     ).join('\n');
 
   const family = (list) => list.map((f) => (/[\s]/.test(f) && !f.includes('-apple') ? `"${f}"` : f)).join(', ');
   const sans = family([...F.font.family.latin, ...F.font.family.cjk.web, ...F.font.family.fallback.web]);
+  const display = family([...F.font.family.display, ...F.font.family.cjkSerif.web, ...F.font.family.displayFallback.web]);
+  const fam = (s) => (s.family === 'display' ? 'var(--ts-font-serif)' : 'var(--ts-font-sans)');
 
   const springCss = Object.entries(springs).map(([k, s]) => {
     const { css, settleMs } = springToCssLinear(s);
@@ -56,11 +61,13 @@ function buildWeb() {
     '/* ---------- 非颜色 token ---------- */',
     ':root {',
     `  --ts-font-sans: ${sans};`,
+    `  --ts-font-serif: ${display};`,
+    `  --ts-font-serif-axes: "SOFT" ${F.font.displayAxes.SOFT}, "WONK" ${F.font.displayAxes.WONK};`,
     `  --ts-font-mono: ${family(F.font.family.mono)};`,
     `  --ts-font-weight-regular: ${F.font.weight.regular};`,
     `  --ts-font-weight-semibold: ${F.font.weight.semibold};`,
     ...textStyles.map(
-      ([k, s]) => `  --ts-font-${k}: ${weightNum(s.weight)} ${s.size}px/${s.lineHeight}px var(--ts-font-sans);`,
+      ([k, s]) => `  --ts-font-${k}: ${weightNum(s.weight)} ${s.size}px/${s.lineHeight}px ${fam(s)};\n  --ts-tracking-${k}: ${s.tracking}em;`,
     ),
     `  --ts-line-height-reading: ${F.font.readingLineHeight};`,
     ...Object.entries(F.space).map(([k, v]) => `  --ts-space-${k}: ${v}px;`),
@@ -71,15 +78,18 @@ function buildWeb() {
     `  --ts-focus-ring-offset: ${F.focus.ringOffset}px;`,
     `  --ts-focus-glow-width: ${F.focus.glowWidth}px;`,
     `  --ts-opacity-disabled: ${F.opacity.disabled};`,
-    `  --ts-glass-blur: ${F.material.glass.blur}px;`,
-    `  --ts-glass-saturation: ${F.material.glass.saturation * 100}%;`,
+    `  --ts-tile-grout: ${F.tile.grout}px;`,
+    `  --ts-tile-edge: ${F.tile.edge}px;`,
     ...Object.entries(F.z).map(([k, v]) => `  --ts-z-${k}: ${v};`),
     ...Object.entries(M.duration).map(([k, v]) => `  --ts-duration-${k}: ${v}ms;`),
     ...Object.entries(M.ease).map(
       ([k, v]) => `  --ts-ease-${k}: ${Array.isArray(v) ? `cubic-bezier(${v.join(', ')})` : v};`,
     ),
     ...springCss,
-    `  --ts-press-scale: ${M.press.scale};`,
+    `  --ts-press-sink: ${M.press.sink}px;`,
+    `  --ts-press-duration: ${M.press.duration}ms;`,
+    `  --ts-settle-lift: ${M.settle.lift}px;`,
+    `  --ts-settle-scale: ${M.settle.scale};`,
     '}',
     '',
     '/* ---------- 颜色：浅色（默认） ---------- */',
@@ -165,24 +175,32 @@ ${colorLines.join('\n')}
 // MARK: - 字体
 
 public enum TesseraFontFamily {
-    /// 英文和数字。需把字体文件加入 App 并在 Info.plist 注册；未注册时 SwiftUI 自动回退到系统字体。
-    public static let latin = "${F.font.family.latin[0]}"
-    /// 中文由系统自动回退到苹方，无需额外处理。
+    /// 标题：软衬线 ${F.font.family.display[0]}（可变字体，SOFT=${F.font.displayAxes.SOFT}）。需加入 App 并在 Info.plist 注册。
+    public static let display = "${F.font.family.display[0]}"
+    /// 正文：${F.font.family.latin[0]}。需加入 App 并在 Info.plist 注册；未注册时回退到系统字体。
+    public static let text = "${F.font.family.latin[0]}"
+    /// 标题里的中文：系统自带的宋体。
+    public static let cjkSerif = "${F.font.family.cjkSerif.apple[0]}"
+    /// 正文里的中文：系统自动回退到苹方。
     public static let cjk = "${F.font.family.cjk.apple[0]}"
 }
 
 public struct TesseraTextStyle: Sendable {
+    public enum Family: Sendable { case display, text }
     public let size: CGFloat
     public let lineHeight: CGFloat
     public let weight: Font.Weight
+    public let family: Family
+    /// 字距，单位 em
+    public let tracking: CGFloat
     public let relativeTo: Font.TextStyle
 }
 
 public extension TesseraTextStyle {
 ${textStyles
   .map(([k, s]) => {
-    const rel = { display: '.largeTitle', 'title-1': '.title', 'title-2': '.title2', 'title-3': '.title3', body: '.body', 'body-sm': '.subheadline', label: '.subheadline', caption: '.caption' }[k];
-    return `    static let ${camel(k)} = TesseraTextStyle(size: ${s.size}, lineHeight: ${s.lineHeight}, weight: ${s.weight === 'semibold' ? '.semibold' : '.regular'}, relativeTo: ${rel})`;
+    const rel = { display: '.largeTitle', 'title-1': '.title', 'title-2': '.title2', 'title-3': '.title3', body: '.body', 'body-sm': '.subheadline', label: '.subheadline', caption: '.caption', overline: '.caption2' }[k];
+    return `    static let ${camel(k)} = TesseraTextStyle(size: ${s.size}, lineHeight: ${s.lineHeight}, weight: ${s.weight === 'semibold' ? '.semibold' : '.regular'}, family: .${s.family}, tracking: ${s.tracking}, relativeTo: ${rel})`;
   })
   .join('\n')}
 }
@@ -200,6 +218,12 @@ ${Object.entries(F.size).map(([k, v]) => `    public static let ${swiftKey(k)}: 
 /// 使用时搭配 \`RoundedRectangle(cornerRadius:style: .continuous)\`，即连续曲率圆角。
 public enum TesseraRadius {
 ${Object.entries(F.radius).map(([k, v]) => `    public static let ${swiftKey(k)}: CGFloat = ${v}`).join('\n')}
+}
+
+/// 拼贴：成组的砖之间留缝，实色砖底部有砖厚
+public enum TesseraTile {
+    public static let grout: CGFloat = ${F.tile.grout}
+    public static let edge: CGFloat = ${F.tile.edge}
 }
 
 public enum TesseraFocus {
@@ -237,7 +261,11 @@ ${Object.entries(M.ease)
   .filter(([, v]) => ease(v))
   .map(([k, v]) => `    public static func ${camel('ease-' + k)}(_ duration: Double) -> Animation { .timingCurve(${v.join(', ')}, duration: duration) }`)
   .join('\n')}
-    public static let pressScale: CGFloat = ${M.press.scale}
+    /// 按下时砖往下沉的距离
+    public static let pressSink: CGFloat = ${M.press.sink}
+    public static let pressDuration: Double = ${M.press.duration / 1000}
+    public static let settleLift: CGFloat = ${M.settle.lift}
+    public static let settleScale: CGFloat = ${M.settle.scale}
     public static let flingVelocity: CGFloat = ${M.gesture.flingVelocity}
     public static let staggerStep: Double = ${M.stagger.step / 1000}
     public static let staggerMaxItems = ${M.stagger.maxItems}
@@ -277,6 +305,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 
 @Immutable
@@ -294,7 +323,7 @@ val TesseraDarkHighContrastColors = ${set('dark-hc')}
 
 object TesseraType {
 ${textStyles
-  .map(([k, s]) => `    val ${camel(k)} = TextStyle(fontSize = ${s.size}.sp, lineHeight = ${s.lineHeight}.sp, fontWeight = FontWeight.${s.weight === 'semibold' ? 'SemiBold' : 'Normal'})`)
+  .map(([k, s]) => `    /** ${s.family === 'display' ? '标题字体（软衬线）' : '正文字体'} */\n    val ${camel(k)} = TextStyle(fontSize = ${s.size}.sp, lineHeight = ${s.lineHeight}.sp, fontWeight = FontWeight.${s.weight === 'semibold' ? 'SemiBold' : 'Normal'}, letterSpacing = ${s.tracking}.em)`)
   .join('\n')}
     const val READING_LINE_HEIGHT = ${F.font.readingLineHeight}f
 }
@@ -309,6 +338,12 @@ ${Object.entries(F.size).map(([k, v]) => `    val ${ktKey(k)} = ${v}.dp`).join('
 
 object TesseraRadius {
 ${Object.entries(F.radius).map(([k, v]) => `    val ${ktKey(k)} = ${v}.dp`).join('\n')}
+}
+
+/** 拼贴：成组的砖之间留缝，实色砖底部有砖厚 */
+object TesseraTile {
+    val grout = ${F.tile.grout}.dp
+    val edge = ${F.tile.edge}.dp
 }
 
 object TesseraFocus {
@@ -334,7 +369,11 @@ ${Object.entries(M.duration).map(([k, v]) => `    const val DURATION_${k.toUpper
 ${Object.entries(M.ease)
   .map(([k, v]) => `    val Ease${pascal(k)} = ${Array.isArray(v) ? `CubicBezierEasing(${v.map((n) => n + 'f').join(', ')})` : 'LinearEasing'}`)
   .join('\n')}
-    const val PRESS_SCALE = ${M.press.scale}f
+    /** 按下时砖往下沉的距离（dp） */
+    const val PRESS_SINK_DP = ${M.press.sink}f
+    const val PRESS_DURATION = ${M.press.duration}
+    const val SETTLE_LIFT_DP = ${M.settle.lift}f
+    const val SETTLE_SCALE = ${M.settle.scale}f
     const val FLING_VELOCITY_DP = ${M.gesture.flingVelocity}f
     const val STAGGER_STEP = ${M.stagger.step}
     const val STAGGER_MAX_ITEMS = ${M.stagger.maxItems}
@@ -371,6 +410,8 @@ ${Object.entries(F.z).map(([k, v]) => `    const val ${k.toUpperCase()} = ${v}f`
 // ==================================================================
 // 增强对比度时 Windows 使用系统的高对比度主题色，这里把每个语义 token 映射到系统色。
 const WIN_HC = {
+  'bg.inverse': 'SystemColorWindowTextColor',
+  'text.inverse': 'SystemColorWindowColor',
   'bg.': 'SystemColorWindowColor',
   'fill.default': 'SystemColorWindowColor',
   'text.primary': 'SystemColorWindowTextColor',
@@ -386,10 +427,12 @@ const WIN_HC = {
   'focus.': 'SystemColorHighlightColor',
   selection: 'SystemColorHighlightColor',
   'state.': null, // 叠加层在高对比度下不使用
-  'material.': 'SystemColorWindowColor',
+  'edge.': null,
+  sheen: null,
   'shadow.': null,
 };
 function winHcFor(name) {
+  if (name.startsWith('pigment.')) return name.endsWith('-subtle') ? 'SystemColorWindowColor' : 'SystemColorWindowTextColor';
   for (const [k, v] of Object.entries(WIN_HC)) {
     if (name === k || name.startsWith(k) || (k.startsWith('.') && name.endsWith(k))) return v;
   }
@@ -411,6 +454,7 @@ function buildWindows() {
     })
     .join('\n');
   const fontFamily = [...F.font.family.latin, ...F.font.family.cjk.windows, F.font.family.fallback.windows].join(', ');
+  const displayFamily = [...F.font.family.display, ...F.font.family.cjkSerif.windows, F.font.family.fallback.windows].join(', ');
   const xaml = `<!-- ${HEADER('').slice(1)} -->
 <!-- 用法：在 App.xaml 的 MergedDictionaries 里引用本文件（放在 XamlControlsResources 之后）。 -->
 <ResourceDictionary
@@ -432,11 +476,14 @@ ${hcDict}
 
     <!-- 字体：英文 ${F.font.family.latin[0]}，中文${F.font.family.cjk.windows[0]}，回退 ${F.font.family.fallback.windows} -->
     <FontFamily x:Key="TesseraFontFamily">${fontFamily}</FontFamily>
+    <!-- 标题：软衬线 ${F.font.family.display[0]} + 思源宋体（需随应用打包；未打包时回退到微软雅黑） -->
+    <FontFamily x:Key="TesseraDisplayFontFamily">${displayFamily}</FontFamily>
     <FontFamily x:Key="TesseraMonoFontFamily">${F.font.family.mono.filter((f) => f !== 'monospace').join(', ')}</FontFamily>
 ${textStyles
   .map(([k, s]) => `    <Style x:Key="Tessera${pascal(k)}TextStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontFamily" Value="{StaticResource ${s.family === 'display' ? 'TesseraDisplayFontFamily' : 'TesseraFontFamily'}}" />
         <Setter Property="FontSize" Value="${s.size}" />
+        <Setter Property="CharacterSpacing" Value="${Math.round(s.tracking * 1000)}" />
         <Setter Property="LineHeight" Value="${s.lineHeight}" />
         <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
         <Setter Property="FontWeight" Value="${s.weight === 'semibold' ? 'SemiBold' : 'Normal'}" />
@@ -449,6 +496,10 @@ ${Object.entries(F.size).map(([k, v]) => `    <x:Double x:Key="TesseraSize${pasc
 
     <!-- 圆角。WinUI 的 CornerRadius 是普通圆弧，没有连续曲率；胶囊形用 高度 ÷ 2。 -->
 ${Object.entries(F.radius).map(([k, v]) => `    <CornerRadius x:Key="TesseraRadius${pascal(k)}">${v}</CornerRadius>`).join('\n')}
+
+    <!-- 拼贴：砖缝、砖厚 -->
+    <x:Double x:Key="TesseraTileGrout">${F.tile.grout}</x:Double>
+    <x:Double x:Key="TesseraTileEdge">${F.tile.edge}</x:Double>
 
     <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
     <Thickness x:Key="TesseraFocusRingThickness">${F.focus.ringWidth}</Thickness>
@@ -477,7 +528,11 @@ ${Object.entries(M.ease)
   .filter(([, v]) => Array.isArray(v))
   .map(([k, v]) => `        public static readonly (Vector2 P1, Vector2 P2) Ease${pascal(k)} = (new(${v[0]}f, ${v[1]}f), new(${v[2]}f, ${v[3]}f));`)
   .join('\n')}
-        public const float PressScale = ${M.press.scale}f;
+        /// <summary>按下时砖往下沉的距离（epx）</summary>
+        public const float PressSink = ${M.press.sink}f;
+        public const int PressDurationMs = ${M.press.duration};
+        public const float SettleLift = ${M.settle.lift}f;
+        public const float SettleScale = ${M.settle.scale}f;
         public const float FlingVelocity = ${M.gesture.flingVelocity}f;
         public const int StaggerStepMs = ${M.stagger.step};
         public const int StaggerMaxItems = ${M.stagger.maxItems};
