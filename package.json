@@ -1,10 +1,10 @@
 {
   "name": "tesseraui",
   "version": "0.1.0",
-  "description": "TesseraUI：Apple、Android、Windows、Web 四端统一的 UI 设计标准库",
+  "description": "TesseraUI：面向 Apple、Android、Windows 与 Web 的跨平台 UI 设计标准库",
   "type": "module",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "node scripts/build.mjs && node scripts/build-icons.mjs",
     "check:contrast": "node scripts/check-contrast.mjs --report docs/contrast-report.md",
@@ -12,5 +12,20 @@
     "test": "npm run build && npm run check:contrast && npm run check:icons && node --test tests/*.test.mjs",
     "demo": "npm run build && npx --yes http-server -c-1 -p 5173 ."
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DeepShawn/TesseraUI.git"
+  },
+  "keywords": [
+    "design-system",
+    "design-tokens",
+    "ui",
+    "swiftui",
+    "jetpack-compose",
+    "winui",
+    "css"
+  ]
 }
