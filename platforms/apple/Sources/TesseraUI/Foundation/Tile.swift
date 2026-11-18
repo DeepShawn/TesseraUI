@@ -69,7 +69,7 @@ struct TileSurface<S: InsettableShape>: ViewModifier {
         content.background {
             ZStack {
                 shape.fill(fill)
-                if tesseraShape == .round {
+                if tesseraShape.isRound {
                     if style == .solid {
                         // 整面柔光：顶部略亮、底部略暗，没有硬边
                         LinearGradient(stops: [.init(color: .white.opacity(0.14), location: 0), .init(color: .clear, location: 0.6)], startPoint: .top, endPoint: .bottom)
@@ -101,7 +101,7 @@ struct TileSurface<S: InsettableShape>: ViewModifier {
                 }
             }
             .clipShape(shape)
-            .overlay { shape.strokeBorder(style == .sunken && tesseraShape == .tile ? TesseraColor.borderField : .clear, lineWidth: 1) }
+            .overlay { shape.strokeBorder(style == .sunken && !tesseraShape.isRound ? TesseraColor.borderField : .clear, lineWidth: 1) }
         }
     }
 }

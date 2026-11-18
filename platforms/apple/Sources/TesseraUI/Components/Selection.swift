@@ -24,6 +24,8 @@ public struct TesseraCheckboxStyle: ToggleStyle {
                         .padding(5)
                 }
                 .frame(width: 20, height: 20)
+                .tesseraBeadPop(trigger: on, active: tesseraShape == .flow)
+                .tesseraSplash(trigger: on, active: tesseraShape == .flow, color: (on ? TesseraColor.accentControl : TesseraColor.textTertiary).opacity(0.75), diameter: 52)
                 .animation(.easeOut(duration: TesseraMotion.durationFast), value: on)
                 configuration.label.tesseraText(.bodySm).foregroundStyle(TesseraColor.textPrimary)
             }
@@ -34,6 +36,7 @@ public struct TesseraCheckboxStyle: ToggleStyle {
         .opacity(isEnabled ? 1 : TesseraOpacity.disabled)
         .accessibilityAddTraits(on ? [.isSelected] : [])
         .accessibilityValue(on ? "已勾选" : "未勾选")
+        .sensoryFeedback(.selection, trigger: on) { _, _ in tesseraShape == .flow }
     }
 
     struct CheckMark: Shape {
@@ -78,13 +81,15 @@ public struct TesseraRadioGroup<Value: Hashable>: View {
                             if on { Color.clear.tesseraTile(TesseraColor.accentControl, style: .solid, shape: Circle()) }
                             else { Circle().fill(TesseraColor.fillDefault).overlay { Circle().strokeBorder(TesseraColor.borderStrong, lineWidth: 1.5) } }
                             // 拼贴：小方砖转正落位；圆融：圆点直接放大
-                            RoundedRectangle(cornerRadius: tesseraShape == .round ? 4.5 : 3, style: .continuous)
+                            RoundedRectangle(cornerRadius: tesseraShape.isRound ? 4.5 : 3, style: .continuous)
                                 .fill(TesseraColor.textOnSolid)
-                                .frame(width: tesseraShape == .round ? 9 : 8, height: tesseraShape == .round ? 9 : 8)
+                                .frame(width: tesseraShape.isRound ? 9 : 8, height: tesseraShape.isRound ? 9 : 8)
                                 .scaleEffect(on ? 1 : 0)
-                                .rotationEffect(.degrees(on || tesseraShape == .round ? 0 : -45))
+                                .rotationEffect(.degrees(on || tesseraShape.isRound ? 0 : -45))
                         }
                         .frame(width: 20, height: 20)
+                        .tesseraBeadPop(trigger: on, active: tesseraShape == .flow && on)
+                        .tesseraSplash(trigger: on, active: tesseraShape == .flow && on, color: TesseraColor.accentControl.opacity(0.75), diameter: 52)
                         .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: on)
                         TesseraLabel(options[i].title, style: .bodySm)
                     }
@@ -95,6 +100,7 @@ public struct TesseraRadioGroup<Value: Hashable>: View {
                 .accessibilityAddTraits(on ? [.isSelected] : [])
             }
         }
+        .sensoryFeedback(.selection, trigger: selection) { _, _ in tesseraShape == .flow }
     }
 }
 
@@ -146,15 +152,20 @@ public struct TesseraSwitchStyle: ToggleStyle {
                 }
                 Group {
                     if glass { thumbShape.fill(.ultraThinMaterial).overlay { thumbShape.strokeBorder(TesseraColor.materialGlassRim, lineWidth: 1) } }
-                    else if tesseraShape == .round { thumbShape.fill(.white) }
+                    else if tesseraShape.isRound { thumbShape.fill(.white) }
                     else { thumbShape.fill(.white).overlay { thumbShape.fill(LinearGradient(colors: [.clear, Color.black.opacity(0.06)], startPoint: .center, endPoint: .bottom)) } }
                 }
                 .frame(width: thumb + stretch, height: thumb)
+                .tesseraDropWobble(trigger: isOn, active: tesseraShape == .flow)
                 .shadow(color: TesseraColor.shadowColor.opacity(0.22), radius: 1.5, y: 0.5)
                 .shadow(color: TesseraColor.shadowColor.opacity(0.12), radius: 4, y: 2)
                 .offset(x: pad + pos * (travel + stretchMax - stretch))
             }
             .frame(width: w, height: h)
+            // 流韵：拨动时从滑块落脚处溅起两圈涟漪
+            .tesseraSplash(trigger: isOn, active: tesseraShape == .flow, color: (isOn ? TesseraColor.accentControl : TesseraColor.textTertiary).opacity(0.75),
+                           diameter: h * 2.4, anchor: UnitPoint(x: isOn ? (w - h / 2) / w : (h / 2) / w, y: 0.5))
+            .sensoryFeedback(.impact(weight: .medium, intensity: 0.7), trigger: isOn) { _, _ in tesseraShape == .flow }
             .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: isOn)
             .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: stretch)
             .animation(.easeOut(duration: TesseraMotion.durationNormal), value: preview)
@@ -207,11 +218,11 @@ public struct TesseraSegmentedControl: View {
     }
 
     public var body: some View {
-        let round = tesseraShape == .round
+        let round = tesseraShape.isRound
         let height = small ? TesseraSize.sm : TesseraSize.md
         let outer: CGFloat = small ? 11 : TesseraRadius.md
         let gap = round ? 0 : TesseraTile.grout
-        let pill = RoundedRectangle(cornerRadius: TesseraRound.pill, style: .continuous)
+        let pill = RoundedRectangle(cornerRadius: tesseraShape.roundRadius(TesseraRound.pill), style: .continuous)
         // 圆融：一整条浅底胶囊，选中块是一颗浮起的白色胶囊；拼贴：一排砖 + 墨色选中砖
         GeometryReader { geo in
             let n = CGFloat(options.count)
@@ -231,6 +242,7 @@ public struct TesseraSegmentedControl: View {
                     else { Color.clear.tesseraTile(TesseraColor.textPrimary, style: .solid, shape: tileShape(.of(current, count: options.count), outer: outer)) }
                 }
                     .frame(width: max(0, right - left), height: height)
+                    .tesseraTension(trigger: selection, active: tesseraShape == .flow)
                     .offset(x: left)
                     .shadow(color: TesseraColor.shadowColor.opacity(round ? 0.14 : 0.1), radius: round ? 5 : 3, y: round ? 2 : 1)
                 HStack(spacing: gap) {
@@ -275,6 +287,7 @@ public struct TesseraSegmentedControl: View {
         .frame(height: height)
         .padding(round ? 3 : 0)
         .background { if round { pill.fill(TesseraColor.fillDefault) } }
+        .sensoryFeedback(.selection, trigger: selection) { _, _ in tesseraShape == .flow }
         .accessibilityElement(children: .contain)
     }
 }

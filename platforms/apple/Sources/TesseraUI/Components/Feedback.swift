@@ -63,7 +63,7 @@ struct SheetModifier<SheetContent: View>: ViewModifier {
             .presentationCornerRadius(shape.radius(tile: TesseraRadius.s2xl, round: TesseraRound.panel))
             .presentationBackground(TesseraColor.bgElevated)
             // sheet 是新的视图层级，外观要再传进去
-            .tesseraShape(shape)
+            .environment(\.tesseraShape, shape)
         }
     }
 }
@@ -136,7 +136,7 @@ public struct TesseraToastView: View {
             }
         }
         .foregroundStyle(TesseraColor.textInverse)
-        .padding(.leading, tesseraShape == .round ? TesseraSpace.s5 : TesseraSpace.s4)
+        .padding(.leading, tesseraShape.isRound ? TesseraSpace.s5 : TesseraSpace.s4)
         .padding(.trailing, message.actionTitle == nil ? TesseraSpace.s5 : TesseraSpace.s2)
         .frame(minHeight: 48)
         .tesseraTile(TesseraColor.bgInverse, style: .solid, shape: shape)
@@ -201,7 +201,7 @@ public struct TesseraDialogPanel: View {
     }
 
     public var body: some View {
-        let round = tesseraShape == .round
+        let round = tesseraShape.isRound
         let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.s2xl, round: TesseraRound.panel), style: .continuous)
         VStack(alignment: .leading, spacing: 0) {
             TesseraLabel(title, style: .title2).accessibilityAddTraits(.isHeader)

@@ -84,3 +84,5 @@ public struct TesseraGallery: View {
 #Preview("深色") { TesseraGallery().preferredColorScheme(.dark) }
 #Preview("圆融 · 浅色") { TesseraGallery().tesseraShape(.round) }
 #Preview("圆融 · 深色") { TesseraGallery().tesseraShape(.round).preferredColorScheme(.dark) }
+#Preview("流韵 · 浅色") { TesseraGallery().tesseraShape(.flow, requireCapableDevice: false) }
+#Preview("流韵 · 深色") { TesseraGallery().tesseraShape(.flow, requireCapableDevice: false).preferredColorScheme(.dark) }

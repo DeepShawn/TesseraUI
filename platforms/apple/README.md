@@ -24,9 +24,14 @@ content
 // 外观：圆融（胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线）；不写即为拼贴
 ContentView()
     .tesseraShape(.round)
+
+// 流韵：在圆融基础上，圆角介于方砖与胶囊之间，按下变成胶囊并荡开水波，开关溅起涟漪，有触感反馈。
+// 只在性能较好的设备上启用（不在低电量模式、不少于 6 核、不少于 4GB 内存、没有打开“减弱动态效果”），否则自动改用圆融
+ContentView()
+    .tesseraShape(.flow)
 ```
 
-两种外观共用同一套组件。自定义组件可读取 `@Environment(\.tesseraShape)`，用 `radius(tile:round:)`、`groupShape(_:outer:)`、`groupGap`、`pillGap` 跟随外观；`.tesseraTile(...)` 在圆融外观下自动去掉砖厚和凹槽。
+两种外观共用同一套组件。自定义组件可读取 `@Environment(\.tesseraShape)`，用 `isRound`、`radius(tile:round:)`、`groupShape(_:outer:)`、`groupGap`、`pillGap` 跟随外观；流韵的动效可用 `.tesseraFlowRipple`、`.tesseraSplash`、`.tesseraDropWobble`、`.tesseraBeadPop`、`.tesseraTension`；`.tesseraTile(...)` 在圆融外观下自动去掉砖厚和凹槽。
 
 ## 组件（v0.3：首批 22 个）
 

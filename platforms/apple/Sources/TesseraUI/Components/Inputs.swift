@@ -77,7 +77,7 @@ public struct TesseraTextField: View {
                         .accessibilityLabel("清除")
                 }
             }
-            .padding(.horizontal, tesseraShape == .round ? TesseraSpace.s4 : TesseraSpace.s3)
+            .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
             .frame(minHeight: TesseraSize.md)
             .tesseraTile(isFocused ? TesseraColor.bgSurface : TesseraColor.fillDefault, style: isFocused ? .plain : .sunken, shape: shape)
             .tesseraFocusGlow(isFocused || error != nil, radius: min(radius, TesseraSize.md / 2), error: error != nil)
@@ -224,7 +224,7 @@ public struct TesseraSelect<Value: Hashable>: View {
                     Spacer(minLength: 0)
                     TesseraIcon(.chevronDown, size: 16).foregroundStyle(TesseraColor.textSecondary)
                 }
-                .padding(.horizontal, tesseraShape == .round ? TesseraSpace.s4 : TesseraSpace.s3)
+                .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
                 .frame(height: TesseraSize.md)
                 .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
                 .contentShape(shape)

@@ -37,7 +37,7 @@ public struct TesseraNavBar<Leading: View, Trailing: View>: View {
         }
         .background(TesseraColor.bgCanvas)
         // 圆融外观没有底部分割线
-        .overlay(alignment: .bottom) { if tesseraShape == .tile { Rectangle().fill(TesseraColor.borderSubtle).frame(height: 1) } }
+        .overlay(alignment: .bottom) { if !tesseraShape.isRound { Rectangle().fill(TesseraColor.borderSubtle).frame(height: 1) } }
     }
 }
 
@@ -84,13 +84,13 @@ public struct TesseraTabs: View {
         .coordinateSpace(name: "tabs")
         .overlay(alignment: .bottomLeading) {
             // 圆融：没有底线，指示器是一颗圆头短条
-            UnevenRoundedRectangle(topLeadingRadius: 2, bottomLeadingRadius: tesseraShape == .round ? 2 : 0,
-                                   bottomTrailingRadius: tesseraShape == .round ? 2 : 0, topTrailingRadius: 2, style: .continuous)
+            UnevenRoundedRectangle(topLeadingRadius: 2, bottomLeadingRadius: tesseraShape.isRound ? 2 : 0,
+                                   bottomTrailingRadius: tesseraShape.isRound ? 2 : 0, topTrailingRadius: 2, style: .continuous)
                 .fill(TesseraColor.accentSolid)
-                .frame(width: max(0, right - left), height: tesseraShape == .round ? 4 : 3)
+                .frame(width: max(0, right - left), height: tesseraShape.isRound ? 4 : 3)
                 .offset(x: left)
         }
-        .overlay(alignment: .bottom) { if tesseraShape == .tile { Rectangle().fill(TesseraColor.borderSubtle).frame(height: 1) } }
+        .overlay(alignment: .bottom) { if !tesseraShape.isRound { Rectangle().fill(TesseraColor.borderSubtle).frame(height: 1) } }
         .onPreferenceChange(TabFrameKey.self) { f in
             frames = f
             if right == 0, let r = f[selection] { left = r.minX; right = r.maxX }
@@ -133,14 +133,15 @@ public struct TesseraTabBar: View {
     }
 
     public var body: some View {
-        let round = tesseraShape == .round
-        let pill = RoundedRectangle(cornerRadius: TesseraRound.pill, style: .continuous)
+        let round = tesseraShape.isRound
+        let pill = RoundedRectangle(cornerRadius: tesseraShape.roundRadius(TesseraRound.pill), style: .continuous)
         HStack(spacing: tesseraShape.groupGap) {
             ForEach(items.indices, id: \.self) { i in
                 let item = items[i], on = i == selection
                 Button { selection = i } label: {
                     VStack(spacing: 3) {
                         TesseraIcon(on ? item.selectedIcon : item.icon, size: 22)
+                            .tesseraBeadPop(trigger: on, active: tesseraShape == .flow && on)
                             .overlay(alignment: .topTrailing) { if let b = item.badge { TesseraBadge(count: b).offset(x: 12, y: -6) } }
                         Text(item.title).font(.system(size: 10, weight: .semibold))
                     }
@@ -164,6 +165,7 @@ public struct TesseraTabBar: View {
         .padding(.bottom, round ? TesseraSpace.s3 : 0)
         .background(TesseraColor.bgCanvas.ignoresSafeArea(edges: .bottom))
         .overlay(alignment: .top) { if !round { Rectangle().fill(TesseraColor.borderSubtle).frame(height: 1) } }
+        .sensoryFeedback(.selection, trigger: selection) { _, _ in tesseraShape == .flow }
     }
 }
 
