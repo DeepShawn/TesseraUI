@@ -35,6 +35,11 @@
   .thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
   .thumbs img { width: 96px; height: 72px; object-fit: cover; border-radius: 12px; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 250ms; }
+  /* 圆融外观：演示用的外框也去掉描边 */
+  :root[data-shape="round"] .phone-frame { box-shadow: none; background: var(--ts-bg-surface); }
+  :root[data-shape="round"] .split-demo { box-shadow: var(--ts-shadow-1); border-radius: 28px; }
+  :root[data-shape="round"] .grid-demo > div { border-radius: 999px; }
+  :root[data-shape="round"] .thumbs img { border-radius: 18px; }
 </style>
 </head>
 <body>
@@ -58,7 +63,11 @@
 
   <main>
     <div class="topbar">
-      <h1 class="ts-title-1">组件总览 <span class="ts-tag ts-accent" style="font-family:var(--ts-font-mono);font-weight:500;vertical-align:middle">v0.2</span></h1>
+      <h1 class="ts-title-1">组件总览 <span class="ts-tag ts-accent" style="font-family:var(--ts-font-mono);font-weight:500;vertical-align:middle">v0.3</span></h1>
+      <div class="ts-segmented ts-sm" role="radiogroup" aria-label="外观" id="shape">
+        <label><input type="radio" name="shape" value="tile" checked><span>拼贴</span></label>
+        <label><input type="radio" name="shape" value="round"><span>圆融</span></label>
+      </div>
       <div class="ts-segmented ts-sm" role="radiogroup" aria-label="主题" id="theme">
         <label><input type="radio" name="theme" value="system" checked><span>跟随系统</span></label>
         <label><input type="radio" name="theme" value="light"><span>石灰</span></label>
@@ -490,6 +499,10 @@ tbl.addEventListener('click', async (e) => {
 
 // 主题
 document.getElementById('theme').addEventListener('change', (e) => T.setTheme(e.target.value));
+// 外观：拼贴 / 圆融；地址栏 ?shape=round 直接打开圆融
+const shapeEl = document.getElementById('shape');
+shapeEl.addEventListener('change', (e) => T.setShape(e.target.value));
+if (new URLSearchParams(location.search).get('shape') === 'round') { shapeEl.querySelector('[value="round"]').click(); }
 
 // 按钮组：单选
 document.querySelectorAll('.ts-button-group').forEach((g) => g.addEventListener('click', (e) => {
@@ -535,6 +548,8 @@ window.__cmd = T.commandPalette({ commands: [
   { group: '跳转', label: '选择器', icon: 'calendar', run: () => location.hash = '#pickers' },
   { group: '跳转', label: '数据展示', icon: 'grid', keywords: '表格 树', run: () => location.hash = '#data' },
   { group: '跳转', label: '移动端手势', icon: 'sparkle', run: () => location.hash = '#gestures' },
+  { group: '外观', label: '切换到圆融外观', icon: 'grid', keywords: 'round shape 圆角', run: () => document.querySelector('#shape [value="round"]').click() },
+  { group: '外观', label: '切换到拼贴外观', icon: 'grid', keywords: 'tile shape 方砖', run: () => document.querySelector('#shape [value="tile"]').click() },
   { group: '外观', label: '切换到夜窑（深色）', icon: 'moon', keywords: 'dark 深色', run: () => T.setTheme('dark') },
   { group: '外观', label: '切换到石灰（浅色）', icon: 'sun', keywords: 'light 浅色', run: () => T.setTheme('light') },
   { group: '操作', label: '新建项目', icon: 'plus', shortcut: '⌘N', run: () => T.toast('已新建项目', { type: 'success' }) },

@@ -4,6 +4,9 @@ const { chromium, devices } = require('playwright');
 const assert = require('node:assert/strict');
 
 const BASE = process.env.TESSERA_BASE || 'http://localhost:5173';
+// TESSERA_SHAPE=round：在圆融外观下跑同一套测试
+const SHAPE = process.env.TESSERA_SHAPE === 'round' ? 'round' : 'tile';
+const PAGE = `${BASE}/demo/components.html${SHAPE === 'round' ? '?shape=round' : ''}`;
 let passed = 0, failed = 0;
 async function check(name, fn) {
   try { await fn(); passed++; console.log(`  ✔ ${name}`); }
@@ -17,9 +20,31 @@ async function check(name, fn) {
   const errors = [];
   p.on('pageerror', (e) => errors.push(e.message));
   p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
-  await p.goto(`${BASE}/demo/components.html`);
+  await p.goto(PAGE);
+  console.log(`外观：${SHAPE === 'round' ? '圆融' : '拼贴'}`);
   await p.waitForTimeout(1500);
   const esc = () => p.keyboard.press('Escape');
+
+  await check('外观与地址栏参数一致，且可以切换', async () => {
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.shape || 'tile'), SHAPE);
+    const other = SHAPE === 'round' ? 'tile' : 'round';
+    await p.locator(`#shape input[value="${other}"]`).evaluate((i) => i.closest('label').click());
+    await p.waitForTimeout(400);
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.shape || 'tile'), other);
+    await p.locator(`#shape input[value="${SHAPE}"]`).evaluate((i) => i.closest('label').click());
+    await p.waitForTimeout(400);
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.shape || 'tile'), SHAPE);
+  });
+  if (SHAPE === 'round') {
+    await check('圆融：按钮组合成一整块，中间没有缝', async () => {
+      const gaps = await p.evaluate(() => [...document.querySelectorAll(':is(.ts-tiles, .ts-split-button, .ts-number):not(.ts-drawer-foot, .ts-dialog-actions)')].map((g) => getComputedStyle(g).columnGap));
+      assert.ok(gaps.length > 0 && gaps.every((g) => g === '0px' || g === 'normal'), gaps.join(','));
+    });
+    await check('圆融：列表行之间没有缝和分割线', async () => {
+      const r = await p.evaluate(() => { const l = document.querySelector('.ts-list'); const i = l.querySelector('.ts-list-item'); return [getComputedStyle(l).rowGap, getComputedStyle(i).boxShadow]; });
+      assert.equal(r[0], '0px'); assert.equal(r[1], 'none');
+    });
+  }
 
   console.log('操作与输入');
   await check('按钮组单选', async () => {
@@ -381,7 +406,7 @@ async function check(name, fn) {
   console.log('手机');
   const m = await browser.newPage({ ...devices['iPhone 13'] });
   m.on('pageerror', (e) => errors.push('mobile: ' + e.message));
-  await m.goto(`${BASE}/demo/components.html`);
+  await m.goto(PAGE);
   await m.waitForTimeout(1200);
   await check('手机上日期选择器改为底部抽屉滚轮', async () => {
     await m.locator('.ts-datepicker').nth(1).tap();

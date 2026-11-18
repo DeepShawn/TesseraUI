@@ -1397,6 +1397,8 @@ dialog.ts-command::backdrop { background: var(--ts-bg-scrim); }
 /* 选择列 */
 .ts-table .ts-select-cell { width: 48px; padding-inline-end: 0; }
 .ts-table .ts-select-cell .ts-checkbox { vertical-align: middle; }
+/* 勾选列固定 48 宽（16 + 20 + 12），和固定第二列的 left: 48px 对齐，中间不露缝 */
+.ts-table .ts-select-cell .ts-checkbox { margin-inline-end: 12px; }
 
 /* 行操作：悬停或聚焦时才显示，触屏上常显 */
 .ts-row-actions { display: inline-flex; gap: 2px; opacity: 0; transition: opacity var(--ts-duration-fast) var(--ts-ease-standard); }
@@ -1463,6 +1465,7 @@ th[aria-sort="ascending"] .ts-sort .ts-icon, th[aria-sort="descending"] .ts-sort
   .ts-table[data-responsive] td.ts-card-title .ts-cell-inner { grid-column: 1 / -1; justify-self: start; text-align: start; font: var(--ts-font-label); font-size: 15px; padding-top: 8px; padding-bottom: 8px; }
   .ts-table[data-responsive] tbody tr { position: relative; }
   .ts-table[data-responsive][data-selectable] .ts-select-cell .ts-cell-inner { position: absolute; left: 0; top: 2px; padding: 10px 16px; }
+  .ts-table[data-responsive] .ts-select-cell .ts-checkbox { margin-inline-end: 0; }
   .ts-table[data-responsive][data-selectable] td.ts-card-title .ts-cell-inner { padding-inline-start: 50px; }
   /* 操作列：不显示列名，按钮靠右 */
   .ts-table[data-responsive] td.ts-actions-cell .ts-cell-inner { grid-column: 1 / -1; justify-self: end; padding-top: 0; }
@@ -1966,5 +1969,171 @@ img[data-viewer] { cursor: zoom-in; }
   background-color: var(--ts-material-glass-thumb);
   box-shadow: inset 0 0 0 1px var(--ts-material-glass-rim), 0 2px 8px rgb(31 27 22 / .12);
 }
+
+/* ======================================================================
+   以下是 v0.2 补齐的其余 62 个组件
+   ====================================================================== */
+
+/* ---------- 操作：FAB、按钮组、分割按钮 ---------- */
+:root[data-shape="round"] .ts-fab { border-radius: var(--ts-round-pill); padding-bottom: 0; }
+:root[data-shape="round"] .ts-split-button { gap: 0; --_outer: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-split-button > * { border-radius: 0 !important; }
+:root[data-shape="round"] .ts-split-button > :first-child { border-start-start-radius: var(--_outer) !important; border-end-start-radius: var(--_outer) !important; }
+:root[data-shape="round"] .ts-split-button > :last-child { border-start-end-radius: var(--_outer) !important; border-end-end-radius: var(--_outer) !important; padding-inline-end: 4px; }
+/* 按钮组：一整条浅底胶囊，按下的那一项浮起成一颗小胶囊（和分段控制一致） */
+:root[data-shape="round"] .ts-button-group { gap: 0; padding: 3px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); box-shadow: 0 0 0 var(--ts-border-width) var(--ts-border-field); }
+:root[data-shape="round"] .ts-button-group > * { border-radius: var(--ts-round-pill) !important; background-color: transparent; box-shadow: none; }
+:root[data-shape="round"] .ts-button-group > [aria-pressed="true"] { background-color: var(--ts-bg-elevated); color: var(--ts-text-primary); background-image: var(--ts-layer-sheen); box-shadow: 0 1px 2px rgb(31 27 22 / .1), 0 3px 10px rgb(31 27 22 / .1); }
+
+/* ---------- 输入：密码、数字、验证码、下拉列表、标签输入 ---------- */
+:root[data-shape="round"] .ts-password .ts-reveal { border-radius: 50%; }
+:root[data-shape="round"] .ts-number { gap: 0; --_outer: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-number > .ts-input, :root[data-shape="round"] .ts-number > .ts-icon-button { border-radius: 0; box-shadow: none; }
+:root[data-shape="round"] .ts-number > :first-child { border-radius: var(--_outer) 0 0 var(--_outer); padding-inline-start: 4px; }
+:root[data-shape="round"] .ts-number > :last-child { border-radius: 0 var(--_outer) var(--_outer) 0; padding-inline-end: 4px; }
+:root[data-shape="round"] .ts-number:focus-within { border-radius: var(--ts-round-pill); box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow); }
+:root[data-shape="round"] .ts-number > .ts-input:focus-within { box-shadow: none; }
+:root[data-shape="round"] .ts-otp-cell { border-radius: 20px; }
+:root[data-shape="round"] .ts-otp-cell[data-active] { box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow); }
+:root[data-shape="round"] .ts-otp[data-invalid] .ts-otp-cell { box-shadow: 0 0 0 1.5px var(--ts-danger-text); }
+:root[data-shape="round"] .ts-listbox { border-radius: 24px; padding: 6px; }
+:root[data-shape="round"] .ts-option { border-radius: 18px; }
+:root[data-shape="round"] .ts-taginput { border-radius: 22px; padding: 5px 8px; }
+:root[data-shape="round"] .ts-taginput .ts-tag { border-radius: var(--ts-round-pill); background-image: none; box-shadow: 0 1px 2px rgb(31 27 22 / .1); }
+:root[data-shape="round"] .ts-taginput .ts-tag button { border-radius: 50%; }
+:root[data-shape="round"] .ts-taginput .ts-tag[data-armed] { box-shadow: 0 0 0 1.5px var(--ts-danger-text); }
+
+/* ---------- 滑块、评分、上传、表单 ---------- */
+:root[data-shape="round"] :is(.ts-slider-track, .ts-slider-fill) { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-slider-thumb { border-radius: 50%; background-image: none; box-shadow: 0 1px 2px rgb(31 27 22 / .18), 0 3px 8px rgb(31 27 22 / .14), 0 0 0 var(--ts-border-width) var(--ts-border-field); }
+:root[data-shape="round"] .ts-slider-value { border-radius: var(--ts-round-pill); padding: 4px 10px; }
+:root[data-shape="round"] .ts-rating button { border-radius: 50%; }
+:root[data-shape="round"] .ts-upload { border-radius: var(--ts-round-card); outline-offset: -10px; }
+:root[data-shape="round"] .ts-upload-list { gap: 0; padding: 6px; border-radius: 22px; background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+:root[data-shape="round"] .ts-upload-item, :root[data-shape="round"] .ts-upload-list > :is(:first-child, :last-child) { border-radius: 16px; background: transparent; box-shadow: none; }
+:root[data-shape="round"] .ts-upload-list:empty { display: none; }
+:root[data-shape="round"] .ts-input.ts-textarea { border-radius: 22px; }
+:root[data-shape="round"] .ts-fieldset { border-radius: var(--ts-round-card); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+
+/* ---------- 选择器 ---------- */
+:root[data-shape="round"] .ts-picker-panel { border-radius: var(--ts-round-card); }
+:root[data-shape="round"] .ts-calendar-grid { column-gap: 0; }
+:root[data-shape="round"] .ts-day { border-radius: 50%; }
+:root[data-shape="round"] .ts-day[data-today]::after { border-radius: 50%; }
+/* 范围：中间段连成一条没有缝的浅色带，首尾是半圆 */
+:root[data-shape="round"] .ts-day[data-in-range] { border-radius: 0; }
+:root[data-shape="round"] .ts-day[data-range-start] { border-radius: var(--ts-round-pill) 0 0 var(--ts-round-pill); }
+:root[data-shape="round"] .ts-day[data-range-end] { border-radius: 0 var(--ts-round-pill) var(--ts-round-pill) 0; }
+:root[data-shape="round"] .ts-day[data-range-start][data-range-end] { border-radius: 50%; }
+:root[data-shape="round"] .ts-wheel::before { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-wheel:focus-within::before { box-shadow: 0 0 0 2px var(--ts-focus-ring); }
+:root[data-shape="round"] .ts-color-area { border-radius: 22px; }
+:root[data-shape="round"] .ts-color-hue { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-color-handle { border-radius: 50%; }
+:root[data-shape="round"] :is(.ts-color-preview, .ts-color-trigger-swatch, .ts-color-swatches button) { border-radius: 50%; background-image: none; }
+
+/* ---------- 导航 ---------- */
+:root[data-shape="round"] .ts-sidebar-item { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-sidebar-item[aria-current="page"] { background-image: none; box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+:root[data-shape="round"] .ts-breadcrumb a { border-radius: var(--ts-round-pill); padding-inline: 10px; }
+:root[data-shape="round"] .ts-breadcrumb [aria-current="page"] { padding-inline: 10px; }
+/* 分页：一整条浅底胶囊，当前页是一颗墨色小胶囊 */
+:root[data-shape="round"] .ts-pages { gap: 0; padding: 3px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); }
+:root[data-shape="round"] .ts-page, :root[data-shape="round"] .ts-pages > :is(:first-child, :last-child) { border-radius: var(--ts-round-pill); background-color: transparent; background-image: none; }
+:root[data-shape="round"] .ts-page[aria-current="page"] { background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen); }
+:root[data-shape="round"] .ts-step::before { border-radius: 50%; }
+:root[data-shape="round"] .ts-step:not(:last-child)::after { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] dialog.ts-command { border-radius: var(--ts-round-card); }
+:root[data-shape="round"] .ts-command-search, :root[data-shape="round"] .ts-command-foot { box-shadow: none; }
+:root[data-shape="round"] .ts-command-search { margin: 6px 6px 0; height: 52px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); padding: 0 var(--ts-space-4); }
+:root[data-shape="round"] .ts-command-item { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-anchor a { border-radius: var(--ts-round-pill); }
+
+/* ---------- 表格：一整块面，行与行之间没有缝、没有线；隔行极淡的底色帮助横向阅读 ---------- */
+:root[data-shape="round"] .ts-table-wrap { border-radius: var(--ts-round-card); }
+:root[data-shape="round"] .ts-table { border-spacing: 0; margin: 0; }
+:root[data-shape="round"] .ts-table tbody tr td:is(:first-child, :last-child) { border-radius: 0; }
+:root[data-shape="round"] .ts-table tbody tr:first-child td:first-child { border-top-left-radius: 22px; }
+:root[data-shape="round"] .ts-table tbody tr:first-child td:last-child { border-top-right-radius: 22px; }
+:root[data-shape="round"] .ts-table tbody tr:last-child td:first-child { border-bottom-left-radius: 22px; }
+:root[data-shape="round"] .ts-table tbody tr:last-child td:last-child { border-bottom-right-radius: 22px; }
+:root[data-shape="round"] .ts-table tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--_row-bg), var(--ts-text-primary) 2.5%); }
+@media (hover: hover) { :root[data-shape="round"] .ts-table tbody tr:hover td { background: color-mix(in srgb, var(--_row-bg), var(--ts-text-primary) 5%); } }
+:root[data-shape="round"] .ts-table tbody tr[aria-selected="true"] td { background: color-mix(in srgb, var(--ts-bg-surface), var(--ts-accent-solid) 12%); }
+:root[data-shape="round"] .ts-table tbody tr[aria-selected="true"] td:first-child { box-shadow: none; }
+:root[data-shape="round"] .ts-sort { border-radius: var(--ts-round-pill); padding-inline: 8px; margin-inline: -8px; }
+:root[data-shape="round"] .ts-table-bulk { border-radius: var(--ts-round-pill); padding-inline-start: 18px; }
+:root[data-shape="round"] .ts-table-bulk :is(.ts-button, .ts-icon-button) { border-radius: var(--ts-round-pill); }
+@container (max-width: 560px) {
+  :root[data-shape="round"] .ts-table[data-responsive] tbody { gap: var(--ts-round-gap); }
+  :root[data-shape="round"] .ts-table[data-responsive] tbody tr, :root[data-shape="round"] .ts-table[data-responsive] tbody tr:is(:first-child, :last-child) { border-radius: 22px; }
+  :root[data-shape="round"] .ts-table[data-responsive] tbody tr:nth-child(even) td { background: none; }
+}
+
+/* ---------- 树、折叠面板、提示、气泡 ---------- */
+:root[data-shape="round"] .ts-tree ul::before { display: none; }
+:root[data-shape="round"] .ts-tree-row { border-radius: var(--ts-round-pill); }
+/* 折叠面板：一整块面，展开的那一项在面内浮出浅底 */
+:root[data-shape="round"] .ts-accordion { gap: 0; padding: 6px; border-radius: var(--ts-round-card); background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+:root[data-shape="round"] .ts-accordion > details, :root[data-shape="round"] .ts-accordion > details:is(:first-child, :last-child) { border-radius: 22px; background: transparent; box-shadow: none; transition: background-color var(--ts-duration-fast) var(--ts-ease-standard); }
+:root[data-shape="round"] .ts-accordion > details[open] { background: var(--ts-fill-default); }
+:root[data-shape="round"] .ts-accordion summary { padding: 0 var(--ts-space-4); }
+:root[data-shape="round"] .ts-accordion-body { padding: 0 var(--ts-space-4) var(--ts-space-4); }
+:root[data-shape="round"] .ts-tooltip { border-radius: 14px; padding: 6px 12px; }
+:root[data-shape="round"] .ts-popover { border-radius: 24px; }
+
+/* ---------- 描述列表、时间线、统计：合成一整块 ---------- */
+:root[data-shape="round"] .ts-dl { gap: 0; padding: 6px 0; border-radius: 22px; background: var(--ts-bg-surface); }
+:root[data-shape="round"] .ts-dl dt, :root[data-shape="round"] .ts-dl dd, :root[data-shape="round"] .ts-dl > div:is(:first-child, :last-child) :is(dt, dd) { border-radius: 0; background: transparent; }
+:root[data-shape="round"] .ts-timeline > li::before { border-radius: 50%; }
+:root[data-shape="round"] .ts-timeline > li:not(:last-child)::after { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-stats { gap: 0; border-radius: var(--ts-round-card); background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+:root[data-shape="round"] .ts-stat, :root[data-shape="round"] .ts-stats > .ts-stat:is(:first-child, :last-child) { border-radius: 0; background: transparent; box-shadow: none; }
+
+/* ---------- 轮播、图片预览、空状态、代码块 ---------- */
+:root[data-shape="round"] :is(.ts-carousel-track, .ts-carousel-track > *) { border-radius: var(--ts-round-card); }
+:root[data-shape="round"] .ts-carousel-dots button { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-viewer img { border-radius: 22px; }
+:root[data-shape="round"] .ts-viewer-tools { gap: 0; padding: 4px; border-radius: var(--ts-round-pill); background: rgb(255 255 255 / .12); }
+:root[data-shape="round"] .ts-viewer-tools .ts-icon-button, :root[data-shape="round"] .ts-viewer-tools .ts-icon-button:is(:first-child, :last-child) { border-radius: 50%; background: transparent !important; }
+:root[data-shape="round"] .ts-empty-art { gap: 6px; }
+:root[data-shape="round"] .ts-empty-art i, :root[data-shape="round"] .ts-empty-art i:is(:nth-child(1), :nth-child(3), :nth-child(7), :nth-child(9)) { border-radius: 50%; }
+:root[data-shape="round"] .ts-empty-art i:nth-child(5) { transform: translateY(-6px); }
+:root[data-shape="round"] .ts-code { border-radius: 22px; }
+:root[data-shape="round"] .ts-code-head { box-shadow: none; padding-inline-start: 18px; }
+:root[data-shape="round"] .ts-code pre { padding-inline: 18px; }
+
+/* ---------- 反馈 ---------- */
+:root[data-shape="round"] .ts-banner { border-radius: 22px; padding-inline: 18px; }
+:root[data-shape="round"] .ts-banner.ts-page-banner { border-radius: 0; }
+:root[data-shape="round"] .ts-drawer { border-radius: var(--ts-round-panel) 0 0 var(--ts-round-panel); }
+:root[data-shape="round"] .ts-drawer[data-side="left"] { border-radius: 0 var(--ts-round-panel) var(--ts-round-panel) 0; }
+:root[data-shape="round"] .ts-drawer-foot { box-shadow: none; gap: var(--ts-round-gap); }
+:root[data-shape="round"] .ts-drawer-foot > .ts-button { border-radius: var(--ts-round-pill) !important; }
+/* 操作面板：一组操作合成一整块，中间没有线；取消是单独的一块 */
+:root[data-shape="round"] .ts-action-group { gap: 0; border-radius: var(--ts-round-card); overflow: hidden; background: var(--ts-bg-elevated); }
+:root[data-shape="round"] .ts-action-group > *, :root[data-shape="round"] .ts-action-group > :is(:first-child, :last-child) { border-radius: 0; background: transparent; }
+:root[data-shape="round"] .ts-action.ts-cancel { border-radius: var(--ts-round-card); }
+:root[data-shape="round"] :is(.ts-progress, .ts-progress-bar) { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-spinner i { border-radius: 50%; }
+:root[data-shape="round"] .ts-result-icon { border-radius: 50%; background-image: var(--ts-layer-sheen); }
+
+/* ---------- 布局：分割线只留白，不画线 ---------- */
+:root[data-shape="round"] .ts-grid.ts-tiled { gap: var(--ts-space-3); }
+:root[data-shape="round"] .ts-divider, :root[data-shape="round"] .ts-divider.ts-line { height: 0; background: none; margin: var(--ts-space-5) 0; }
+:root[data-shape="round"] .ts-divider.ts-vertical { width: 0; background: none; margin: 0 var(--ts-space-3); }
+:root[data-shape="round"] .ts-divider[data-label] { justify-content: center; }
+:root[data-shape="round"] .ts-divider[data-label]::before, :root[data-shape="round"] .ts-divider[data-label]::after { display: none; }
+:root[data-shape="round"] .ts-ratio { border-radius: 22px; }
+:root[data-shape="round"] .ts-split-handle::before { border-radius: var(--ts-round-pill); }
+
+/* ---------- 移动端手势 ---------- */
+:root[data-shape="round"] .ts-list .ts-swipe, :root[data-shape="round"] .ts-list > li:is(:first-child, :last-child) > .ts-swipe { border-radius: 22px; }
+:root[data-shape="round"] .ts-swipe-actions { gap: 0; padding-inline-start: 0; background: transparent; }
+:root[data-shape="round"] .ts-swipe-actions > button { background-image: none; }
+:root[data-shape="round"] .ts-ptr-indicator { border-radius: 50%; }
+:root[data-shape="round"] .ts-indexbar { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-indexbar button { border-radius: 50%; width: 18px; height: 18px; }
+:root[data-shape="round"] .ts-index-bubble { border-radius: 50%; background-image: var(--ts-layer-sheen); }
 
 }

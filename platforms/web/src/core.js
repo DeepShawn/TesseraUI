@@ -583,6 +583,17 @@ export function initCore(root = document) {
   once(root, 'ime', () => guardEnterWhileComposing(root));
 }
 
+/** 外观：'tile'（拼贴，默认）或 'round'（圆融：胶囊与大圆角，成组控件合成一整块，没有分割线） */
+export function setShape(shape) {
+  const apply = () => {
+    if (shape === 'round') document.documentElement.dataset.shape = 'round';
+    else delete document.documentElement.dataset.shape;
+    // 分段控制、标签页的指示器按新的尺寸重新定位
+    window.dispatchEvent(new Event('resize'));
+  };
+  if (document.startViewTransition && !prefersReducedMotion()) document.startViewTransition(apply);
+  else apply();
+}
 export function setMaterial(glass) {
   const apply = () => {
     if (glass) document.documentElement.dataset.material = 'glass';

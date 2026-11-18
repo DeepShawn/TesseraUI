@@ -54,6 +54,8 @@
 /* 选择列 */
 .ts-table .ts-select-cell { width: 48px; padding-inline-end: 0; }
 .ts-table .ts-select-cell .ts-checkbox { vertical-align: middle; }
+/* 勾选列固定 48 宽（16 + 20 + 12），和固定第二列的 left: 48px 对齐，中间不露缝 */
+.ts-table .ts-select-cell .ts-checkbox { margin-inline-end: 12px; }
 
 /* 行操作：悬停或聚焦时才显示，触屏上常显 */
 .ts-row-actions { display: inline-flex; gap: 2px; opacity: 0; transition: opacity var(--ts-duration-fast) var(--ts-ease-standard); }
@@ -120,6 +122,7 @@ th[aria-sort="ascending"] .ts-sort .ts-icon, th[aria-sort="descending"] .ts-sort
   .ts-table[data-responsive] td.ts-card-title .ts-cell-inner { grid-column: 1 / -1; justify-self: start; text-align: start; font: var(--ts-font-label); font-size: 15px; padding-top: 8px; padding-bottom: 8px; }
   .ts-table[data-responsive] tbody tr { position: relative; }
   .ts-table[data-responsive][data-selectable] .ts-select-cell .ts-cell-inner { position: absolute; left: 0; top: 2px; padding: 10px 16px; }
+  .ts-table[data-responsive] .ts-select-cell .ts-checkbox { margin-inline-end: 0; }
   .ts-table[data-responsive][data-selectable] td.ts-card-title .ts-cell-inner { padding-inline-start: 50px; }
   /* 操作列：不显示列名，按钮靠右 */
   .ts-table[data-responsive] td.ts-actions-cell .ts-cell-inner { grid-column: 1 / -1; justify-self: end; padding-top: 0; }
