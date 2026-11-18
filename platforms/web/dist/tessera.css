@@ -42,12 +42,12 @@
   --ts-size-md: 40px;
   --ts-size-lg: 48px;
   --ts-size-touch-min: 44px;
-  --ts-radius-grout: 4px;
-  --ts-radius-sm: 6px;
-  --ts-radius-md: 10px;
-  --ts-radius-lg: 14px;
-  --ts-radius-xl: 20px;
-  --ts-radius-2xl: 28px;
+  --ts-radius-grout: 6px;
+  --ts-radius-sm: 8px;
+  --ts-radius-md: 14px;
+  --ts-radius-lg: 18px;
+  --ts-radius-xl: 24px;
+  --ts-radius-2xl: 32px;
   --ts-radius-full: 9999px;
   --ts-border-width: 1px;
   --ts-focus-ring-width: 2px;
@@ -372,7 +372,7 @@
 .ts-root ::-webkit-scrollbar { width: 10px; height: 10px; }
 .ts-root ::-webkit-scrollbar-track { background: transparent; }
 .ts-root ::-webkit-scrollbar-thumb {
-  background: var(--ts-border-strong); border: 2px solid transparent; border-radius: 4px;
+  background: var(--ts-border-strong); border: 2px solid transparent; border-radius: 999px;
   background-clip: content-box; min-height: 40px;
 }
 .ts-root ::-webkit-scrollbar-thumb:hover { border-width: 0; }
@@ -481,8 +481,8 @@
   box-shadow: 0 0 0 var(--ts-border-width) var(--ts-border-field);
   position: relative;
 }
-.ts-button.ts-sm { --_h: var(--ts-size-sm); --_px: var(--ts-space-3); border-radius: 8px; }
-.ts-button.ts-lg { --_h: var(--ts-size-lg); --_px: var(--ts-space-6); font-size: 16px; border-radius: 12px; }
+.ts-button.ts-sm { --_h: var(--ts-size-sm); --_px: var(--ts-space-3); border-radius: 11px; }
+.ts-button.ts-lg { --_h: var(--ts-size-lg); --_px: var(--ts-space-6); font-size: 16px; border-radius: 17px; }
 @media (pointer: coarse) {
   .ts-button.ts-sm::before, .ts-icon-button.ts-sm::before { content: ""; position: absolute; inset: -6px; }
 }
@@ -528,8 +528,8 @@
 }
 .ts-icon-button.ts-filled { background-color: var(--ts-fill-default); background-image: var(--ts-layer-edge-soft); }
 .ts-pressable.ts-icon-button.ts-filled:active { background-image: var(--ts-layer-edge-soft-pressed); }
-.ts-icon-button.ts-sm { --_h: var(--ts-size-sm); border-radius: 8px; }
-.ts-icon-button.ts-lg { --_h: var(--ts-size-lg); border-radius: 12px; }
+.ts-icon-button.ts-sm { --_h: var(--ts-size-sm); border-radius: 11px; }
+.ts-icon-button.ts-lg { --_h: var(--ts-size-lg); border-radius: 17px; }
 .ts-icon-button .ts-icon { width: 20px; height: 20px; }
 
 /* ================= 输入框 / 搜索框 / 下拉选择：凹槽 ================= */
@@ -549,8 +549,8 @@
   transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), box-shadow var(--ts-duration-fast) var(--ts-ease-standard);
   color: var(--ts-text-secondary);
 }
-.ts-input.ts-sm { --_h: var(--ts-size-sm); border-radius: 8px; }
-.ts-input.ts-lg { --_h: var(--ts-size-lg); padding: 0 var(--ts-space-4); border-radius: 12px; }
+.ts-input.ts-sm { --_h: var(--ts-size-sm); border-radius: 11px; }
+.ts-input.ts-lg { --_h: var(--ts-size-lg); padding: 0 var(--ts-space-4); border-radius: 17px; }
 .ts-input:focus-within {
   background: var(--ts-bg-surface);
   box-shadow: inset 0 0 0 1px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow);
@@ -591,7 +591,7 @@
   transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), box-shadow var(--ts-duration-fast) var(--ts-ease-standard),
               transform var(--ts-spring-snappy-duration) var(--ts-spring-snappy);
 }
-.ts-checkbox { border-radius: var(--ts-radius-sm); }
+.ts-checkbox { border-radius: 7px; }
 .ts-radio { border-radius: 50%; }
 .ts-checkbox::before {
   content: ""; width: 14px; height: 14px; background: var(--ts-text-on-solid);
@@ -608,7 +608,7 @@
 .ts-checkbox:indeterminate::before { mask: none; width: 10px; height: 2px; border-radius: 1px; clip-path: inset(0 0 0 0); }
 /* 单选的圆点是一块小方砖，选中时转正落位 */
 .ts-radio::before {
-  content: ""; width: 8px; height: 8px; border-radius: 2px; background: var(--ts-text-on-solid);
+  content: ""; width: 8px; height: 8px; border-radius: 3px; background: var(--ts-text-on-solid);
   transform: scale(0) rotate(-45deg); transition: transform var(--ts-spring-snappy-duration) var(--ts-spring-snappy);
 }
 .ts-radio:checked::before { transform: scale(1) rotate(0); }
@@ -626,7 +626,7 @@
   --_stretch: 0px;                   /* 按住时拉宽的量 */
   --_pos: 0;                         /* 0 = 关，1 = 开；拖动时由 JS 写入中间值 */
   --_travel: calc(var(--_w) - var(--_pad) * 2 - var(--_thumb) - var(--_stretch));
-  --_r: 10px; --_tr: 8px;            /* 轨道圆角、滑块圆角：10 − 内边距 3 ≈ 8，两条弧线平行 */
+  --_r: 13px; --_tr: 10px;           /* 轨道圆角、滑块圆角：13 − 内边距 3 = 10，两条弧线平行 */
   appearance: none; -webkit-appearance: none; margin: 0; flex: none; cursor: pointer;
   width: var(--_w); height: var(--_h); border-radius: var(--_r); position: relative;
   background-color: var(--ts-fill-control-off);
@@ -665,7 +665,7 @@
 /* 拖过中线时轨道颜色先变，告诉用户松手会落到哪边 */
 .ts-switch.is-dragging[data-preview="on"] { background-color: var(--ts-accent-control); }
 .ts-switch.is-dragging[data-preview="off"] { background-color: var(--ts-fill-control-off); }
-.ts-switch.ts-sm { --_w: 40px; --_h: 24px; --_thumb: 18px; --_r: 8px; --_tr: 6px; }
+.ts-switch.ts-sm { --_w: 40px; --_h: 24px; --_thumb: 18px; --_r: 10px; --_tr: 7px; }
 .ts-switch.ts-sm::after { opacity: 0; }
 
 /* 可选毛玻璃：滑块变成一块磨砂玻璃，透出下面的轨道颜色；按住时放大成透镜 */
@@ -689,7 +689,7 @@
   display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: relative;
   gap: var(--ts-tile-grout); height: var(--_h);
 }
-.ts-segmented.ts-sm { --_h: var(--ts-size-sm); --_outer: 8px; }
+.ts-segmented.ts-sm { --_h: var(--ts-size-sm); --_outer: 11px; }
 .ts-segmented > label { position: relative; z-index: 2; display: grid; }
 .ts-segmented input { position: absolute; opacity: 0; pointer-events: none; }
 .ts-segmented span {
@@ -776,7 +776,7 @@ label.ts-list-item { cursor: pointer; }
 
 .ts-avatar {
   --_s: 40px; --_tint: var(--ts-accent-subtle);
-  width: var(--_s); height: var(--_s); border-radius: 30%; flex: none; position: relative;
+  width: var(--_s); height: var(--_s); border-radius: 36%; flex: none; position: relative;
   display: inline-grid; place-items: center;
   /* 浅底色是半透明的，先垫一层砖面色，重叠时不会透出下面那块 */
   background: linear-gradient(var(--_tint), var(--_tint)), var(--ts-bg-surface);
@@ -802,10 +802,10 @@ label.ts-list-item { cursor: pointer; }
 
 .ts-badge {
   display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px;
-  border-radius: 5px; font: 600 11px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
+  border-radius: 7px; font: 600 11px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
   background: var(--ts-danger-solid); color: var(--ts-text-on-solid);
 }
-.ts-badge.ts-dot { min-width: 8px; width: 8px; height: 8px; padding: 0; border-radius: 2.5px; }
+.ts-badge.ts-dot { min-width: 8px; width: 8px; height: 8px; padding: 0; border-radius: 3px; }
 .ts-avatar > .ts-badge, .ts-icon-button > .ts-badge { position: absolute; top: -3px; right: -3px; box-shadow: 0 0 0 2px var(--ts-bg-surface); }
 .ts-icon-button > .ts-badge { top: 3px; right: 1px; }
 .ts-icon-button > .ts-badge.ts-dot { top: 7px; right: 7px; }
@@ -830,7 +830,7 @@ label.ts-list-item { cursor: pointer; }
     var(--ts-fill-default);
   animation: ts-shimmer var(--ts-skeleton-period, 1500ms) linear infinite;
 }
-.ts-skeleton.ts-tile { border-radius: 30%; }
+.ts-skeleton.ts-tile { border-radius: 36%; }
 @keyframes ts-shimmer { to { background-position: 300% 0, 0 0; } }
 
 /* ================= 浮层：菜单 / 对话框 / 底部抽屉 / 提示消息 ================= */
@@ -851,7 +851,7 @@ label.ts-list-item { cursor: pointer; }
 .ts-menu-item.ts-danger, .ts-menu-item.ts-danger .ts-icon { color: var(--ts-danger-text); }
 /* 分隔线是一道砖缝 */
 .ts-menu-sep { height: var(--ts-tile-grout); margin: var(--ts-space-1) calc(var(--ts-space-1) * -1); background: var(--ts-bg-canvas); }
-.ts-kbd { margin-inline-start: auto; font: 500 11px/1 var(--ts-font-mono); color: var(--ts-text-secondary); padding: 3px 5px 4px; border-radius: 4px; background-image: var(--ts-layer-edge-soft); box-shadow: 0 0 0 1px var(--ts-border-subtle); }
+.ts-kbd { margin-inline-start: auto; font: 500 11px/1 var(--ts-font-mono); color: var(--ts-text-secondary); padding: 3px 6px 4px; border-radius: 6px; background-image: var(--ts-layer-edge-soft); box-shadow: 0 0 0 1px var(--ts-border-subtle); }
 
 .ts-scrim { position: fixed; inset: 0; z-index: var(--ts-z-overlay); background: var(--ts-bg-scrim); }
 
@@ -876,7 +876,7 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
   padding: 0 var(--ts-space-5) var(--ts-space-6); touch-action: none; will-change: transform;
 }
 .ts-sheet-handle { display: grid; place-items: center; height: 26px; cursor: grab; }
-.ts-sheet-handle::before { content: ""; width: 32px; height: 5px; border-radius: 2px; background: var(--ts-border-strong); }
+.ts-sheet-handle::before { content: ""; width: 36px; height: 5px; border-radius: 3px; background: var(--ts-border-strong); }
 
 .ts-toaster {
   position: fixed; top: max(var(--ts-space-4), env(safe-area-inset-top)); left: 50%; transform: translateX(-50%);

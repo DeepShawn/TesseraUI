@@ -21,7 +21,7 @@ public struct TesseraButtonStyle: ButtonStyle {
         switch size { case .sm: TesseraSpace.s3; case .md: TesseraSpace.s4; case .lg: TesseraSpace.s6 }
     }
     private var radius: CGFloat {
-        switch size { case .sm: 8; case .md: TesseraRadius.md; case .lg: 12 }
+        switch size { case .sm: 11; case .md: TesseraRadius.md; case .lg: 17 }
     }
     private var background: Color {
         switch variant {

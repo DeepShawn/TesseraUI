@@ -42,12 +42,12 @@
   --ts-size-md: 40px;
   --ts-size-lg: 48px;
   --ts-size-touch-min: 44px;
-  --ts-radius-grout: 4px;
-  --ts-radius-sm: 6px;
-  --ts-radius-md: 10px;
-  --ts-radius-lg: 14px;
-  --ts-radius-xl: 20px;
-  --ts-radius-2xl: 28px;
+  --ts-radius-grout: 6px;
+  --ts-radius-sm: 8px;
+  --ts-radius-md: 14px;
+  --ts-radius-lg: 18px;
+  --ts-radius-xl: 24px;
+  --ts-radius-2xl: 32px;
   --ts-radius-full: 9999px;
   --ts-border-width: 1px;
   --ts-focus-ring-width: 2px;

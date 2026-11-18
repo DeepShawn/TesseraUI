@@ -144,6 +144,8 @@ function edgeIndicator(container, indicator, getRect, { stretchWithScale = false
   };
   // 拖动时直接设置两条边（1:1 跟手，不加弹簧）
   moveTo.drag = (l, r) => { left.set(l); right.set(r); };
+  // 追手指：从未选中的块起手时，选中砖先用 snappy 追到手指下面
+  moveTo.chase = (l, r) => { left.to(l, { preset: 'snappy' }); right.to(r, { preset: 'snappy' }); };
   moveTo.current = () => ({ l: left.value, r: right.value });
   new ResizeObserver(() => {
     const cur = container.querySelector('[aria-selected="true"], input:checked');
@@ -177,14 +179,20 @@ export function segmented(root) {
   root.addEventListener('change', () => sync(true));
   sync(false);
 
-  // 按住选中砖左右拖动来选择：拖动 1:1 跟手，松手落到最近的一块；甩得够快就朝甩的方向走一块
+  // 按住任意一块左右拖动来选择：
+  // - 从选中砖起手：选中砖 1:1 跟手
+  // - 从其他块起手：选中砖先追到手指下面，再跟着手指走
+  // 松手落到最近的一块；甩得够快就朝甩的方向走一块
   const vt = new VelocityTracker();
   let drag = null, suppressClick = false;
   root.addEventListener('pointerdown', (e) => {
     const label = e.target.closest('label');
-    if (!label || e.button !== 0 || !label.querySelector('input:checked') || label.querySelector('input:disabled')) return;
+    if (!label || e.button !== 0 || root.querySelector('input:disabled')) return;
     const { l, r } = moveTo.current();
-    drag = { x: e.clientX, l, w: r - l, moved: false, id: e.pointerId };
+    const onSelected = !!label.querySelector('input:checked');
+    const w = label.offsetWidth;
+    const rootX = root.getBoundingClientRect().left;
+    drag = { x: e.clientX, l, w: onSelected ? r - l : w, moved: false, id: e.pointerId, onSelected, rootX };
     vt.points = [];
   });
   root.addEventListener('pointermove', (e) => {
@@ -198,10 +206,13 @@ export function segmented(root) {
     }
     vt.add(e.clientX);
     const max = root.clientWidth - drag.w;
-    let l = drag.l + dx;
+    // 从选中砖起手保持按下时的相对位置；从其他块起手让砖的中心对准手指
+    let l = drag.onSelected ? drag.l + dx : e.clientX - drag.rootX - drag.w / 2;
     if (l < 0) l = rubberBand(l, drag.w * 0.5);
     if (l > max) l = max + rubberBand(l - max, drag.w * 0.5);
-    moveTo.drag(l, l + drag.w);
+    drag.lastL = l;
+    if (drag.onSelected) moveTo.drag(l, l + drag.w);
+    else moveTo.chase(l, l + drag.w);
   });
   const end = () => {
     if (!drag) return;
@@ -210,8 +221,9 @@ export function segmented(root) {
     if (!d.moved) return;
     root.classList.remove('is-dragging');
     suppressClick = true;
+    // 追手指模式下砖可能还没追上，按手指的位置算落点
     const { l, r } = moveTo.current();
-    const center = (l + r) / 2;
+    const center = d.onSelected ? (l + r) / 2 : d.lastL + d.w / 2;
     let i = labels.reduce((best, lb, k) => {
       const c = lb.offsetLeft + lb.offsetWidth / 2;
       return Math.abs(c - center) < Math.abs(labels[best].offsetLeft + labels[best].offsetWidth / 2 - center) ? k : best;

@@ -31,7 +31,7 @@
   .hero h1 em { font-style: normal; color: var(--ts-accent-text); }
   .hero p.lead { max-width: 520px; color: var(--ts-text-secondary); margin: 20px 0 0; font: var(--ts-font-body); }
   .mosaic { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; aspect-ratio: 1; }
-  .mosaic i { border-radius: 4px; background-color: var(--ts-fill-default);
+  .mosaic i { border-radius: 6px; background-color: var(--ts-fill-default);
     background-image: var(--ts-layer-sheen), var(--ts-layer-edge-soft);
     animation: ts-settle var(--ts-spring-smooth-duration) var(--ts-spring-smooth) both; animation-delay: calc(var(--d) * 28ms);
     transition: transform var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy); }
@@ -46,8 +46,8 @@
   .mosaic i.c-ink { background-color: var(--ts-text-primary); }
   .mosaic i.c-sur { background-color: var(--ts-bg-surface); }
   .mosaic i[class^="c-"]:not(.c-sur) { background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
-  .mosaic i.r-tl { border-top-left-radius: 22px; } .mosaic i.r-tr { border-top-right-radius: 22px; }
-  .mosaic i.r-bl { border-bottom-left-radius: 22px; } .mosaic i.r-br { border-bottom-right-radius: 22px; }
+  .mosaic i.r-tl { border-top-left-radius: 26px; } .mosaic i.r-tr { border-top-right-radius: 26px; }
+  .mosaic i.r-bl { border-bottom-left-radius: 26px; } .mosaic i.r-br { border-bottom-right-radius: 26px; }
 
   /* 区块 */
   section { margin-top: 96px; }
@@ -67,20 +67,20 @@
 
   /* 设计语言 */
   .principle { display: grid; gap: 14px; align-content: start; }
-  .principle .demo { height: 148px; border-radius: 14px; background: var(--ts-bg-canvas); display: grid; place-items: center; padding: 16px; }
+  .principle .demo { height: 148px; border-radius: 18px; background: var(--ts-bg-canvas); display: grid; place-items: center; padding: 16px; }
   .principle h3 { margin: 4px 0 0; }
   .principle p { margin: 0; font: var(--ts-font-body-sm); color: var(--ts-text-secondary); }
   .edge-demo { display: flex; gap: 14px; align-items: center; }
   .edge-demo { gap: 10px; }
-  .edge-demo .big { height: 56px; padding: 0 20px; font-size: 16px; border-radius: 14px; }
+  .edge-demo .big { height: 56px; padding: 0 20px; font-size: 16px; border-radius: 18px; }
   .serif-demo { font: 600 52px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); letter-spacing: -.02em; }
   .serif-demo small { display: block; margin-top: 10px; font: var(--ts-font-caption); color: var(--ts-text-tertiary); letter-spacing: 0; text-align: center; }
   .pigments { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; width: 100%; }
-  .pigments i { aspect-ratio: .7; border-radius: 4px; background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
-  .pigments i:first-child { border-radius: 12px 4px 4px 12px; } .pigments i:last-child { border-radius: 4px 12px 12px 4px; }
+  .pigments i { aspect-ratio: .7; border-radius: 6px; background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+  .pigments i:first-child { border-radius: 16px 6px 6px 16px; } .pigments i:last-child { border-radius: 6px 16px 16px 6px; }
 
   /* 毛玻璃展示：彩色马赛克底 */
-  .glass-stage { display: grid; gap: 14px; padding: 18px; border-radius: 14px; position: relative; overflow: hidden;
+  .glass-stage { display: grid; gap: 14px; padding: 18px; border-radius: 18px; position: relative; overflow: hidden;
     background:
       radial-gradient(circle at 15% 30%, var(--ts-pigment-cinnabar) 0 22%, transparent 23%),
       radial-gradient(circle at 70% 80%, var(--ts-pigment-lapis) 0 26%, transparent 27%),
@@ -93,8 +93,8 @@
 
   /* 颜色 */
   .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 3px; }
-  .swatch { background: var(--ts-bg-surface); border-radius: 4px; overflow: hidden; }
-  .swatch:first-child { border-top-left-radius: 20px; }
+  .swatch { background: var(--ts-bg-surface); border-radius: 6px; overflow: hidden; }
+  .swatch:first-child { border-top-left-radius: 24px; }
   .swatch-color { height: 56px; position: relative; background: repeating-conic-gradient(var(--ts-fill-default) 0 25%, transparent 0 50%) 0 0 / 10px 10px; }
   .swatch-color::after { content: ""; position: absolute; inset: 0; background: var(--c); }
   .swatch-meta { padding: 8px 10px 10px; display: grid; gap: 2px; }
@@ -110,27 +110,29 @@
   .radii { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
   .radius-box { width: 84px; height: 84px; background: var(--ts-accent-subtle); box-shadow: inset 0 0 0 1.5px var(--ts-accent-text); display: grid; place-items: center; text-align: center; font: 500 11px/15px var(--ts-font-mono); color: var(--ts-accent-text); }
   .shadows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 8px; }
-  .shadow-box { height: 110px; border-radius: 20px; background: var(--ts-bg-elevated); display: grid; place-items: center; font: 500 12px/1 var(--ts-font-mono); color: var(--ts-text-secondary); }
+  .shadow-box { height: 110px; border-radius: 24px; background: var(--ts-bg-elevated); display: grid; place-items: center; font: 500 12px/1 var(--ts-font-mono); color: var(--ts-text-secondary); }
 
   /* 动效 */
   .springs { display: grid; gap: 14px; }
   .lane { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 16px; }
-  .track { position: relative; height: 40px; border-radius: 10px; background: var(--ts-fill-default); box-shadow: var(--ts-recess); }
-  .ball { position: absolute; top: 4px; left: 4px; width: 32px; height: 32px; border-radius: 8px; background-color: var(--ts-accent-solid); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+  .track { position: relative; height: 40px; border-radius: 14px; background: var(--ts-fill-default); box-shadow: var(--ts-recess); }
+  .ball { position: absolute; top: 4px; left: 4px; width: 32px; height: 32px; border-radius: 11px; background-color: var(--ts-accent-solid); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
   .lane small { display: block; color: var(--ts-text-tertiary); font: 400 11px/16px var(--ts-font-mono); }
-  .drag-zone { position: relative; height: 172px; border-radius: 14px; overflow: hidden; touch-action: none;
+  .drag-zone { position: relative; height: 172px; border-radius: 18px; overflow: hidden; touch-action: none;
     background: var(--ts-fill-default); box-shadow: var(--ts-recess);
     background-image: linear-gradient(var(--ts-border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--ts-border-subtle) 1px, transparent 1px);
     background-size: 24px 24px; background-position: center; }
-  .drag-puck { position: absolute; left: calc(50% - 32px); top: calc(50% - 32px); width: 64px; height: 64px; border-radius: 16px; background-color: var(--ts-pigment-cinnabar); color: #fff; display: grid; place-items: center; cursor: grab; user-select: none;
+  .drag-puck { position: absolute; left: calc(50% - 32px); top: calc(50% - 32px); width: 64px; height: 64px; border-radius: 22px; background-color: var(--ts-pigment-cinnabar); color: #fff; display: grid; place-items: center; cursor: grab; user-select: none;
     background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); box-shadow: var(--ts-shadow-2); }
 
   /* 图标 */
   .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 3px; }
-  .icon-cell { display: grid; place-items: center; gap: 8px; padding: 18px 4px 12px; border-radius: 4px; background: var(--ts-bg-surface); color: var(--ts-text-primary); }
+  .icon-cell { display: grid; place-items: center; gap: 8px; padding: 18px 4px 12px; border-radius: 6px; background: var(--ts-bg-surface); color: var(--ts-text-primary); }
   .icon-cell .ts-icon { width: 24px; height: 24px; }
   .icon-cell span:last-child { font: 400 10.5px/14px var(--ts-font-mono); color: var(--ts-text-secondary); text-align: center; word-break: break-all; }
   .icon-cell:hover { color: var(--ts-accent-text); }
+  .icon-cat { margin: 24px 0 10px; }
+  .icon-cat:first-child { margin-top: 0; }
 
   /* 手机 */
   .phone { width: 360px; height: 740px; border-radius: 52px; padding: 10px; background: #1F1B16; box-shadow: var(--ts-shadow-3), inset 0 0 0 1.5px #3A3631; margin: 0 auto; }
@@ -141,22 +143,22 @@
   .phone-hero { padding: 6px 6px 18px; }
   .phone-hero h3 { margin: 4px 0 0; }
   .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
-  .stat { display: grid; gap: 2px; padding: 12px; background: var(--ts-fill-default); border-radius: 4px; }
-  .stat:first-child { border-radius: 12px 4px 4px 12px; } .stat:last-child { border-radius: 4px 12px 12px 4px; }
+  .stat { display: grid; gap: 2px; padding: 12px; background: var(--ts-fill-default); border-radius: 6px; }
+  .stat:first-child { border-radius: 16px 6px 6px 16px; } .stat:last-child { border-radius: 6px 16px 16px 6px; }
   .stat b { font: 600 26px/1.1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); font-variant-numeric: tabular-nums; }
   .stat span { font: var(--ts-font-caption); color: var(--ts-text-secondary); }
   .phone-side { display: grid; gap: 24px; align-content: center; }
   .phone-wrap { display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; }
   @media (max-width: 900px) { .phone-wrap { grid-template-columns: 1fr; } }
   .callout { display: grid; grid-template-columns: 32px 1fr; gap: 14px; }
-  .callout b { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font: 600 14px/1 var(--ts-font-serif); background-image: var(--ts-layer-edge-solid); }
+  .callout b { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 11px; background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font: 600 14px/1 var(--ts-font-serif); background-image: var(--ts-layer-edge-solid); }
   .callout p { margin: 4px 0 0; font: var(--ts-font-body-sm); color: var(--ts-text-secondary); }
 
   /* 四端 */
   .platforms { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
   @media (max-width: 900px) { .platforms { grid-template-columns: 1fr 1fr; } }
-  .platform { background: var(--ts-bg-surface); padding: 22px; border-radius: 4px; display: grid; gap: 10px; align-content: start; }
-  .platform:first-child { border-radius: 20px 4px 4px 20px; } .platform:last-child { border-radius: 4px 20px 20px 4px; }
+  .platform { background: var(--ts-bg-surface); padding: 22px; border-radius: 6px; display: grid; gap: 10px; align-content: start; }
+  .platform:first-child { border-radius: 24px 6px 6px 24px; } .platform:last-child { border-radius: 6px 24px 24px 6px; }
   .platform h3 { margin: 0; }
   .platform p { margin: 0; font: var(--ts-font-caption); color: var(--ts-text-secondary); }
   .platform code { display: block; font: 400 11.5px/18px var(--ts-font-mono); color: var(--ts-text-primary); }
@@ -204,7 +206,7 @@
         <p>列表、分段控制、按钮组、标签栏都拆成独立的砖，砖缝露出底色。整组外角 14、内角 4。</p>
       </div>
       <div class="ts-card principle">
-        <div class="demo"><div class="edge-demo"><button class="ts-button ts-primary big ts-pressable ts-state">按住我</button><div class="ts-input" style="width:72px;height:56px;border-radius:14px"><input aria-label="示例" placeholder="凹槽"></div></div></div>
+        <div class="demo"><div class="edge-demo"><button class="ts-button ts-primary big ts-pressable ts-state">按住我</button><div class="ts-input" style="width:72px;height:56px;border-radius:18px"><input aria-label="示例" placeholder="凹槽"></div></div></div>
         <span class="ts-overline">02 · 釉面砖</span>
         <h3 class="ts-title-3">凸起的按，凹下的填</h3>
         <p>能按的砖顶部有一道釉光、底部 2px 砖厚，按下时下沉 1px；能填的是凹槽，顶部带内阴影。</p>
@@ -346,7 +348,7 @@
         <ul class="ts-list">
           <li class="ts-settle" style="--i:0"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-lapis">设</span><span class="ts-grow"><span class="ts-label">设计评审</span><span class="ts-caption">今天 14:00 · 3 号会议室</span></span><i data-icon="chevron-right"></i></button></li>
           <li class="ts-settle" style="--i:1"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-olive">发</span><span class="ts-grow"><span class="ts-label">v0.1 发布检查</span><span class="ts-caption">对比度 284 / 284 通过</span></span><span class="ts-tag ts-success">就绪</span></button></li>
-          <li class="ts-settle" style="--i:2"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-ochre">图</span><span class="ts-grow"><span class="ts-label">首批图标</span><span class="ts-caption">44 / 150</span></span><i data-icon="chevron-right"></i></button></li>
+          <li class="ts-settle" style="--i:2"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-ochre">图</span><span class="ts-grow"><span class="ts-label">首批图标</span><span class="ts-caption">157 / 150 ✓</span></span><i data-icon="chevron-right"></i></button></li>
         </ul>
         <div class="ts-card" aria-busy="true" aria-label="加载中" style="padding:20px">
           <div class="row" style="flex-wrap:nowrap;align-items:flex-start">
@@ -468,8 +470,8 @@
 
   <!-- 图标 -->
   <section>
-    <div class="sec-head"><span class="sec-num">08</span><h2 class="ts-title-1">图标</h2><p>24×24 画布、1.5px 圆头线条、单色 currentColor；实心版加 <code>-fill</code> 后缀。v0.1 先画了 <span id="icon-count"></span>，首批目标约 150 个。</p></div>
-    <div class="icons" id="icons"></div>
+    <div class="sec-head"><span class="sec-num">08</span><h2 class="ts-title-1">图标</h2><p>24×24 画布、1.5px 圆头线条、单色 currentColor；实心版加 <code>-fill</code> 后缀。按 9 个分类画了 <span id="icon-count"></span>。方形一律 3–4px 圆角，和组件的圆角方砖一致。</p></div>
+    <div id="icons"></div>
   </section>
 
   <!-- 四端 -->
@@ -517,7 +519,7 @@
 <script type="module">
 import T, { Spring } from '../platforms/web/dist/tessera.js';
 import { tokens } from '../platforms/web/dist/tokens.mjs';
-import { icons } from '../platforms/web/dist/icons.mjs';
+import { icons, categories } from '../platforms/web/dist/icons.mjs';
 
 // 首屏马赛克：按对角线依次“落砖”
 {
@@ -603,7 +605,11 @@ document.getElementById('play').onclick = () => { side = 1 - side; for (const b 
 // 图标
 const iconNames = Object.keys(icons);
 document.getElementById('icon-count').textContent = `${iconNames.filter((n) => !n.endsWith('-fill')).length} 个（另有 ${iconNames.filter((n) => n.endsWith('-fill')).length} 个实心版）`;
-document.getElementById('icons').innerHTML = iconNames.map((n) => `<div class="icon-cell" title="${n}"><span class="ts-icon">${icons[n]}</span><span>${n}</span></div>`).join('');
+const cell = (n) => `<div class="icon-cell" title="${n}"><span class="ts-icon">${icons[n]}</span><span>${n}</span></div>`;
+document.getElementById('icons').innerHTML = Object.entries(categories).map(([cat, list]) => {
+  const all = list.flatMap((n) => (icons[n + '-fill'] ? [n, n + '-fill'] : [n]));
+  return `<p class="ts-overline icon-cat">${cat} · ${all.length}</p><div class="icons">${all.map(cell).join('')}</div>`;
+}).join('');
 
 T.init();
 document.getElementById('indet').indeterminate = true;

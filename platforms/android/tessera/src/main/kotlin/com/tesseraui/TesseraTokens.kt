@@ -368,12 +368,12 @@ object TesseraSize {
 }
 
 object TesseraRadius {
-    val grout = 4.dp
-    val sm = 6.dp
-    val md = 10.dp
-    val lg = 14.dp
-    val xl = 20.dp
-    val s2xl = 28.dp
+    val grout = 6.dp
+    val sm = 8.dp
+    val md = 14.dp
+    val lg = 18.dp
+    val xl = 24.dp
+    val s2xl = 32.dp
     val full = 9999.dp
 }
 

@@ -464,12 +464,12 @@
     <x:Double x:Key="TesseraSizeTouchMin">44</x:Double>
 
     <!-- 圆角。WinUI 的 CornerRadius 是普通圆弧，没有连续曲率；胶囊形用 高度 ÷ 2。 -->
-    <CornerRadius x:Key="TesseraRadiusGrout">4</CornerRadius>
-    <CornerRadius x:Key="TesseraRadiusSm">6</CornerRadius>
-    <CornerRadius x:Key="TesseraRadiusMd">10</CornerRadius>
-    <CornerRadius x:Key="TesseraRadiusLg">14</CornerRadius>
-    <CornerRadius x:Key="TesseraRadiusXl">20</CornerRadius>
-    <CornerRadius x:Key="TesseraRadius2xl">28</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusGrout">6</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusSm">8</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusMd">14</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusLg">18</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusXl">24</CornerRadius>
+    <CornerRadius x:Key="TesseraRadius2xl">32</CornerRadius>
     <CornerRadius x:Key="TesseraRadiusFull">9999</CornerRadius>
 
     <!-- 拼贴：砖缝、砖厚 -->

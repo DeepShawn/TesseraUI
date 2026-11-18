@@ -37,7 +37,7 @@ import com.tesseraui.TesseraType
 
 enum class TesseraButtonVariant { Primary, Secondary, Text, Danger }
 enum class TesseraButtonSize(val height: Dp, val padding: Dp, val radius: Dp) {
-    Sm(TesseraSize.sm, TesseraSpace.s3, 8.dp), Md(TesseraSize.md, TesseraSpace.s4, TesseraRadius.md), Lg(TesseraSize.lg, TesseraSpace.s6, 12.dp)
+    Sm(TesseraSize.sm, TesseraSpace.s3, 11.dp), Md(TesseraSize.md, TesseraSpace.s4, TesseraRadius.md), Lg(TesseraSize.lg, TesseraSpace.s6, 17.dp)
 }
 
 /** 按钮：圆角方砖。实色砖顶部一道釉光、底部 2dp 砖厚；按下时下沉 1dp、砖厚变薄，松手用 snappy 弹回。 */

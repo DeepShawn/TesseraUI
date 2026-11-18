@@ -149,12 +149,12 @@ public enum TesseraSize {
 
 /// 使用时搭配 `RoundedRectangle(cornerRadius:style: .continuous)`，即连续曲率圆角。
 public enum TesseraRadius {
-    public static let grout: CGFloat = 4
-    public static let sm: CGFloat = 6
-    public static let md: CGFloat = 10
-    public static let lg: CGFloat = 14
-    public static let xl: CGFloat = 20
-    public static let s2xl: CGFloat = 28
+    public static let grout: CGFloat = 6
+    public static let sm: CGFloat = 8
+    public static let md: CGFloat = 14
+    public static let lg: CGFloat = 18
+    public static let xl: CGFloat = 24
+    public static let s2xl: CGFloat = 32
     public static let full: CGFloat = 9999
 }
 
