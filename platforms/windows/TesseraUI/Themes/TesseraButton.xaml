@@ -1,7 +1,8 @@
 <!-- 按钮：圆角方砖（合并 TesseraShapeRound.xaml 后为胶囊）。底部 2px 砖厚（实色砖另有顶部釉光）；按下下沉 1px、砖厚变薄，松手弹回。依赖 TesseraTokens.xaml。 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tessera="using:TesseraUI">
 
     <Style x:Key="TesseraButtonBaseStyle" TargetType="Button">
         <!-- BorderBrush 用作砖厚颜色 -->
@@ -17,6 +18,8 @@
         <Setter Property="FocusVisualSecondaryThickness" Value="0" />
         <Setter Property="FocusVisualMargin" Value="{StaticResource TesseraFocusRingMargin}" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <!-- 流韵外观：按下处荡开水波（其他外观不生效） -->
+        <Setter Property="tessera:TesseraFlow.Ripple" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -115,6 +118,8 @@
         <Setter Property="FocusVisualSecondaryThickness" Value="0" />
         <Setter Property="FocusVisualMargin" Value="{StaticResource TesseraFocusRingMargin}" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <!-- 流韵外观：按下处荡开水波（其他外观不生效） -->
+        <Setter Property="tessera:TesseraFlow.Ripple" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
