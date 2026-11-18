@@ -5,6 +5,12 @@ import UIKit
 
 // MARK: - 文本框
 
+/// 回车键类型
+public enum TesseraSubmitKey: Sendable {
+    case done, search, next, go
+    var label: SubmitLabel { switch self { case .done: .done; case .search: .search; case .next: .next; case .go: .go } }
+}
+
 /// 文本框：凹槽；聚焦时底色变成砖面色，外圈 3pt 光晕。
 ///
 /// - `onCommittedChange` 只在输入法完成组合（拼音选定汉字）后回调，适合做搜索、校验、字数统计；
@@ -19,7 +25,7 @@ public struct TesseraTextField: View {
     let icon: TesseraIconName?
     let isSecure: Bool
     let clearable: Bool
-    let submitLabel: SubmitLabel
+    let submitKey: TesseraSubmitKey
     let onCommittedChange: ((String) -> Void)?
     let onSubmit: (() -> Void)?
     @State private var focused = false
@@ -34,7 +40,7 @@ public struct TesseraTextField: View {
         icon: TesseraIconName? = nil,
         isSecure: Bool = false,
         clearable: Bool = false,
-        submitLabel: SubmitLabel = .done,
+        submitKey: TesseraSubmitKey = .done,
         onCommittedChange: ((String) -> Void)? = nil,
         onSubmit: (() -> Void)? = nil
     ) {
@@ -46,7 +52,7 @@ public struct TesseraTextField: View {
         self.icon = icon
         self.isSecure = isSecure
         self.clearable = clearable
-        self.submitLabel = submitLabel
+        self.submitKey = submitKey
         self.onCommittedChange = onCommittedChange
         self.onSubmit = onSubmit
     }
@@ -83,7 +89,7 @@ public struct TesseraTextField: View {
     @ViewBuilder private var field: some View {
         #if canImport(UIKit) && !os(watchOS)
         CommittedTextField(text: $text, focused: $focused, placeholder: placeholder, isSecure: isSecure,
-                           returnKey: submitLabel == .search ? .search : .done,
+                           returnKey: submitKey.returnKey,
                            onCommitted: onCommittedChange, onSubmit: onSubmit)
             .frame(minHeight: 22)
             .accessibilityLabel(label ?? placeholder)
@@ -95,7 +101,7 @@ public struct TesseraTextField: View {
         .tesseraText(.bodySm)
         .foregroundStyle(TesseraColor.textPrimary)
         .focused($swiftUIFocused)
-        .submitLabel(submitLabel)
+        .submitLabel(submitKey.label)
         .onSubmit { onSubmit?() }
         // macOS 的输入法在选定之前不会更新绑定，这里的变化即为已提交的内容
         .onChange(of: text) { _, new in onCommittedChange?(new) }
@@ -104,6 +110,10 @@ public struct TesseraTextField: View {
 }
 
 #if canImport(UIKit) && !os(watchOS)
+extension TesseraSubmitKey {
+    var returnKey: UIReturnKeyType { switch self { case .done: .done; case .search: .search; case .next: .next; case .go: .go } }
+}
+
 /// UITextField 包装：把“输入法是否在组合中”暴露出来
 struct CommittedTextField: UIViewRepresentable {
     @Binding var text: String
@@ -175,7 +185,7 @@ public struct TesseraSearchField: View {
     }
 
     public var body: some View {
-        TesseraTextField(text: $text, placeholder: placeholder, icon: .search, clearable: true, submitLabel: .search,
+        TesseraTextField(text: $text, placeholder: placeholder, icon: .search, clearable: true, submitKey: .search,
                          onCommittedChange: onCommittedChange, onSubmit: { onSearch(text) })
     }
 }
