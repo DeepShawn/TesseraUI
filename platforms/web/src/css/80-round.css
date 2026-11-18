@@ -1,0 +1,148 @@
+/* ================= 圆融外观（试验中）=================
+   在 <html> 上写 data-shape="round" 打开；不写时完全不影响默认的“拼贴”外观。
+   - 形状：控件都是胶囊或大圆角，没有方砖
+   - 浑然一体：成组的控件合成一整块，中间没有砖缝、没有分割线；列表是一整块面，行与行之间只靠留白
+   - 质感：去掉釉光和 2px 砖厚，改为柔和的整面渐变；凹槽改为平的浅底色
+   - 按压：从“下沉”改为“轻轻一捏”（缩小 3%）
+   - 增强对比度时保留 1px 描边，保证边界可辨 */
+
+@layer tessera {
+
+:root[data-shape="round"] {
+  --ts-round-pill: 999px;
+  --ts-round-card: 28px;
+  --ts-round-panel: 36px;
+  --ts-round-gap: 8px;
+  /* 整面柔光：顶部略亮、底部略暗，没有硬边 */
+  --ts-layer-sheen: linear-gradient(to bottom, rgb(255 255 255 / .14), rgb(255 255 255 / 0) 60%);
+  --ts-layer-edge-solid: linear-gradient(to top, rgb(0 0 0 / .06), rgb(0 0 0 / 0) 55%);
+  --ts-layer-edge-solid-pressed: none;
+  --ts-layer-edge-soft: none;
+  --ts-layer-edge-soft-pressed: none;
+  --ts-recess: 0 0 0 0 transparent;
+  --ts-border-width: 0px;
+}
+:root[data-shape="round"][data-contrast="more"] { --ts-border-width: 1px; }
+@media (prefers-contrast: more) {
+  :root[data-shape="round"]:not([data-contrast="normal"]) { --ts-border-width: 1px; }
+}
+
+/* ---------- 按压：轻捏 ---------- */
+:root[data-shape="round"] .ts-pressable:active:not(:disabled, [aria-disabled="true"]) { transform: scale(.97); }
+:root[data-shape="round"] .ts-checkbox:active:not(:disabled),
+:root[data-shape="round"] .ts-radio:active:not(:disabled) { transform: scale(.9); }
+
+/* ---------- 成组：合成一整块，没有缝 ---------- */
+:root[data-shape="round"] .ts-tiles { gap: 0; --_outer: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-tiles > * { border-radius: 0 !important; }
+:root[data-shape="round"] .ts-tiles > :first-child { border-start-start-radius: var(--_outer) !important; border-end-start-radius: var(--_outer) !important; }
+:root[data-shape="round"] .ts-tiles > :last-child { border-start-end-radius: var(--_outer) !important; border-end-end-radius: var(--_outer) !important; }
+:root[data-shape="round"] .ts-tiles > :only-child { border-radius: var(--_outer) !important; }
+:root[data-shape="round"] .ts-tiles > .ts-icon-button:first-child { padding-inline-start: 4px; }
+:root[data-shape="round"] .ts-tiles > .ts-icon-button:last-child { padding-inline-end: 4px; }
+:root[data-shape="round"] .ts-tiles > .ts-input:first-child { padding-inline-start: var(--ts-space-4); }
+
+/* ---------- 按钮 ---------- */
+:root[data-shape="round"] :is(.ts-button, .ts-button.ts-sm, .ts-button.ts-lg, .ts-icon-button, .ts-icon-button.ts-sm, .ts-icon-button.ts-lg) { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-button { --_px: var(--ts-space-5); padding-bottom: 0; }
+:root[data-shape="round"] .ts-button.ts-sm { --_px: var(--ts-space-4); }
+:root[data-shape="round"] .ts-button.ts-lg { --_px: var(--ts-space-8); }
+:root[data-shape="round"] .ts-button.ts-text { --_px: var(--ts-space-4); }
+:root[data-shape="round"] .ts-button[aria-busy="true"]::before {
+  background: none; border-radius: 50%; mask: none;
+  border: 2px solid var(--_c); border-right-color: transparent;
+  animation: ts-round-spin 700ms linear infinite;
+}
+@keyframes ts-round-spin { to { transform: rotate(1turn); } }
+
+/* ---------- 输入框：胶囊浅底，没有凹槽、没有描边 ---------- */
+:root[data-shape="round"] :is(.ts-input, .ts-input.ts-sm, .ts-input.ts-lg) { border-radius: var(--ts-round-pill); padding: 0 var(--ts-space-4); }
+:root[data-shape="round"] .ts-textarea { border-radius: 22px; padding: var(--ts-space-3) var(--ts-space-4); }
+:root[data-shape="round"] .ts-select::after { right: var(--ts-space-4); }
+:root[data-shape="round"] .ts-input:focus-within {
+  background: var(--ts-bg-surface);
+  box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow);
+}
+:root[data-shape="round"] .ts-field[data-invalid] .ts-input { box-shadow: 0 0 0 1.5px var(--ts-danger-text), 0 0 0 var(--ts-focus-glow-width) var(--ts-danger-subtle); }
+:root[data-shape="round"] .ts-field-label, :root[data-shape="round"] .ts-field-help { padding-inline: var(--ts-space-4); }
+
+/* ---------- 复选框 / 单选 ---------- */
+:root[data-shape="round"] .ts-checkbox { width: 22px; height: 22px; border-radius: 8px; box-shadow: inset 0 0 0 1.5px var(--ts-border-strong); }
+:root[data-shape="round"] .ts-radio { width: 22px; height: 22px; }
+:root[data-shape="round"] .ts-radio::before { width: 9px; height: 9px; border-radius: 50%; transform: scale(0); }
+:root[data-shape="round"] .ts-radio:checked::before { transform: scale(1); }
+:root[data-shape="round"] :is(.ts-checkbox, .ts-radio):is(:checked, :indeterminate) { box-shadow: none; }
+
+/* ---------- 开关：胶囊轨道 + 圆形滑块 ---------- */
+:root[data-shape="round"] .ts-switch { --_r: 15px; --_tr: 12px; box-shadow: 0 0 0 var(--ts-border-width) var(--ts-border-field); }
+:root[data-shape="round"] .ts-switch:checked { box-shadow: none; }
+:root[data-shape="round"] .ts-switch.ts-sm { --_r: 12px; --_tr: 9px; }
+:root[data-shape="round"] .ts-switch::before { background-image: none; box-shadow: 0 1px 2px rgb(31 27 22 / .16), 0 3px 8px rgb(31 27 22 / .12); }
+
+/* ---------- 分段控制：一整条胶囊，选中块是胶囊 ---------- */
+:root[data-shape="round"] .ts-segmented { gap: 0; padding: 3px; --_outer: var(--ts-round-pill); height: calc(var(--_h) + 6px); }
+:root[data-shape="round"] .ts-segmented-tiles { inset: 0; gap: 0; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); box-shadow: 0 0 0 var(--ts-border-width) var(--ts-border-field); }
+:root[data-shape="round"] .ts-segmented-tiles > i { background: none !important; box-shadow: none; }
+:root[data-shape="round"] .ts-segmented span { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-segmented-indicator { top: 3px; bottom: 3px; border-radius: var(--ts-round-pill) !important; background-image: var(--ts-layer-sheen); }
+:root[data-shape="round"] .ts-segmented-indicator { background-color: var(--ts-bg-elevated); box-shadow: 0 1px 2px rgb(31 27 22 / .1), 0 3px 10px rgb(31 27 22 / .1); }
+:root[data-shape="round"] .ts-segmented input:checked + span { color: var(--ts-text-primary); }
+:root[data-shape="round"] .ts-segmented.is-dragging .ts-segmented-indicator { box-shadow: 0 2px 6px rgb(31 27 22 / .14), 0 8px 20px rgb(31 27 22 / .12); }
+
+/* ---------- 标签页：没有底线，指示器是一颗圆头短条 ---------- */
+:root[data-shape="round"] .ts-tabs { box-shadow: none; }
+:root[data-shape="round"] .ts-tabs-indicator { height: 4px; border-radius: 2px; }
+
+/* ---------- 卡片：大圆角，没有描边，只有柔和的投影 ---------- */
+:root[data-shape="round"] .ts-card { border-radius: var(--ts-round-card); }
+
+/* ---------- 列表：一整块圆角面，行之间没有缝、没有线；悬停时行内出现一颗胶囊 ---------- */
+:root[data-shape="round"] .ts-list {
+  gap: 0; padding: 6px; border-radius: var(--ts-round-card);
+  background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface);
+}
+:root[data-shape="round"] .ts-list.ts-sunken-list { background: var(--ts-fill-default); box-shadow: none; }
+:root[data-shape="round"] .ts-list-item,
+:root[data-shape="round"] .ts-list > li:is(:first-child, :last-child) > .ts-list-item {
+  background: transparent; box-shadow: none; border-radius: 22px; padding-inline: 12px;
+}
+
+/* ---------- 头像、徽标、标签、骨架屏：圆 ---------- */
+:root[data-shape="round"] .ts-avatar { border-radius: 50%; }
+:root[data-shape="round"] .ts-avatar-group > .ts-avatar { box-shadow: 0 0 0 2px var(--ts-bg-surface); }
+:root[data-shape="round"] .ts-avatar-group > .ts-avatar + .ts-avatar { margin-inline-start: -8px; }
+:root[data-shape="round"] .ts-badge, :root[data-shape="round"] .ts-badge.ts-dot { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-tag { border-radius: var(--ts-round-pill); padding: 0 10px; }
+:root[data-shape="round"] .ts-skeleton { border-radius: var(--ts-round-pill); }
+:root[data-shape="round"] .ts-skeleton.ts-tile { border-radius: 50%; }
+:root[data-shape="round"] .ts-kbd { border-radius: 8px; }
+
+/* ---------- 浮层 ---------- */
+:root[data-shape="round"] .ts-menu { border-radius: 24px; padding: 6px; }
+:root[data-shape="round"] .ts-menu-item { border-radius: 18px; }
+/* 分组之间只留白，不画线 */
+:root[data-shape="round"] .ts-menu-sep { height: 0; margin: 4px 0; background: none; }
+:root[data-shape="round"] dialog.ts-dialog { border-radius: var(--ts-round-panel); padding: var(--ts-space-8) var(--ts-space-6) var(--ts-space-6); }
+:root[data-shape="round"] .ts-dialog-actions { gap: var(--ts-round-gap); }
+:root[data-shape="round"] .ts-dialog-actions > .ts-button { border-radius: var(--ts-round-pill) !important; }
+:root[data-shape="round"] .ts-sheet { border-radius: var(--ts-round-panel) var(--ts-round-panel) 0 0; }
+:root[data-shape="round"] .ts-toaster { gap: var(--ts-round-gap); }
+:root[data-shape="round"] .ts-toast { border-radius: var(--ts-round-pill); padding-bottom: 0; padding-inline-start: var(--ts-space-5); }
+
+/* ---------- 导航：去掉分割线；底部标签栏浮起成一颗胶囊 ---------- */
+:root[data-shape="round"] .ts-navbar { box-shadow: none; }
+:root[data-shape="round"] .ts-tabbar {
+  gap: 0; margin: 0 var(--ts-space-3) max(var(--ts-space-3), env(safe-area-inset-bottom));
+  padding: 6px; border-radius: var(--ts-round-pill);
+  background: var(--ts-bg-elevated); box-shadow: var(--ts-shadow-2), 0 0 0 var(--ts-border-width) var(--ts-border-subtle);
+}
+:root[data-shape="round"] .ts-tabbar-item { height: 50px; border-radius: var(--ts-round-pill); }
+
+/* 毛玻璃仍然可选：放在最后，盖过上面的实色选中块 */
+:root[data-shape="round"] .ts-segmented.ts-glass .ts-segmented-indicator,
+:root[data-shape="round"][data-material="glass"] .ts-segmented-indicator {
+  background-color: var(--ts-material-glass-thumb);
+  box-shadow: inset 0 0 0 1px var(--ts-material-glass-rim), 0 2px 8px rgb(31 27 22 / .12);
+}
+
+}
