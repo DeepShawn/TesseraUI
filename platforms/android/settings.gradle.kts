@@ -5,4 +5,4 @@ dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
 rootProject.name = "TesseraUI"
-include(":tessera")
+include(":tessera", ":sample")

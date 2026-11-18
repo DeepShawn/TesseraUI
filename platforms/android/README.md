@@ -43,9 +43,14 @@ echo "sdk.dir=$ANDROID_HOME" > local.properties
 gradle :tessera:compileDebugKotlin          # 编译
 gradle :tessera:recordPaparazziDebug        # 录制截图基准图（tessera/src/test/snapshots）
 gradle :tessera:verifyPaparazziDebug        # 截图对比
+gradle :sample:testDebugUnitTest            # 无障碍检查
+gradle :sample:assembleDebug                # 示例 App（sample/build/outputs/apk/debug/sample-debug.apk）
 ```
 
-截图测试使用 [Paparazzi](https://github.com/cashapp/paparazzi)，在 JVM 上渲染，不需要模拟器；每个分区截拼贴 / 圆融 / 流韵 × 浅色 / 深色共 6 张，共 36 张基准图。组件总览 `samples/TesseraGallery` 同时用于开发预览和截图测试。
+截图测试使用 [Paparazzi](https://github.com/cashapp/paparazzi)，在 JVM 上渲染，不需要模拟器；每个分区截拼贴 / 圆融 / 流韵 × 浅色 / 深色 / 浅色增强对比度共 9 张，共 54 张基准图。组件总览 `samples/TesseraGallery` 同时用于开发预览、截图测试、无障碍检查和示例 App。
+
+- **无障碍检查**（`sample/src/test/.../AccessibilityTest.kt`）：用 Robolectric 在 JVM 上运行，三种外观 × 6 个分区，检查每个可点击、可切换的元素都有读屏名称，触摸区域不小于 44dp（按 Compose 自动扩展后的触摸范围计算）。放在 `sample` 模块是因为 Robolectric 与 Paparazzi 不能在同一模块里运行。
+- **示例 App**（`sample`）：可在真机上切换三种外观和浅色 / 深色，逐个查看首批 22 个组件。持续集成每次都会编译并上传为 `tessera-sample-apk`，下载后直接安装即可做真机验证。
 
 - `TesseraTokens.kt`、`icons/TesseraIcons.kt`、`res/values*/tessera_*.xml` 由 `npm run build` 生成，请勿手动修改。
 - 已知限制：Compose 没有连续曲率圆角，目前使用普通圆角；毛玻璃滑块在 Android 上为半透明效果，不做背景模糊。

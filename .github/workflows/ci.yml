@@ -73,6 +73,14 @@ jobs:
         run: gradle :tessera:compileDebugKotlin
       - name: 截图对比（Paparazzi）
         run: gradle :tessera:verifyPaparazziDebug
+      - name: 无障碍检查（Robolectric）
+        run: gradle :sample:testDebugUnitTest
+      - name: 示例 App
+        run: gradle :sample:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tessera-sample-apk
+          path: platforms/android/sample/build/outputs/apk/debug/sample-debug.apk
 
   apple:
     runs-on: macos-15

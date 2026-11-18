@@ -145,7 +145,11 @@ fun TesseraTextField(
             interactionSource = interactionSource,
             modifier = Modifier
                 .fillMaxWidth()
-                .semantics { if (error != null) error(error) }
+                .semantics {
+                    // 读屏名称：标签（没有标签时用占位文字），否则读屏只会说“编辑框”
+                    (label ?: placeholder)?.let { contentDescription = it }
+                    if (error != null) error(error)
+                }
                 .focusGlow(glow, radius, if (error != null) c.dangerSubtle else c.focusGlow, if (error != null) c.dangerText else c.focusRing)
                 .graphicsLayer { alpha = if (enabled) 1f else TesseraOpacity.DISABLED },
             decorationBox = { inner ->
