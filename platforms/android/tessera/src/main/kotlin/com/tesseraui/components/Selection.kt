@@ -126,7 +126,7 @@ fun TesseraCheckbox(
     Box(
         modifier
             .defaultMinSize(minHeight = TesseraSize.touchMin)
-            .triStateToggleable(state, interaction, null, enabled = enabled && onCheckedChange != null, role = Role.Checkbox) { haptic(TesseraHaptic.Light); onCheckedChange?.invoke(!checked) }
+            .triStateToggleable(state, interaction, null, enabled = enabled && onCheckedChange != null, role = Role.Checkbox) { haptic(TesseraHaptic.Selection); onCheckedChange?.invoke(!checked) }
             .alpha(if (enabled) 1f else TesseraOpacity.DISABLED),
         contentAlignment = Alignment.CenterStart,
     ) {
@@ -175,7 +175,7 @@ fun TesseraRadio(selected: Boolean, onClick: (() -> Unit)?, modifier: Modifier =
     Box(
         modifier
             .defaultMinSize(minHeight = TesseraSize.touchMin)
-            .selectable(selected, interaction, null, enabled = enabled && onClick != null, role = Role.RadioButton) { haptic(TesseraHaptic.Light); onClick?.invoke() }
+            .selectable(selected, interaction, null, enabled = enabled && onClick != null, role = Role.RadioButton) { haptic(TesseraHaptic.Selection); onClick?.invoke() }
             .alpha(if (enabled) 1f else TesseraOpacity.DISABLED),
         contentAlignment = Alignment.CenterStart,
     ) {
@@ -380,7 +380,7 @@ fun TesseraSegmentedControl(
                     val l = leftOf(i)
                     launch { left.animateTo(l, snappy, initialVelocity = v) }
                     launch { right.animateTo(l + itemPx, snappy, initialVelocity = v) }
-                    if (i != latest) { haptic(TesseraHaptic.Light); onSelect(i) }
+                    if (i != latest) { haptic(TesseraHaptic.Selection); onSelect(i) }
                 }),
             horizontalArrangement = Arrangement.spacedBy(gap),
         ) {
@@ -388,7 +388,7 @@ fun TesseraSegmentedControl(
                 val selected = i == selectedIndex
                 val fg by animateColorAsState(if (selected) (if (round) c.textPrimary else c.bgSurface) else c.textSecondary, tween(TesseraMotion.DURATION_NORMAL), label = "fg")
                 Box(
-                    Modifier.weight(1f).fillMaxHeight().selectable(selected, role = Role.Tab) { if (!selected) haptic(TesseraHaptic.Light); onSelect(i) },
+                    Modifier.weight(1f).fillMaxHeight().selectable(selected, role = Role.Tab) { if (!selected) haptic(TesseraHaptic.Selection); onSelect(i) },
                     contentAlignment = Alignment.Center,
                 ) { TesseraText(o, style = Tessera.type.label, color = fg, maxLines = 1) }
             }

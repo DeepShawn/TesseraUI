@@ -36,7 +36,7 @@ public struct TesseraCheckboxStyle: ToggleStyle {
         .opacity(isEnabled ? 1 : TesseraOpacity.disabled)
         .accessibilityAddTraits(on ? [.isSelected] : [])
         .accessibilityValue(on ? "已勾选" : "未勾选")
-        .sensoryFeedback(.selection, trigger: on) { _, _ in tesseraShape == .flow }
+        .tesseraHaptic(.selection, trigger: on)
     }
 
     struct CheckMark: Shape {
@@ -100,7 +100,7 @@ public struct TesseraRadioGroup<Value: Hashable>: View {
                 .accessibilityAddTraits(on ? [.isSelected] : [])
             }
         }
-        .sensoryFeedback(.selection, trigger: selection) { _, _ in tesseraShape == .flow }
+        .tesseraHaptic(.selection, trigger: selection)
     }
 }
 
@@ -165,7 +165,7 @@ public struct TesseraSwitchStyle: ToggleStyle {
             // 流韵：拨动时从滑块落脚处溅起两圈涟漪
             .tesseraSplash(trigger: isOn, active: tesseraShape == .flow, color: (isOn ? TesseraColor.accentControl : TesseraColor.textTertiary).opacity(0.75),
                            diameter: h * 2.4, anchor: UnitPoint(x: isOn ? (w - h / 2) / w : (h / 2) / w, y: 0.5))
-            .sensoryFeedback(.impact(weight: .medium, intensity: 0.7), trigger: isOn) { _, _ in tesseraShape == .flow }
+            .tesseraHaptic(isOn ? .medium : .light, trigger: isOn)
             .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: isOn)
             .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: stretch)
             .animation(.easeOut(duration: TesseraMotion.durationNormal), value: preview)
@@ -287,7 +287,7 @@ public struct TesseraSegmentedControl: View {
         .frame(height: height)
         .padding(round ? 3 : 0)
         .background { if round { pill.fill(TesseraColor.fillDefault) } }
-        .sensoryFeedback(.selection, trigger: selection) { _, _ in tesseraShape == .flow }
+        .tesseraHaptic(.selection, trigger: selection)
         .accessibilityElement(children: .contain)
     }
 }

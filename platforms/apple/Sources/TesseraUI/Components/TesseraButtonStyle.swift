@@ -65,7 +65,7 @@ public struct TesseraButtonStyle: ButtonStyle {
             .frame(minWidth: TesseraSize.touchMin, minHeight: TesseraSize.touchMin)
             .tesseraPress(pressed, shape: tesseraShape, reduceMotion: reduceMotion)
             .animation(pressed ? .easeOut(duration: TesseraMotion.pressDuration) : .tessera(flow ? TesseraMotion.bouncy : TesseraMotion.snappy, reduceMotion: reduceMotion), value: pressed)
-            .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.6), trigger: pressed) { _, now in now && flow && isSolid }
+            .tesseraHaptic(variant == .danger ? .warning : .light, trigger: pressed) { _, now in now && isSolid }
             .opacity(isEnabled ? 1 : TesseraOpacity.disabled)
     }
 }

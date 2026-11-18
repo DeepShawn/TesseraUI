@@ -204,7 +204,7 @@ fun TesseraTabBar(items: List<TesseraTabBarItem>, selectedIndex: Int, onSelect: 
                     .height(if (round) 50.dp else 52.dp)
                     .clip(if (round) pill else RoundedCornerShape(TesseraRadius.md))
                     .background(bg)
-                    .selectable(selected, role = Role.Tab) { if (!selected) haptic(TesseraHaptic.Light); onSelect(i) },
+                    .selectable(selected, role = Role.Tab) { if (!selected) haptic(TesseraHaptic.Selection); onSelect(i) },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {

@@ -165,7 +165,7 @@ public struct TesseraTabBar: View {
         .padding(.bottom, round ? TesseraSpace.s3 : 0)
         .background(TesseraColor.bgCanvas.ignoresSafeArea(edges: .bottom))
         .overlay(alignment: .top) { if !round { Rectangle().fill(TesseraColor.borderSubtle).frame(height: 1) } }
-        .sensoryFeedback(.selection, trigger: selection) { _, _ in tesseraShape == .flow }
+        .tesseraHaptic(.selection, trigger: selection)
     }
 }
 

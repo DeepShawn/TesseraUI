@@ -1,6 +1,11 @@
 package com.tesseraui.foundation
 
 import android.app.ActivityManager
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
+import android.os.PowerManager
 import android.content.Context
 import android.view.HapticFeedbackConstants
 import android.view.View
@@ -11,6 +16,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -35,31 +44,59 @@ import kotlin.math.max
 
 // 流韵外观的动效：水波、涟漪、水滴形变、触感。只在 TesseraShape.Flow 下生效，“移除动画”时只保留触感。
 
-/** 设备是否适合流韵的持续动效：不是低内存设备，处理器不少于 6 核，内存不少于 4GB */
+/**
+ * 设备是否适合流韵的持续动效：不是低内存设备，处理器不少于 6 核，内存不少于 4GB，且没有打开省电模式。
+ * 省电模式在使用中打开或关闭时会实时更新（外观随之在流韵与圆融之间切换）。
+ */
 @Composable
 fun isFlowCapable(): Boolean {
     if (LocalInspectionMode.current) return true
     val context = LocalContext.current
-    return remember {
+    val hardware = remember {
         val am = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
         val mem = ActivityManager.MemoryInfo().also { am?.getMemoryInfo(it) }
         val lowRam = am?.isLowRamDevice == true
         val cores = Runtime.getRuntime().availableProcessors()
         !lowRam && cores >= TesseraFlow.MIN_CORES && mem.totalMem >= TesseraFlow.MIN_MEMORY_GB * 0.9 * 1024 * 1024 * 1024
     }
+    val power = context.getSystemService(Context.POWER_SERVICE) as? PowerManager
+    var saving by remember { mutableStateOf(power?.isPowerSaveMode == true) }
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(c: Context?, i: Intent?) { saving = power?.isPowerSaveMode == true }
+        }
+        ContextCompatRegister.register(context, receiver, IntentFilter(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED))
+        onDispose { runCatching { context.unregisterReceiver(receiver) } }
+    }
+    return hardware && !saving
 }
 
-/** 触感反馈的种类 */
-enum class TesseraHaptic { Light, Medium }
+private object ContextCompatRegister {
+    fun register(context: Context, receiver: BroadcastReceiver, filter: IntentFilter) {
+        if (Build.VERSION.SDK_INT >= 33) context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        else @Suppress("UnspecifiedRegisterReceiverFlag") context.registerReceiver(receiver, filter)
+    }
+}
 
-/** 流韵外观下的触感反馈；其他外观不触发 */
+/** 四端统一的触感种类：选择（切换选项）、轻触、中等（开关打开）、确认（成功）、警告（危险操作、失败） */
+enum class TesseraHaptic { Selection, Light, Medium, Success, Warning }
+
+/** 流韵外观下的触感反馈；其他外观不触发。Android 11 以下没有“确认 / 警告”专用触感，用相近的代替 */
 @Composable
 fun rememberFlowHaptic(): (TesseraHaptic) -> Unit {
     val view: View = LocalView.current
     val flow = isFlow
     return remember(view, flow) {
         { kind ->
-            if (flow) view.performHapticFeedback(if (kind == TesseraHaptic.Medium) HapticFeedbackConstants.VIRTUAL_KEY else HapticFeedbackConstants.CLOCK_TICK)
+            if (flow) view.performHapticFeedback(
+                when (kind) {
+                    TesseraHaptic.Selection -> HapticFeedbackConstants.CLOCK_TICK
+                    TesseraHaptic.Light -> HapticFeedbackConstants.KEYBOARD_TAP
+                    TesseraHaptic.Medium -> HapticFeedbackConstants.VIRTUAL_KEY
+                    TesseraHaptic.Success -> if (Build.VERSION.SDK_INT >= 30) HapticFeedbackConstants.CONFIRM else HapticFeedbackConstants.VIRTUAL_KEY
+                    TesseraHaptic.Warning -> if (Build.VERSION.SDK_INT >= 30) HapticFeedbackConstants.REJECT else HapticFeedbackConstants.LONG_PRESS
+                },
+            )
         }
     }
 }

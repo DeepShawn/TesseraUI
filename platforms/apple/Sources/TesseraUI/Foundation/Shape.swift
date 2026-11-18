@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 // MARK: - 外观
 
@@ -84,9 +85,48 @@ struct ShapeResolver: ViewModifier {
     let shape: TesseraShape
     let requireCapableDevice: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// 低电量模式在使用中打开或关闭时，外观实时在流韵与圆融之间切换
+    @State private var capable = tesseraFlowCapable()
 
     func body(content: Content) -> some View {
-        let resolved: TesseraShape = shape == .flow && (reduceMotion || (requireCapableDevice && !tesseraFlowCapable())) ? .round : shape
-        content.environment(\.tesseraShape, resolved)
+        let resolved: TesseraShape = shape == .flow && (reduceMotion || (requireCapableDevice && !capable)) ? .round : shape
+        content
+            .environment(\.tesseraShape, resolved)
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.NSProcessInfoPowerStateDidChange)) { _ in
+                capable = tesseraFlowCapable()
+            }
+    }
+}
+
+/// 四端统一的触感种类：选择（切换选项）、轻触、中等（开关打开）、确认（成功）、警告（危险操作、失败）
+public enum TesseraHaptic: Sendable {
+    case selection, light, medium, success, warning
+
+    var feedback: SensoryFeedback {
+        switch self {
+        case .selection: .selection
+        case .light: .impact(flexibility: .soft, intensity: 0.6)
+        case .medium: .impact(weight: .medium, intensity: 0.7)
+        case .success: .success
+        case .warning: .warning
+        }
+    }
+}
+
+public extension View {
+    /// 流韵外观下的触感反馈：trigger 变化且 condition 为真时触发；其他外观不触发（macOS 上无效果）
+    func tesseraHaptic<T: Equatable>(_ kind: TesseraHaptic, trigger: T, when condition: @escaping (T, T) -> Bool = { _, _ in true }) -> some View {
+        modifier(FlowHaptic(kind: kind, trigger: trigger, condition: condition))
+    }
+}
+
+struct FlowHaptic<T: Equatable>: ViewModifier {
+    let kind: TesseraHaptic
+    let trigger: T
+    let condition: (T, T) -> Bool
+    @Environment(\.tesseraShape) private var tesseraShape
+
+    func body(content: Content) -> some View {
+        content.sensoryFeedback(kind.feedback, trigger: trigger) { old, new in tesseraShape == .flow && condition(old, new) }
     }
 }

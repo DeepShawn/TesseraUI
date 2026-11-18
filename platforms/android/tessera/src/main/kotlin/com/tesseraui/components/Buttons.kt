@@ -110,7 +110,7 @@ fun TesseraButton(
     val radius by animateDpAsState(if (flow && pressed && enabled) size.height / 2 else baseRadius, if (pressed) tween(120) else TesseraMotion.bouncy(), label = "radius")
     val s = shape ?: RoundedCornerShape(radius)
     val haptic = rememberFlowHaptic()
-    LaunchedEffect(pressed) { if (pressed && solid && enabled) haptic(TesseraHaptic.Light) }
+    LaunchedEffect(pressed) { if (pressed && solid && enabled) haptic(if (variant == TesseraButtonVariant.Danger) TesseraHaptic.Warning else TesseraHaptic.Light) }
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = TesseraSize.touchMin, minHeight = TesseraSize.touchMin)
