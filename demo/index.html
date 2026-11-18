@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TesseraUI v0.1 预览</title>
+<title>TesseraUI v0.2 预览</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..600,0..100,0..1&family=Instrument+Sans:wght@400;600&family=Noto+Serif+SC:wght@600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -168,7 +168,7 @@
 </head>
 <body>
 <header class="ts-navbar">
-  <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>TesseraUI <span class="ts-tag ts-accent" style="font-family:var(--ts-font-mono);font-weight:500">0.1</span></div>
+  <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>TesseraUI <span class="ts-tag ts-accent" style="font-family:var(--ts-font-mono);font-weight:500">0.2</span></div>
   <div class="controls">
     <div class="ts-segmented ts-sm" role="radiogroup" aria-label="主题" id="theme">
       <label><input type="radio" name="theme" value="system" checked><span>跟随系统</span></label>
@@ -348,7 +348,7 @@
       <div class="stack">
         <ul class="ts-list">
           <li class="ts-settle" style="--i:0"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-lapis">设</span><span class="ts-grow"><span class="ts-label">设计评审</span><span class="ts-caption">今天 14:00 · 3 号会议室</span></span><i data-icon="chevron-right"></i></button></li>
-          <li class="ts-settle" style="--i:1"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-olive">发</span><span class="ts-grow"><span class="ts-label">v0.1 发布检查</span><span class="ts-caption">对比度 284 / 284 通过</span></span><span class="ts-tag ts-success">就绪</span></button></li>
+          <li class="ts-settle" style="--i:1"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-olive">发</span><span class="ts-grow"><span class="ts-label">v0.2 发布检查</span><span class="ts-caption">对比度 284 / 284 通过</span></span><span class="ts-tag ts-success">就绪</span></button></li>
           <li class="ts-settle" style="--i:2"><button class="ts-list-item ts-state"><span class="ts-avatar ts-pigment-ochre">图</span><span class="ts-grow"><span class="ts-label">首批图标</span><span class="ts-caption">157 / 150 ✓</span></span><i data-icon="chevron-right"></i></button></li>
         </ul>
         <div class="ts-card" aria-busy="true" aria-label="加载中" style="padding:20px">
@@ -497,7 +497,7 @@
 </div>
 
 <dialog class="ts-dialog" id="dialog" aria-labelledby="dlg-title">
-  <h2 class="ts-dialog-title" id="dlg-title">发布 v0.1？</h2>
+  <h2 class="ts-dialog-title" id="dlg-title">发布 v0.2？</h2>
   <p class="ts-dialog-body">发布后会生成 0.1.0 标签和更新日志，四端产物同步打包。这一步可以随时回滚。</p>
   <div class="ts-dialog-actions ts-tiles">
     <button class="ts-button ts-pressable ts-state" data-close>再想想</button>
@@ -630,7 +630,7 @@ T.onCommittedInput(document.getElementById('f-name'), (v) => (document.getElemen
 T.menu(document.getElementById('menu-trigger'), document.getElementById('menu'));
 const dlg = document.getElementById('dialog');
 document.getElementById('open-dialog').onclick = () => T.openDialog(dlg);
-dlg.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => { T.closeDialog(dlg, b.dataset.close); if (b.dataset.close === 'ok') setTimeout(() => T.toast('已发布 v0.1.0', { type: 'success' }), 160); }));
+dlg.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => { T.closeDialog(dlg, b.dataset.close); if (b.dataset.close === 'ok') setTimeout(() => T.toast('已发布 v0.2.0', { type: 'success' }), 160); }));
 document.getElementById('open-toast').onclick = () => T.toast('已保存到相册', { type: 'success' });
 document.getElementById('open-toast-action').onclick = () => T.toast('已删除 3 个文件', { iconName: 'trash', action: { label: '撤销', onClick: () => T.toast('已恢复') } });
 const sheet = T.bottomSheet(document.getElementById('sheet'));
