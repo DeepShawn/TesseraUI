@@ -33,7 +33,7 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 | `Themes/TesseraButton.xaml` | 按钮：主要、次要、文字、危险 |
 | `Themes/TesseraControls.xaml` | 其余控件的样式与模板 |
 | `Themes/TesseraShapeRound.xaml` | 圆融外观：覆盖圆角、砖缝、砖厚、按压等数值。可选，生成文件 |
-| `Themes/TesseraShapeFlow.xaml` | 流韵外观：以圆融为基础，圆角介于方砖与胶囊之间。可选，生成文件；水波与开关涟漪在 WinUI 上尚未实现 |
+| `Themes/TesseraShapeFlow.xaml` | 流韵外观：以圆融为基础，圆角介于方砖与胶囊之间。可选，生成文件。水波、开关涟漪、水珠弹跳由 `TesseraFlow.Ripple` / `Splash` 附加属性实现（TesseraUI 样式已默认挂上）；按压变胶囊与浮层模糊浮现尚未实现；WinUI 没有通用触感接口 |
 | `Controls/*.cs` | 系统中没有对应控件、或系统控件无法改成 TesseraUI 交互的自定义控件 |
 | `Generated/*.g.cs` | 动效常量、层级、图标路径数据。生成文件 |
 

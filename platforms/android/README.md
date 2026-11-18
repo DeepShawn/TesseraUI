@@ -13,7 +13,7 @@ TesseraTheme(fonts = TesseraFonts(display = fraunces, text = instrumentSans)) {
 }
 ```
 
-- 外观：`TesseraTheme(shape = TesseraShape.Flow)` 切换为“流韵”——在圆融基础上，圆角介于方砖与胶囊之间，按下变成胶囊并荡开水波，开关溅起涟漪、滑块像水滴一样晃，开关、复选框、分段控制、标签栏和主要按钮有触感反馈；只在性能较好的设备上启用（不是低内存设备、不少于 6 核、不少于 4GB 内存，且没有打开“移除动画”），否则自动改用圆融，`requireCapableDevice = false` 可跳过设备检测。`TesseraShape.Round` 切换为“圆融”——胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线，按下是轻轻一捏；默认 `TesseraShape.Tile`（拼贴）。两种外观共用同一套组件，自定义组件可通过 `isRound`、`shapeOf()`、`groupShape()`、`groupGap` 跟随外观。
+- 外观：`TesseraTheme(shape = TesseraShape.Flow)` 切换为“流韵”——在圆融基础上，圆角介于方砖与胶囊之间，按下变成胶囊并荡开水波，开关溅起涟漪、滑块像水滴一样晃，开关、复选框、分段控制、标签栏和主要按钮有触感反馈；只在性能较好的设备上启用（不是低内存设备、不少于 6 核、不少于 4GB 内存，且没有打开“移除动画”），否则自动改用圆融，`requireCapableDevice = false` 可跳过设备检测；省电模式在使用中打开时会实时退回圆融。触感用 `rememberFlowHaptic()`，五档 `TesseraHaptic.Selection / Light / Medium / Success / Warning`（Android 11 以下用相近触感代替）。`TesseraShape.Round` 切换为“圆融”——胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线，按下是轻轻一捏；默认 `TesseraShape.Tile`（拼贴）。两种外观共用同一套组件，自定义组件可通过 `isRound`、`shapeOf()`、`groupShape()`、`groupGap` 跟随外观。
 - 主题默认跟随系统的深色模式、Android 14+ 的“对比度”设置和“移除动画”设置。
 - 动效统一通过 `motion(TesseraMotion.snappy())` 取得；系统“移除动画”时自动改为 150ms 过渡。
 - 字体：把 Fraunces（标题）和 Instrument Sans（正文）放进 `res/font/`，通过 `TesseraFonts` 传入；未传入时标题回退系统衬线体（中文为 Noto Serif CJK），正文回退系统无衬线体。

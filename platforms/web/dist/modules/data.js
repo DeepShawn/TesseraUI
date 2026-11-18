@@ -1,4 +1,4 @@
-// TesseraUI v0.3.1 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.3.2 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 数据展示：Table、Tree、Accordion、Tooltip、Popover、Carousel、ImageViewer、CodeBlock
 import { Spring, VelocityTracker, motion as M, icon, once, uid, clamp, place, follow, onOutside, animateIn, animateOut, emit, esc, prefersReducedMotion, onCommittedInput } from '../core.js';
 import { pagination } from './navigation.js';

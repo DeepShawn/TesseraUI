@@ -26,7 +26,8 @@ ContentView()
     .tesseraShape(.round)
 
 // 流韵：在圆融基础上，圆角介于方砖与胶囊之间，按下变成胶囊并荡开水波，开关溅起涟漪，有触感反馈。
-// 只在性能较好的设备上启用（不在低电量模式、不少于 6 核、不少于 4GB 内存、没有打开“减弱动态效果”），否则自动改用圆融
+// 只在性能较好的设备上启用（不在低电量模式、不少于 6 核、不少于 4GB 内存、没有打开“减弱动态效果”），否则自动改用圆融；
+// 低电量模式在使用中切换会实时生效。触感：.tesseraHaptic(.selection | .light | .medium | .success | .warning, trigger:)
 ContentView()
     .tesseraShape(.flow)
 ```

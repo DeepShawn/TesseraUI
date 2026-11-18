@@ -88,7 +88,8 @@ import { slider, datePicker } from './dist/modules/forms.js';
 | `setTheme(theme)` / `setContrast(on)` / `setMaterial(on)` | 切换主题、增强对比度、毛玻璃 |
 | `setShape(shape, { force })` | 切换外观：`'tile'`（拼贴，默认）、`'round'`（圆融）或 `'flow'`（流韵），等同于在 `<html>` 上写 `data-shape`。设备不适合流韵时自动改用圆融（`force: true` 可强制），返回实际使用的外观 |
 | `flowCapable()` | 设备是否适合流韵：没有打开“减弱动态效果”、没有开省流量、CPU 不少于 6 核、内存不少于 4GB |
-| `haptic(kind)` | 触感反馈：`'light'`、`'medium'`、`'success'`。Android 浏览器使用 Vibration API，iOS Safari 18+ 借用系统开关控件的触感，桌面浏览器无效果。须在用户操作的回调中调用 |
+| `haptic(kind)` | 触感反馈，五档：`'selection'`、`'light'`、`'medium'`、`'success'`、`'warning'`。Android 浏览器使用 Vibration API；iOS Safari 18+ 借用系统开关控件的触感（只有一种强度）；桌面浏览器无效果。返回是否触发，不支持时静默降级。须在用户操作的回调中调用 |
+| `tessera:flow-degraded` 事件 | 流韵因持续掉帧（`reason: 'fps'`）或电量低（`'battery'`）自动退回圆融时，在 `document` 上派发 |
 | `toast(message, options?)` | 提示消息 |
 | `openDialog(dialog)` / `closeDialog(dialog)` | 打开或关闭 `<dialog class="ts-dialog">` |
 | `confirm(options)` | 确认框，返回 `Promise<boolean>` |
