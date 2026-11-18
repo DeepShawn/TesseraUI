@@ -399,6 +399,20 @@ object TesseraRound {
     const val PRESS_SCALE = 0.97f
 }
 
+/** 流韵外观的形状与动效数值（TesseraTheme(shape = TesseraShape.Flow) 时使用） */
+object TesseraFlow {
+    val control = 17.dp
+    val card = 26.dp
+    val panel = 34.dp
+    val row = 18.dp
+    val menu = 22.dp
+    const val PRESS_SCALE = 0.96f
+    const val RIPPLE_DURATION = 760
+    const val SPLASH_DURATION = 640
+    const val MIN_CORES = 6
+    const val MIN_MEMORY_GB = 4
+}
+
 object TesseraFocus {
     val ringWidth = 2.dp
     val ringOffset = 2.dp

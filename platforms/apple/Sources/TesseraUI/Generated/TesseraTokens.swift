@@ -176,6 +176,20 @@ public enum TesseraRound {
     public static let pressScale: CGFloat = 0.97
 }
 
+/// 流韵外观的形状与动效数值（`.tesseraShape(.flow)` 时使用）
+public enum TesseraFlow {
+    public static let control: CGFloat = 17
+    public static let card: CGFloat = 26
+    public static let panel: CGFloat = 34
+    public static let row: CGFloat = 18
+    public static let menu: CGFloat = 22
+    public static let pressScale: CGFloat = 0.96
+    public static let rippleDuration: Double = 0.76
+    public static let splashDuration: Double = 0.64
+    public static let minCores = 6
+    public static let minMemoryGB = 4
+}
+
 public enum TesseraFocus {
     public static let ringWidth: CGFloat = 2
     public static let ringOffset: CGFloat = 2

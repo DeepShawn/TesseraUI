@@ -83,9 +83,10 @@ namespace TesseraUI
         private void ApplyTrackStyle()
         {
             var round = TesseraResources.IsRound;
-            // 拼贴：圆角 14 的凹槽；圆融：胶囊，没有描边
-            _track.CornerRadius = new CornerRadius(round ? 999 : 14 + Pad);
-            _thumb.CornerRadius = new CornerRadius(round ? 999 : 14);
+            var flow = TesseraResources.IsFlow;
+            // 拼贴：圆角 14 的凹槽；圆融：胶囊，没有描边；流韵：方圆之间（17），没有描边
+            _track.CornerRadius = new CornerRadius(flow ? 17 + Pad : round ? 999 : 14 + Pad);
+            _thumb.CornerRadius = new CornerRadius(flow ? 17 : round ? 999 : 14);
             _track.Background = Res("TesseraFillDefaultBrush");
             _track.BorderBrush = Res("TesseraBorderSubtleBrush");
             _track.BorderThickness = new Thickness(round ? 0 : 1);
@@ -148,10 +149,25 @@ namespace TesseraUI
         private void OnSelectedIndexChanged(int old)
         {
             UpdateLabels();
+            if (TesseraResources.IsFlow && TesseraResources.AnimationsEnabled && _thumbVisual is not null) Tension();
             if (!_dragging) Layout(animate: true);
             if (FrameworkElementAutomationPeer.FromElement(this) is SegmentedPeer peer && Items is { } items && SelectedIndex >= 0 && SelectedIndex < items.Count)
                 peer.RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, old >= 0 && old < items.Count ? items[old] : "", items[SelectedIndex]);
             SelectionChanged?.Invoke(this, SelectedIndex);
+        }
+
+        /// <summary>流韵：选中块移动时像液面一样被拉扁，停下时回弹</summary>
+        private void Tension()
+        {
+            var v = _thumbVisual!;
+            v.CenterPoint = new Vector3((float)_thumb.ActualWidth / 2, (float)_thumb.ActualHeight / 2, 0);
+            var a = v.Compositor.CreateVector3KeyFrameAnimation();
+            a.InsertKeyFrame(0.30f, new Vector3(1, 0.84f, 1));
+            a.InsertKeyFrame(0.62f, new Vector3(1, 1.06f, 1));
+            a.InsertKeyFrame(0.82f, new Vector3(1, 0.98f, 1));
+            a.InsertKeyFrame(1f, Vector3.One);
+            a.Duration = TimeSpan.FromMilliseconds(520);
+            v.StartAnimation("Scale", a);
         }
 
         private void MoveThumb(float x, bool animate)

@@ -14,12 +14,12 @@
 
 :root[data-shape="flow"] {
   /* 方圆之间的圆角 */
-  --ts-round-pill: 17px;
-  --ts-round-card: 26px;
-  --ts-round-panel: 34px;
-  --ts-round-row: 18px;
-  --ts-round-menu: 22px;
-  --ts-round-press-scale: 0.96;
+  --ts-round-pill: var(--ts-flow-control);
+  --ts-round-card: var(--ts-flow-card);
+  --ts-round-panel: var(--ts-flow-panel);
+  --ts-round-row: var(--ts-flow-row);
+  --ts-round-menu: var(--ts-flow-menu);
+  --ts-round-press-scale: var(--ts-flow-press-scale);
   /* 釉光：跟随指针的高光；rim：面板顶边一道极细的受光边（不是分割线，是“厚度”） */
   --ts-flow-glint: rgb(255 255 255 / .2);
   --ts-flow-glint-soft: color-mix(in srgb, var(--ts-bg-elevated) 75%, transparent);
@@ -77,7 +77,7 @@
   /* 一圈亮边、中间清透：水波而不是墨点 */
   background: radial-gradient(circle, transparent 42%, var(--ts-flow-wave) 60%, transparent 71%);
   transform: scale(0); opacity: 1;
-  animation: ts-flow-wave 760ms cubic-bezier(.2, .7, .2, 1) forwards;
+  animation: ts-flow-wave var(--ts-flow-ripple-duration) cubic-bezier(.2, .7, .2, 1) forwards;
 }
 .ts-flow-ink > i + i { background: radial-gradient(circle, transparent 50%, var(--ts-flow-wave) 64%, transparent 72%); }
 @keyframes ts-flow-wave { 60% { opacity: .9; } to { transform: scale(1); opacity: 0; } }
@@ -89,7 +89,7 @@
   position: absolute; inset: 0; border-radius: 50%;
   border: 1.5px solid color-mix(in srgb, var(--ts-text-tertiary) 70%, transparent);
   transform: scale(.3); opacity: 0;
-  animation: ts-flow-splash 640ms cubic-bezier(.15, .8, .25, 1) forwards;
+  animation: ts-flow-splash var(--ts-flow-splash-duration) cubic-bezier(.15, .8, .25, 1) forwards;
 }
 .ts-flow-splash > i + i { animation-delay: 110ms; border-width: 1px; }
 .ts-flow-splash.is-on > i { border-color: color-mix(in srgb, var(--ts-accent-control) 75%, transparent); }

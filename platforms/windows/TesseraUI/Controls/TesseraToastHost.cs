@@ -62,7 +62,7 @@ namespace TesseraUI
                 MaxWidth = 480,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Padding = new Thickness(round ? 20 : 16, 0, actionTitle is null ? 20 : 8, 0),
-                CornerRadius = new CornerRadius(round ? 999 : 18),
+                CornerRadius = new CornerRadius(TesseraResources.IsFlow ? 17 : round ? 999 : 18),
                 Background = TesseraResources.Brush("TesseraBgInverseBrush"),
                 BorderBrush = TesseraResources.Brush("TesseraEdgeSolidBrush"),
                 // 拼贴有 2px 砖厚，圆融没有

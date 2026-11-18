@@ -108,7 +108,7 @@ namespace TesseraUI
         {
             // 拼贴：圆角 32，有描边；圆融：圆角 36，没有描边
             var round = TesseraResources.IsRound;
-            var r = round ? 36 : 32;
+            var r = TesseraResources.IsFlow ? 34 : round ? 36 : 32;
             _panel.CornerRadius = new CornerRadius(r, r, 0, 0);
             _panel.BorderThickness = round ? new Thickness(0) : new Thickness(1, 1, 1, 0);
             _scrim.Background = TesseraResources.Brush("TesseraBgScrimBrush");

@@ -89,6 +89,14 @@ function buildWeb() {
     `  --ts-round-menu: ${F.shape.round.menu}px;`,
     `  --ts-round-gap: ${F.shape.round.gap}px;`,
     `  --ts-round-press-scale: ${F.shape.round.pressScale};`,
+    `  --ts-flow-control: ${F.shape.flow.control}px;`,
+    `  --ts-flow-card: ${F.shape.flow.card}px;`,
+    `  --ts-flow-panel: ${F.shape.flow.panel}px;`,
+    `  --ts-flow-row: ${F.shape.flow.row}px;`,
+    `  --ts-flow-menu: ${F.shape.flow.menu}px;`,
+    `  --ts-flow-press-scale: ${F.shape.flow.pressScale};`,
+    `  --ts-flow-ripple-duration: ${F.shape.flow.rippleDuration}ms;`,
+    `  --ts-flow-splash-duration: ${F.shape.flow.splashDuration}ms;`,
     ...Object.entries(F.z).map(([k, v]) => `  --ts-z-${k}: ${v};`),
     ...Object.entries(M.duration).map(([k, v]) => `  --ts-duration-${k}: ${v}ms;`),
     ...Object.entries(M.ease).map(
@@ -257,6 +265,20 @@ public enum TesseraRound {
     public static let pressScale: CGFloat = ${F.shape.round.pressScale}
 }
 
+/// 流韵外观的形状与动效数值（\`.tesseraShape(.flow)\` 时使用）
+public enum TesseraFlow {
+    public static let control: CGFloat = ${F.shape.flow.control}
+    public static let card: CGFloat = ${F.shape.flow.card}
+    public static let panel: CGFloat = ${F.shape.flow.panel}
+    public static let row: CGFloat = ${F.shape.flow.row}
+    public static let menu: CGFloat = ${F.shape.flow.menu}
+    public static let pressScale: CGFloat = ${F.shape.flow.pressScale}
+    public static let rippleDuration: Double = ${F.shape.flow.rippleDuration / 1000}
+    public static let splashDuration: Double = ${F.shape.flow.splashDuration / 1000}
+    public static let minCores = ${F.shape.flow.minCores}
+    public static let minMemoryGB = ${F.shape.flow.minMemoryGB}
+}
+
 public enum TesseraFocus {
     public static let ringWidth: CGFloat = ${F.focus.ringWidth}
     public static let ringOffset: CGFloat = ${F.focus.ringOffset}
@@ -391,6 +413,20 @@ object TesseraRound {
     val gap = ${F.shape.round.gap}.dp
     val groupGap = ${F.shape.round.groupGap}.dp
     const val PRESS_SCALE = ${F.shape.round.pressScale}f
+}
+
+/** 流韵外观的形状与动效数值（TesseraTheme(shape = TesseraShape.Flow) 时使用） */
+object TesseraFlow {
+    val control = ${F.shape.flow.control}.dp
+    val card = ${F.shape.flow.card}.dp
+    val panel = ${F.shape.flow.panel}.dp
+    val row = ${F.shape.flow.row}.dp
+    val menu = ${F.shape.flow.menu}.dp
+    const val PRESS_SCALE = ${F.shape.flow.pressScale}f
+    const val RIPPLE_DURATION = ${F.shape.flow.rippleDuration}
+    const val SPLASH_DURATION = ${F.shape.flow.splashDuration}
+    const val MIN_CORES = ${F.shape.flow.minCores}
+    const val MIN_MEMORY_GB = ${F.shape.flow.minMemoryGB}
 }
 
 object TesseraFocus {
@@ -652,7 +688,7 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
 
   // 圆融外观：合并在 TesseraTokens.xaml、TesseraTheme.xaml 之后，覆盖圆角、砖缝和砖厚
   const RD = F.shape.round;
-  emit('platforms/windows/TesseraUI/Themes/TesseraShapeRound.xaml', `<!-- ${HEADER('').slice(1)} -->
+  const roundXaml = `<!-- ${HEADER('').slice(1)} -->
 <!-- 圆融外观：胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线。
      用法：在 App.xaml 中紧跟 TesseraTokens.xaml、TesseraTheme.xaml 之后合并本文件；不合并即为默认的“拼贴”外观。
      WinUI 会把超过半高的圆角自动收成半圆，所以 ${RD.pill} 就是胶囊。 -->
@@ -720,7 +756,26 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     <CornerRadius x:Key="ControlCornerRadius">${F.size.md / 2}</CornerRadius>
     <CornerRadius x:Key="OverlayCornerRadius">${RD.menu}</CornerRadius>
 </ResourceDictionary>
-`);
+`;
+  emit('platforms/windows/TesseraUI/Themes/TesseraShapeRound.xaml', roundXaml);
+
+  // 流韵外观：以圆融为基础，圆角介于方砖与胶囊之间，按压轻捏 96%
+  const FL = F.shape.flow;
+  emit('platforms/windows/TesseraUI/Themes/TesseraShapeFlow.xaml', roundXaml
+    .replace('<!-- 圆融外观：胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线。', '<!-- 流韵外观：以圆融为基础（成组控件合成一整块、没有砖缝和分割线），圆角介于方砖与胶囊之间，按压时变成胶囊。\n     流韵的水波、涟漪等动效在 WinUI 上逐步提供，见 README。')
+    .replace('紧跟 TesseraTokens.xaml、TesseraTheme.xaml 之后合并本文件；不合并即为默认的“拼贴”外观。', '紧跟 TesseraTokens.xaml、TesseraTheme.xaml 之后合并本文件（不要同时合并 TesseraShapeRound.xaml）。')
+    .replace(`<CornerRadius x:Key="TesseraRadiusMd">${F.size.md / 2}</CornerRadius>`, `<CornerRadius x:Key="TesseraRadiusMd">${FL.control}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraRadiusLg">${RD.menu}</CornerRadius>`, `<CornerRadius x:Key="TesseraRadiusLg">${FL.menu}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraRadiusXl">${RD.card}</CornerRadius>`, `<CornerRadius x:Key="TesseraRadiusXl">${FL.card}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraRadius2xl">${RD.panel}</CornerRadius>`, `<CornerRadius x:Key="TesseraRadius2xl">${FL.panel}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraRoundRow">${RD.row}</CornerRadius>`, `<CornerRadius x:Key="TesseraRoundRow">${FL.row}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraListContainerRadius">${RD.card}</CornerRadius>`, `<CornerRadius x:Key="TesseraListContainerRadius">${FL.card}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraListItemRadius">${RD.row}</CornerRadius>`, `<CornerRadius x:Key="TesseraListItemRadius">${FL.row}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="TesseraMenuItemRadius">${RD.menu - 6}</CornerRadius>`, `<CornerRadius x:Key="TesseraMenuItemRadius">${FL.menu - 6}</CornerRadius>`)
+    .replace(`<x:Double x:Key="TesseraPressScale">${RD.pressScale}</x:Double>`, `<x:Double x:Key="TesseraPressScale">${FL.pressScale}</x:Double>`)
+    .replace('<x:String x:Key="TesseraShape">round</x:String>', '<x:String x:Key="TesseraShape">flow</x:String>')
+    .replace(`<CornerRadius x:Key="ControlCornerRadius">${F.size.md / 2}</CornerRadius>`, `<CornerRadius x:Key="ControlCornerRadius">${FL.control}</CornerRadius>`)
+    .replace(`<CornerRadius x:Key="OverlayCornerRadius">${RD.menu}</CornerRadius>`, `<CornerRadius x:Key="OverlayCornerRadius">${FL.menu}</CornerRadius>`));
 
   const cs = `${HEADER()}
 using System;
@@ -751,6 +806,16 @@ ${Object.entries(M.ease)
         public const int StaggerMaxItems = ${M.stagger.maxItems};
         public const int ToastDurationMs = ${M.toast.duration};
         public const int ToastDurationWithActionMs = ${M.toast.durationWithAction};
+    }
+
+    /// <summary>流韵外观的动效数值与启用条件</summary>
+    public static class TesseraFlowLimits
+    {
+        public const int MinCores = ${F.shape.flow.minCores};
+        public const int MinMemoryGB = ${F.shape.flow.minMemoryGB};
+        public const float PressScale = ${F.shape.flow.pressScale}f;
+        public const int RippleDurationMs = ${F.shape.flow.rippleDuration};
+        public const int SplashDurationMs = ${F.shape.flow.splashDuration};
     }
 
     public static class TesseraZ

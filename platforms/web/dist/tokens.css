@@ -65,6 +65,14 @@
   --ts-round-menu: 24px;
   --ts-round-gap: 8px;
   --ts-round-press-scale: 0.97;
+  --ts-flow-control: 17px;
+  --ts-flow-card: 26px;
+  --ts-flow-panel: 34px;
+  --ts-flow-row: 18px;
+  --ts-flow-menu: 22px;
+  --ts-flow-press-scale: 0.96;
+  --ts-flow-ripple-duration: 760ms;
+  --ts-flow-splash-duration: 640ms;
   --ts-z-sticky: 100;
   --ts-z-overlay: 200;
   --ts-z-modal: 300;

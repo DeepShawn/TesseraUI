@@ -31,6 +31,16 @@ namespace TesseraUI
         public const int ToastDurationWithActionMs = 5000;
     }
 
+    /// <summary>流韵外观的动效数值与启用条件</summary>
+    public static class TesseraFlowLimits
+    {
+        public const int MinCores = 6;
+        public const int MinMemoryGB = 4;
+        public const float PressScale = 0.96f;
+        public const int RippleDurationMs = 760;
+        public const int SplashDurationMs = 640;
+    }
+
     public static class TesseraZ
     {
         public const int Sticky = 100;
