@@ -648,11 +648,24 @@ export const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
  */
 export function place(anchor, panel, { placement = 'bottom-start', offset = 8 } = {}) {
   const r = anchor.getBoundingClientRect ? anchor.getBoundingClientRect() : anchor; // 也接受 {left, top, right, bottom, width, height}
-  const m = panel.getBoundingClientRect();
+  // 先恢复浮层的自然高度再测量（上一次可能因为放不下被压缩过）
+  if (panel.dataset.squeezed) { panel.style.maxHeight = ''; panel.style.overflowY = ''; delete panel.dataset.squeezed; }
+  let m = panel.getBoundingClientRect();
   const vw = innerWidth, vh = innerHeight, pad = 8;
   let [side, align] = placement.split('-');
-  if (side === 'bottom' && r.bottom + offset + m.height > vh - pad && r.top - offset - m.height > pad) side = 'top';
-  else if (side === 'top' && r.top - offset - m.height < pad && r.bottom + offset + m.height < vh - pad) side = 'bottom';
+  if (side === 'bottom' || side === 'top') {
+    const below = vh - pad - r.bottom - offset, above = r.top - offset - pad;
+    if (side === 'bottom' && m.height > below && m.height <= above) side = 'top';
+    else if (side === 'top' && m.height > above && m.height <= below) side = 'bottom';
+    else if (m.height > below && m.height > above) {
+      // 上下都放不下：放到空间大的一侧，并把浮层压到刚好放得下（内部滚动），绝不盖住锚点（例如手机键盘弹出时的输入框）
+      side = below >= above ? 'bottom' : 'top';
+      panel.style.maxHeight = `${Math.max(96, Math.floor(side === 'bottom' ? below : above))}px`;
+      panel.style.overflowY = 'auto';
+      panel.dataset.squeezed = '1';
+      m = panel.getBoundingClientRect();
+    }
+  }
   else if (side === 'right' && r.right + offset + m.width > vw - pad) side = 'left';
   else if (side === 'left' && r.left - offset - m.width < pad) side = 'right';
   let top, left;
@@ -674,6 +687,30 @@ export function place(anchor, panel, { placement = 'bottom-start', offset = 8 } 
   return side;
 }
 
+/**
+ * 浮层跟随锚点：页面或任意滚动容器滚动、窗口大小变化、手机软键盘弹出（visualViewport 变化）时重新定位。
+ * 返回停止函数，浮层关闭时调用。
+ */
+export function follow(anchor, panel, opts) {
+  let frame = 0;
+  const update = () => {
+    if (frame) return;
+    frame = requestAnimationFrame(() => { frame = 0; if (!panel.hidden) place(anchor, panel, opts); });
+  };
+  const vv = window.visualViewport;
+  addEventListener('scroll', update, { passive: true, capture: true });
+  addEventListener('resize', update, { passive: true });
+  vv?.addEventListener('resize', update, { passive: true });
+  vv?.addEventListener('scroll', update, { passive: true });
+  return () => {
+    cancelAnimationFrame(frame);
+    removeEventListener('scroll', update, { capture: true });
+    removeEventListener('resize', update);
+    vv?.removeEventListener('resize', update);
+    vv?.removeEventListener('scroll', update);
+  };
+}
+
 /** 点击元素外部时回调；返回取消函数 */
 export function onOutside(els, cb) {
   const list = [].concat(els);
@@ -684,14 +721,16 @@ export function onOutside(els, cb) {
 
 /** 浮层的打开 / 关闭（带动画），供弹出类组件共用 */
 export function popup(panel) {
+  let unfollow = null;
   return {
     open(anchor, opts) {
       panel.hidden = false;
-      if (anchor) place(anchor, panel, opts);
+      if (anchor) { place(anchor, panel, opts); unfollow?.(); unfollow = follow(anchor, panel, opts); }
       animateIn(panel, 'scale(0.96)');
     },
     async close() {
       if (panel.hidden) return;
+      unfollow?.(); unfollow = null;
       await animateOut(panel);
       panel.hidden = true;
       panel.getAnimations().forEach((a) => a.cancel());

@@ -560,6 +560,7 @@
 
 .ts-input {
   --_h: var(--ts-size-md);
+  min-width: 0; /* 放进弹性布局（如搜索 + 排序的组合）时可以收缩，不把容器撑出屏幕 */
   display: flex; align-items: center; gap: var(--ts-space-2);
   height: var(--_h); padding: 0 var(--ts-space-3);
   border-radius: var(--ts-radius-md);
@@ -576,12 +577,14 @@
 }
 .ts-field[data-invalid] .ts-input { box-shadow: inset 0 0 0 1px var(--ts-danger-text), 0 0 0 var(--ts-focus-glow-width) var(--ts-danger-subtle); }
 .ts-input > input, .ts-input > select {
-  flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; padding: 0; margin: 0;
+  /* width: 100% 让原生输入框不再按“约 20 个字符”的固有宽度撑开容器（百分比宽度的表单控件最小内容宽度为 0） */
+  flex: 1; min-width: 0; width: 100%; height: 100%; border: 0; outline: 0; padding: 0; margin: 0;
   background: transparent; color: var(--ts-text-primary); font: var(--ts-font-body-sm);
   appearance: none; -webkit-appearance: none;
 }
 .ts-input > input::placeholder { color: var(--ts-text-tertiary); opacity: 1; }
-.ts-input > input:focus-visible, .ts-input > select:focus-visible { outline: none; }
+/* 输入框内部的原生控件不画自己的焦点框，焦点由外层 .ts-input 的光晕表示（否则会出现双重框） */
+.ts-input > :is(input, select, textarea):focus-visible, .ts-otp > input:focus-visible, .ts-number input:focus-visible { outline: none; }
 .ts-input .ts-icon { width: 18px; height: 18px; }
 .ts-input > select { cursor: pointer; padding-inline-end: var(--ts-space-6); }
 .ts-select { position: relative; }
@@ -1042,9 +1045,10 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 .ts-number > :last-child { border-radius: var(--ts-radius-grout) var(--_outer) var(--_outer) var(--ts-radius-grout); }
 
 /* ---------- 验证码 OTPInput：一排凹槽砖；真正的输入框盖在上面、透明 ---------- */
-.ts-otp { position: relative; display: inline-grid; grid-auto-flow: column; gap: var(--ts-space-2); }
+/* 窄屏时每格从 48 收到最小 32，不撑出屏幕 */
+.ts-otp { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(32px, 48px); gap: var(--ts-space-2); max-width: 100%; }
 .ts-otp-cell {
-  width: 48px; height: 56px; display: grid; place-items: center; border-radius: var(--ts-radius-md);
+  width: 100%; height: 56px; display: grid; place-items: center; border-radius: var(--ts-radius-md);
   background: var(--ts-fill-default); box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field);
   font: 600 24px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); font-variant-numeric: tabular-nums;
   transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), box-shadow var(--ts-duration-fast) var(--ts-ease-standard);
@@ -1288,7 +1292,10 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 
 /* ---------- 分页 Pagination：一排砖 ---------- */
 .ts-pagination { display: flex; align-items: center; gap: var(--ts-space-3); flex-wrap: wrap; }
-.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); }
+/* 页码在很窄的屏幕上放不下时横向滑动，不撑宽页面 */
+.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.ts-pages::-webkit-scrollbar { display: none; }
+.ts-page { flex: none; }
 .ts-page {
   min-width: 36px; height: 36px; padding: 0 8px; border: 0; border-radius: var(--ts-radius-grout); cursor: pointer;
   background-color: var(--ts-fill-default); color: var(--ts-text-secondary); font: 600 13px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
@@ -2148,6 +2155,14 @@ img[data-viewer] { cursor: zoom-in; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-indexbar button { border-radius: 50%; width: 18px; height: 18px; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-index-bubble { border-radius: 50%; background-image: var(--ts-layer-sheen); }
 
+
+/* ---------- 聚焦：合成一整块的组合输入，光晕包住整块，内部各段一起变成砖面色 ---------- */
+:root:is([data-shape="round"], [data-shape="flow"]) :is(.ts-number, .ts-tiles):focus-within > * { background-color: var(--ts-bg-surface); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-tiles:has(> .ts-input:focus-within) {
+  border-radius: var(--ts-round-pill);
+  box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow);
+}
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-tiles > .ts-input:focus-within { box-shadow: none; }
 }
 
 /* ===== 85-flow.css ===== */

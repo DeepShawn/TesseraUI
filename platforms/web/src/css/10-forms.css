@@ -54,9 +54,10 @@
 .ts-number > :last-child { border-radius: var(--ts-radius-grout) var(--_outer) var(--_outer) var(--ts-radius-grout); }
 
 /* ---------- 验证码 OTPInput：一排凹槽砖；真正的输入框盖在上面、透明 ---------- */
-.ts-otp { position: relative; display: inline-grid; grid-auto-flow: column; gap: var(--ts-space-2); }
+/* 窄屏时每格从 48 收到最小 32，不撑出屏幕 */
+.ts-otp { position: relative; display: inline-grid; grid-auto-flow: column; grid-auto-columns: minmax(32px, 48px); gap: var(--ts-space-2); max-width: 100%; }
 .ts-otp-cell {
-  width: 48px; height: 56px; display: grid; place-items: center; border-radius: var(--ts-radius-md);
+  width: 100%; height: 56px; display: grid; place-items: center; border-radius: var(--ts-radius-md);
   background: var(--ts-fill-default); box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field);
   font: 600 24px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); font-variant-numeric: tabular-nums;
   transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), box-shadow var(--ts-duration-fast) var(--ts-ease-standard);

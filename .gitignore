@@ -13,3 +13,4 @@ bin/
 obj/
 *.user
 .vs/
+tests/e2e/screenshots/

@@ -1,6 +1,6 @@
 // 选择器：Calendar、DatePicker、DateRangePicker、TimePicker、WheelPicker、ColorPicker。
 // 桌面端在弹出面板里选；手机上（触屏且窄屏）改为底部抽屉，日期和时间用滚轮选。
-import { icon, once, clamp, place, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar } from '../core.js';
+import { icon, once, clamp, place, follow, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar } from '../core.js';
 
 // ------------------------------------------------------------------
 // 日期工具（本地时区，字符串格式 YYYY-MM-DD）
@@ -226,19 +226,21 @@ function makeSurface(anchor, title) {
   panel.hidden = true;
   panel.innerHTML = '<div class="ts-picker-body"></div>';
   document.body.append(panel);
-  let off = null;
+  let off = null, unfollow = null;
   const api = {
     body: panel.firstElementChild, el: panel, compact: false,
     open() {
       if (!panel.hidden) return;
       panel.hidden = false;
       place(anchor, panel, { placement: 'bottom-start' });
+      unfollow = follow(anchor, panel, { placement: 'bottom-start' });
       animateIn(panel, 'scale(0.96)');
       off = onOutside([anchor, panel], () => api.close());
     },
     async close() {
       if (panel.hidden) return;
       off?.();
+      unfollow?.(); unfollow = null;
       await animateOut(panel);
       panel.hidden = true;
       panel.getAnimations().forEach((a) => a.cancel());

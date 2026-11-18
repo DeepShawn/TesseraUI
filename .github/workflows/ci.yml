@@ -28,13 +28,26 @@ jobs:
         run: python3 -m http.server 5173 &
       - run: npm run test:e2e
       - name: 端到端测试（圆融外观）
+        if: always()
         run: npm run test:e2e
         env:
           TESSERA_SHAPE: round
       - name: 端到端测试（流韵外观）
+        if: always()
         run: npm run test:e2e
         env:
           TESSERA_SHAPE: flow
+      - name: 输入框逐项截图审查（三种外观 × 浅色 / 深色 × 桌面 / 手机）
+        if: always()
+        run: npm run test:inputs
+      # 每一项测试都会截图（三种外观各一组），失败的截图文件名带“失败”
+      - name: 上传测试截图
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screenshots
+          path: tests/e2e/screenshots/
+          retention-days: 14
 
   android:
     runs-on: ubuntu-latest

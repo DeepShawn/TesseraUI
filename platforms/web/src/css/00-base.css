@@ -201,6 +201,7 @@
 
 .ts-input {
   --_h: var(--ts-size-md);
+  min-width: 0; /* 放进弹性布局（如搜索 + 排序的组合）时可以收缩，不把容器撑出屏幕 */
   display: flex; align-items: center; gap: var(--ts-space-2);
   height: var(--_h); padding: 0 var(--ts-space-3);
   border-radius: var(--ts-radius-md);
@@ -217,12 +218,14 @@
 }
 .ts-field[data-invalid] .ts-input { box-shadow: inset 0 0 0 1px var(--ts-danger-text), 0 0 0 var(--ts-focus-glow-width) var(--ts-danger-subtle); }
 .ts-input > input, .ts-input > select {
-  flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; padding: 0; margin: 0;
+  /* width: 100% 让原生输入框不再按“约 20 个字符”的固有宽度撑开容器（百分比宽度的表单控件最小内容宽度为 0） */
+  flex: 1; min-width: 0; width: 100%; height: 100%; border: 0; outline: 0; padding: 0; margin: 0;
   background: transparent; color: var(--ts-text-primary); font: var(--ts-font-body-sm);
   appearance: none; -webkit-appearance: none;
 }
 .ts-input > input::placeholder { color: var(--ts-text-tertiary); opacity: 1; }
-.ts-input > input:focus-visible, .ts-input > select:focus-visible { outline: none; }
+/* 输入框内部的原生控件不画自己的焦点框，焦点由外层 .ts-input 的光晕表示（否则会出现双重框） */
+.ts-input > :is(input, select, textarea):focus-visible, .ts-otp > input:focus-visible, .ts-number input:focus-visible { outline: none; }
 .ts-input .ts-icon { width: 18px; height: 18px; }
 .ts-input > select { cursor: pointer; padding-inline-end: var(--ts-space-6); }
 .ts-select { position: relative; }

@@ -8,10 +8,21 @@ const BASE = process.env.TESSERA_BASE || 'http://localhost:5173';
 const SHAPE = ['round', 'flow'].includes(process.env.TESSERA_SHAPE) ? process.env.TESSERA_SHAPE : 'tile';
 const PAGE = `${BASE}/demo/components.html${SHAPE === 'tile' ? '' : `?shape=${SHAPE}&force`}`;
 const SHAPE_NAME = { tile: '拼贴', round: '圆融', flow: '流韵' }[SHAPE];
-let passed = 0, failed = 0;
+// 每一项测试结束后都截一张图，存到 TESSERA_SHOTS（默认 tests/e2e/screenshots/<外观>/），CI 会上传
+const path = require('node:path');
+const fs = require('node:fs');
+const SHOTS = process.env.TESSERA_SHOTS || path.join(__dirname, 'screenshots', SHAPE);
+fs.rmSync(SHOTS, { recursive: true, force: true });
+fs.mkdirSync(SHOTS, { recursive: true });
+let passed = 0, failed = 0, shotPage = null, shotNo = 0;
 async function check(name, fn) {
+  let ok = true;
   try { await fn(); passed++; console.log(`  ✔ ${name}`); }
-  catch (e) { failed++; console.log(`  ✖ ${name}\n    ${e.message.split('\n')[0]}`); }
+  catch (e) { ok = false; failed++; console.log(`  ✖ ${name}\n    ${e.message.split('\n')[0]}`); }
+  if (shotPage) {
+    const file = `${String(++shotNo).padStart(2, '0')}-${ok ? '' : '失败-'}${name.replace(/[\\/:*?"<>|\s]+/g, '_')}.png`;
+    await shotPage.screenshot({ path: path.join(SHOTS, file) }).catch(() => {});
+  }
 }
 
 (async () => {
@@ -22,6 +33,7 @@ async function check(name, fn) {
   p.on('pageerror', (e) => errors.push(e.message));
   p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   await p.goto(PAGE);
+  shotPage = p;
   console.log(`外观：${SHAPE_NAME}`);
   await p.waitForTimeout(1500);
   const esc = () => p.keyboard.press('Escape');
@@ -428,6 +440,7 @@ async function check(name, fn) {
   const m = await browser.newPage({ ...devices['iPhone 13'] });
   m.on('pageerror', (e) => errors.push('mobile: ' + e.message));
   await m.goto(PAGE);
+  shotPage = m;
   await m.waitForTimeout(1200);
   await check('手机上日期选择器改为底部抽屉滚轮', async () => {
     await m.locator('.ts-datepicker').nth(1).tap();
@@ -439,7 +452,60 @@ async function check(name, fn) {
     assert.equal(await m.locator('.ts-datepicker').nth(1).locator('input:not([type=hidden])').inputValue(), '2026 年 11 月 20 日');
   });
 
+  await check('手机：自动补全的下拉列表不盖住输入框，滚动后仍贴着输入框', async () => {
+    const input = m.locator('#city');
+    await input.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await input.tap();
+    await m.waitForTimeout(500);
+    const rel = () => m.evaluate(() => {
+      const i = document.querySelector('#city'), a = i.closest('.ts-input').getBoundingClientRect();
+      const l = document.getElementById(i.getAttribute('aria-controls'));
+      if (!l || l.hidden) return null;
+      const b = l.getBoundingClientRect();
+      return { covers: b.top < a.bottom - 1 && b.bottom > a.top + 1 };
+    });
+    const before = await rel();
+    assert.ok(before, '下拉列表没有打开');
+    assert.equal(before.covers, false, '打开时盖住了输入框');
+    await m.mouse.wheel(0, 150); await m.waitForTimeout(400);
+    const after = await rel();
+    if (after) assert.equal(after.covers, false, '滚动后盖住了输入框');
+    await m.keyboard.press('Escape');
+  });
+
+  console.log('输入框');
+  shotPage = p;
+  await check('输入框聚焦时没有双重框（内部原生控件不画焦点框）', async () => {
+    const bad = [];
+    for (const el of await p.locator('.ts-input > input:visible, .ts-input > textarea:visible, .ts-number input:visible').all()) {
+      await el.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+      await el.focus();
+      const r = await el.evaluate((e) => { const s = getComputedStyle(e); return { id: e.id || e.getAttribute('aria-label') || e.placeholder, outline: s.outlineStyle !== 'none' && parseFloat(s.outlineWidth) > 0 }; });
+      if (r.outline) bad.push(r.id);
+      await el.evaluate((e) => e.blur());
+      await p.keyboard.press('Escape');
+    }
+    assert.deepEqual(bad, []);
+    await p.locator('#ta').evaluate((e) => { e.scrollIntoView({ block: 'center', behavior: 'instant' }); e.focus(); });
+    await p.waitForTimeout(200);
+  });
+
+  console.log('窄屏');
+  for (const [device, pageName] of [['iPhone SE', 'components'], ['iPhone SE', 'index'], ['iPhone 13', 'components'], ['iPhone 13', 'index']]) {
+    const ctx2 = await browser.newContext({ ...devices[device] });
+    const n = await ctx2.newPage();
+    await n.goto(PAGE.replace('/components.html', `/${pageName}.html`));
+    await n.waitForTimeout(800);
+    shotPage = n;
+    await check(`${device}：${pageName === 'index' ? '首页' : '组件总览'}不横向溢出`, async () => {
+      const [sw, cw] = await n.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
+      assert.ok(sw <= cw, `页面宽 ${sw}px，超出屏幕 ${cw}px`);
+    });
+    await ctx2.close();
+  }
+
   console.log(`\n${passed} 项通过，${failed} 项失败`);
+  console.log(`截图：${SHOTS}（${shotNo} 张）`);
   if (errors.length) { console.log('页面报错：', errors); }
   await browser.close();
   process.exit(failed || errors.length ? 1 : 0);

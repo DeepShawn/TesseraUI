@@ -2,7 +2,7 @@
 // 操作与输入类组件的交互：TextArea 自动高度、PasswordField、NumberInput、OTPInput、
 // Autocomplete、TagInput、Slider、Rating、FileUpload、表单校验。
 import {
-  Spring, motion as M, icon, once, uid, clamp, place, onOutside, animateIn, animateOut, emit, esc,
+  Spring, motion as M, icon, once, uid, clamp, place, follow, onOutside, animateIn, animateOut, emit, esc,
   onCommittedInput,
 } from '../core.js';
 
@@ -173,7 +173,7 @@ export function listbox({ anchor, input, onPick }) {
   list.setAttribute('role', 'listbox');
   list.hidden = true;
   document.body.append(list);
-  let items = [], active = -1, offOutside = null;
+  let items = [], active = -1, offOutside = null, unfollow = null;
   input.setAttribute('role', 'combobox');
   input.setAttribute('aria-controls', list.id);
   input.setAttribute('aria-expanded', 'false');
@@ -214,6 +214,8 @@ export function listbox({ anchor, input, onPick }) {
       list.hidden = false;
       list.style.minWidth = `${anchor.offsetWidth}px`;
       place(anchor, list, { placement: 'bottom-start', offset: 6 });
+      // 页面滚动、手机键盘弹出时跟着输入框走，不会盖住输入框
+      unfollow = follow(anchor, list, { placement: 'bottom-start', offset: 6 });
       animateIn(list, 'scale(0.98)');
       input.setAttribute('aria-expanded', 'true');
       offOutside = onOutside([anchor, list], () => api.close());
@@ -221,6 +223,7 @@ export function listbox({ anchor, input, onPick }) {
     async close() {
       if (list.hidden) return;
       offOutside?.();
+      unfollow?.(); unfollow = null;
       input.setAttribute('aria-expanded', 'false');
       input.removeAttribute('aria-activedescendant');
       await animateOut(list);

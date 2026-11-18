@@ -194,7 +194,8 @@ TesseraUI/
 | `npm run check:contrast` | 执行对比度检查，并生成 `docs/contrast-report.md` |
 | `npm run check:icons` | 检查图标的画布、线宽、颜色与命名 |
 | `npm test` | 依次执行构建、全部检查与单元测试 |
-| `npm run test:e2e` | 端到端交互测试（需要 Playwright 与 Chromium，并先启动 `npm run demo`） |
+| `npm run test:e2e` | 端到端交互测试（需要 Playwright 与 Chromium，并先启动 `npm run demo`）；每一项都截图，`TESSERA_SHAPE=round` / `flow` 切换外观 |
+| `npm run test:inputs` | 输入框逐项截图审查：三种外观 × 浅色 / 深色 × 桌面 / 手机 × 未聚焦 / 聚焦，并检查双重框与下拉列表遮挡 |
 | `npm run demo` | 构建并在 `http://localhost:5173/demo/` 启动预览页 |
 
 修改设计令牌的流程：
@@ -208,6 +209,7 @@ TesseraUI/
 - [设计规范](docs/spec.md)：设计语言、令牌定义、动效、深色模式、图标、组件、原生控件重绘、无障碍与实施计划
 - [对比度报告](docs/contrast-report.md)：全部 284 项对比度检查的明细
 - [更新日志](CHANGELOG.md)
+- [后续计划](plan/README.md)
 
 ## 版本策略
 

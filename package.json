@@ -11,7 +11,8 @@
     "check:icons": "node scripts/check-icons.mjs",
     "test": "npm run build && npm run check:contrast && npm run check:icons && node --test tests/*.test.mjs",
     "demo": "npm run build && npx --yes http-server -c-1 -p 5173 .",
-    "test:e2e": "node tests/e2e/components.e2e.cjs"
+    "test:e2e": "node tests/e2e/components.e2e.cjs",
+    "test:inputs": "node tests/e2e/inputs.e2e.cjs"
   },
   "engines": {
     "node": ">=18"

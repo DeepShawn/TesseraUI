@@ -1,5 +1,5 @@
 // 数据展示：Table、Tree、Accordion、Tooltip、Popover、Carousel、ImageViewer、CodeBlock
-import { Spring, VelocityTracker, motion as M, icon, once, uid, clamp, place, onOutside, animateIn, animateOut, emit, esc, prefersReducedMotion, onCommittedInput } from '../core.js';
+import { Spring, VelocityTracker, motion as M, icon, once, uid, clamp, place, follow, onOutside, animateIn, animateOut, emit, esc, prefersReducedMotion, onCommittedInput } from '../core.js';
 import { pagination } from './navigation.js';
 
 // ------------------------------------------------------------------
@@ -332,10 +332,11 @@ export function popover(trigger, panel, { placement = 'bottom' } = {}) {
   if (!panel.id) panel.id = uid('popover');
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-controls', panel.id);
-  let off = null;
+  let off = null, unfollow = null;
   const open = () => {
     panel.hidden = false;
     place(trigger, panel, { placement, offset: 10 });
+    unfollow = follow(trigger, panel, { placement, offset: 10 });
     animateIn(panel, 'scale(0.96)');
     trigger.setAttribute('aria-expanded', 'true');
     off = onOutside([trigger, panel], close);
@@ -343,6 +344,7 @@ export function popover(trigger, panel, { placement = 'bottom' } = {}) {
   async function close() {
     if (panel.hidden) return;
     off?.();
+    unfollow?.(); unfollow = null;
     trigger.setAttribute('aria-expanded', 'false');
     await animateOut(panel);
     panel.hidden = true;

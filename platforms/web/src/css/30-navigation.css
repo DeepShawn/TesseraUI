@@ -41,7 +41,10 @@
 
 /* ---------- 分页 Pagination：一排砖 ---------- */
 .ts-pagination { display: flex; align-items: center; gap: var(--ts-space-3); flex-wrap: wrap; }
-.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); }
+/* 页码在很窄的屏幕上放不下时横向滑动，不撑宽页面 */
+.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.ts-pages::-webkit-scrollbar { display: none; }
+.ts-page { flex: none; }
 .ts-page {
   min-width: 36px; height: 36px; padding: 0 8px; border: 0; border-radius: var(--ts-radius-grout); cursor: pointer;
   background-color: var(--ts-fill-default); color: var(--ts-text-secondary); font: 600 13px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;

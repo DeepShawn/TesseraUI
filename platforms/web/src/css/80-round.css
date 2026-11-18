@@ -308,4 +308,12 @@
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-indexbar button { border-radius: 50%; width: 18px; height: 18px; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-index-bubble { border-radius: 50%; background-image: var(--ts-layer-sheen); }
 
+
+/* ---------- 聚焦：合成一整块的组合输入，光晕包住整块，内部各段一起变成砖面色 ---------- */
+:root:is([data-shape="round"], [data-shape="flow"]) :is(.ts-number, .ts-tiles):focus-within > * { background-color: var(--ts-bg-surface); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-tiles:has(> .ts-input:focus-within) {
+  border-radius: var(--ts-round-pill);
+  box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow);
+}
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-tiles > .ts-input:focus-within { box-shadow: none; }
 }
