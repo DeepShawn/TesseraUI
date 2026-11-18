@@ -42,9 +42,9 @@ TesseraUI 是一套跨平台 UI 设计标准库，包含设计规范、设计令
 | 平台 | 技术栈 | 最低版本 | 当前提供 | 状态 |
 |---|---|---|---|---|
 | Web | CSS + ES Modules | 主流浏览器最新两个版本 | 设计令牌、84 个组件、运行时脚本、图标 | 可用 |
-| Apple | SwiftUI | iOS 17、macOS 14、visionOS 1 | 设计令牌、按钮样式 | 预览，尚未经编译验证 |
-| Android | Jetpack Compose | API 24 | 设计令牌、主题、按钮，及 View 系统 XML 资源 | 预览，尚未经编译验证 |
-| Windows | WinUI 3（Windows App SDK 1.6） | Windows 10 1809 | 设计令牌、按钮样式、动效常量 | 预览，尚未经编译验证 |
+| Apple | SwiftUI | iOS 17、macOS 14、visionOS 1 | 设计令牌、首批 22 个组件、图标 | 预览，已在持续集成中编译 |
+| Android | Jetpack Compose | API 24 | 设计令牌、主题、首批 22 个组件、图标，及 View 系统 XML 资源 | 预览，已编译并通过截图对比 |
+| Windows | WinUI 3（Windows App SDK 1.6） | Windows 10 1809 | 设计令牌、系统控件样式、首批 22 个组件、图标 | 预览，已在持续集成中编译 |
 
 ## 快速开始
 
@@ -92,11 +92,14 @@ import TesseraUI
 Button("保存") { }
     .buttonStyle(.tessera(.primary))
 
+Toggle("Wi-Fi", isOn: $wifi)
+    .toggleStyle(.tesseraSwitch(glass: true))
+
+TesseraSegmentedControl(["列表", "网格", "看板"], selection: $view)
+
 Text("区块标题")
     .tesseraText(.title2)
     .foregroundStyle(TesseraColor.textPrimary)
-
-withAnimation(TesseraMotion.smooth) { isExpanded.toggle() }
 ```
 
 ### Android
@@ -105,7 +108,9 @@ withAnimation(TesseraMotion.smooth) { isExpanded.toggle() }
 
 ```kotlin
 TesseraTheme {
-    TesseraButton(text = "保存", onClick = { })
+    TesseraButton("保存", onClick = { })
+    TesseraSwitch(checked = wifi, onCheckedChange = { wifi = it }, label = "Wi-Fi")
+    TesseraSegmentedControl(listOf("列表", "网格", "看板"), selectedIndex = view, onSelect = { view = it })
 }
 ```
 
@@ -117,12 +122,16 @@ TesseraTheme {
 <ResourceDictionary.MergedDictionaries>
     <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
     <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraTokens.xaml" />
+    <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraTheme.xaml" />
     <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraButton.xaml" />
+    <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraControls.xaml" />
 </ResourceDictionary.MergedDictionaries>
 ```
 
 ```xml
 <Button Content="保存" Style="{StaticResource TesseraPrimaryButtonStyle}" />
+<ToggleSwitch Header="Wi-Fi" Style="{StaticResource TesseraToggleSwitchStyle}" />
+<tessera:TesseraSegmentedControl Items="{x:Bind ViewModes}" Glass="True" />
 ```
 
 各平台的字体配置与详细用法见对应目录下的 README：[Web](platforms/web/README.md)、[Apple](platforms/apple/README.md)、[Android](platforms/android/README.md)、[Windows](platforms/windows/README.md)。
@@ -143,7 +152,9 @@ Web 端提供设计规范所列的全部 84 个组件：
 | 布局 | Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea |
 | 移动端手势 | SwipeAction、PullToRefresh、InfiniteScroll、IndexBar |
 
-全部组件的示例见 `demo/components.html`，接口说明见 [Web 端文档](platforms/web/README.md)。原生平台组件的实施计划见[设计规范第 8 节](docs/spec.md#8-实施计划)。
+全部组件的示例见 `demo/components.html`，接口说明见 [Web 端文档](platforms/web/README.md)。
+
+Apple、Android、Windows 三端提供首批 22 个组件：Button、IconButton、TextField、SearchField、Select、Checkbox、Radio、Switch、SegmentedControl、NavBar、TabBar、Tabs、Menu、Card、List、Avatar、Badge、Tag、Toast、Dialog、BottomSheet、Skeleton。各端的接口与平台差异见对应目录下的 README，其余组件的实施计划见[设计规范第 8 节](docs/spec.md#8-实施计划)。
 
 ## 目录结构
 
@@ -155,7 +166,7 @@ TesseraUI/
 │   ├── web/                样式（src/css）、运行时核心与组件模块（src/modules）、构建产物（dist）
 │   ├── apple/              Swift Package
 │   ├── android/            Android Library 模块
-│   └── windows/            WinUI 3 资源字典与 C# 常量
+│   └── windows/            WinUI 3 资源字典、控件样式与自定义控件
 ├── scripts/                构建、对比度检查与图标检查脚本
 ├── tests/                  单元测试与端到端测试（tests/e2e）
 ├── demo/                   预览页（index.html）与组件总览（components.html）

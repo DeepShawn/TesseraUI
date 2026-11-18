@@ -2,6 +2,33 @@
 
 本项目的所有重要变更均记录于此文件。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.3.0] - 2026-11-18
+
+Apple、Android、Windows 三端提供首批 22 个原生组件，并在持续集成中编译验证；Web 端表格重做。
+
+### 新增
+
+- 原生三端首批 22 个组件：Button、IconButton、TextField、SearchField、Select、Checkbox、Radio、Switch、SegmentedControl、NavBar、TabBar、Tabs、Menu、Card、List、Avatar、Badge、Tag、Toast、Dialog、BottomSheet、Skeleton。
+  - **Android**（Jetpack Compose，只依赖 Foundation）：拼贴形状、釉面砖质感、按下下沉与聚焦光晕的基础修饰符；开关与分段控件可拖动；文本框区分输入法组合中与已提交的内容；跟随系统深色、对比度与“移除动画”设置。
+  - **Apple**（SwiftUI，iOS 17 / macOS 14 / visionOS 1）：连续曲率拼贴形状；开关与分段控件可拖动，开关可选系统毛玻璃滑块；iOS 文本框基于 UITextField 判断输入法组合状态；菜单、下拉与底部抽屉使用系统交互，外观换成 TesseraUI。
+  - **Windows**（WinUI 3）：系统控件的轻量样式（`TesseraTheme.xaml`，由构建脚本生成）、控件样式与开关模板（`TesseraControls.xaml`），以及 `TesseraIcon`、`TesseraSegmentedControl`、`TesseraToastHost`、`TesseraSheet` 四个自定义控件；弹簧使用 Composition API。
+- 原生三端的图标：157 个图标分别导出为 Android ImageVector、Apple Asset Catalog（模板渲染）与 Windows 路径数据，名称与 Web 端一致。
+- Android 截图对比测试（Paparazzi），浅色与深色共 12 张基准图。
+- 持续集成新增 Android（编译、截图对比）、Apple（macOS 与 iOS 模拟器编译）、Windows（x64 编译）三个任务。
+- Web 表格：多选（含 Shift 连选）与批量操作栏、分页、加载状态、横向与纵向滚动时的固定列阴影，窄容器下自动切换为卡片布局。
+
+### 变更
+
+- Web 表格工具栏：搜索框与操作按钮按容器宽度排布；选中行后批量操作栏覆盖在工具栏上方，不再挤压搜索框；窄宽度下按钮只显示图标。
+- 构建脚本为 Kotlin 新增 `TesseraOpacity`，为 Windows 生成系统控件轻量样式。
+
+### 已知限制
+
+- 原生三端目前只有首批 22 个组件，其余组件请参考 Web 端或使用系统控件。
+- Apple 与 Windows 端尚无截图对比测试，外观需在 Xcode 预览或 Visual Studio 中查看。
+- Windows 端 TabBar 与 Tabs 使用系统 `NavigationView` 与 `SelectorBar`，仅调整颜色与圆角。
+- 尚无文档站。
+
 ## [0.2.0] - 2026-11-18
 
 Web 端补齐设计规范所列的全部组件，共 84 个。
