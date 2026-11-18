@@ -9,10 +9,6 @@
 @layer tessera {
 
 :root[data-shape="round"] {
-  --ts-round-pill: 999px;
-  --ts-round-card: 28px;
-  --ts-round-panel: 36px;
-  --ts-round-gap: 8px;
   /* 整面柔光：顶部略亮、底部略暗，没有硬边 */
   --ts-layer-sheen: linear-gradient(to bottom, rgb(255 255 255 / .14), rgb(255 255 255 / 0) 60%);
   --ts-layer-edge-solid: linear-gradient(to top, rgb(0 0 0 / .06), rgb(0 0 0 / 0) 55%);
@@ -28,7 +24,7 @@
 }
 
 /* ---------- 按压：轻捏 ---------- */
-:root[data-shape="round"] .ts-pressable:active:not(:disabled, [aria-disabled="true"]) { transform: scale(.97); }
+:root[data-shape="round"] .ts-pressable:active:not(:disabled, [aria-disabled="true"]) { transform: scale(var(--ts-round-press-scale)); }
 :root[data-shape="round"] .ts-checkbox:active:not(:disabled),
 :root[data-shape="round"] .ts-radio:active:not(:disabled) { transform: scale(.9); }
 
@@ -57,7 +53,7 @@
 
 /* ---------- 输入框：胶囊浅底，没有凹槽、没有描边 ---------- */
 :root[data-shape="round"] :is(.ts-input, .ts-input.ts-sm, .ts-input.ts-lg) { border-radius: var(--ts-round-pill); padding: 0 var(--ts-space-4); }
-:root[data-shape="round"] .ts-textarea { border-radius: 22px; padding: var(--ts-space-3) var(--ts-space-4); }
+:root[data-shape="round"] .ts-textarea { border-radius: var(--ts-round-row); padding: var(--ts-space-3) var(--ts-space-4); }
 :root[data-shape="round"] .ts-select::after { right: var(--ts-space-4); }
 :root[data-shape="round"] .ts-input:focus-within {
   background: var(--ts-bg-surface);
@@ -104,7 +100,7 @@
 :root[data-shape="round"] .ts-list.ts-sunken-list { background: var(--ts-fill-default); box-shadow: none; }
 :root[data-shape="round"] .ts-list-item,
 :root[data-shape="round"] .ts-list > li:is(:first-child, :last-child) > .ts-list-item {
-  background: transparent; box-shadow: none; border-radius: 22px; padding-inline: 12px;
+  background: transparent; box-shadow: none; border-radius: var(--ts-round-row); padding-inline: 12px;
 }
 
 /* ---------- 头像、徽标、标签、骨架屏：圆 ---------- */
@@ -118,7 +114,7 @@
 :root[data-shape="round"] .ts-kbd { border-radius: 8px; }
 
 /* ---------- 浮层 ---------- */
-:root[data-shape="round"] .ts-menu { border-radius: 24px; padding: 6px; }
+:root[data-shape="round"] .ts-menu { border-radius: var(--ts-round-menu); padding: 6px; }
 :root[data-shape="round"] .ts-menu-item { border-radius: 18px; }
 /* 分组之间只留白，不画线 */
 :root[data-shape="round"] .ts-menu-sep { height: 0; margin: 4px 0; background: none; }
@@ -171,9 +167,9 @@
 :root[data-shape="round"] .ts-otp-cell { border-radius: 20px; }
 :root[data-shape="round"] .ts-otp-cell[data-active] { box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow); }
 :root[data-shape="round"] .ts-otp[data-invalid] .ts-otp-cell { box-shadow: 0 0 0 1.5px var(--ts-danger-text); }
-:root[data-shape="round"] .ts-listbox { border-radius: 24px; padding: 6px; }
+:root[data-shape="round"] .ts-listbox { border-radius: var(--ts-round-menu); padding: 6px; }
 :root[data-shape="round"] .ts-option { border-radius: 18px; }
-:root[data-shape="round"] .ts-taginput { border-radius: 22px; padding: 5px 8px; }
+:root[data-shape="round"] .ts-taginput { border-radius: var(--ts-round-row); padding: 5px 8px; }
 :root[data-shape="round"] .ts-taginput .ts-tag { border-radius: var(--ts-round-pill); background-image: none; box-shadow: 0 1px 2px rgb(31 27 22 / .1); }
 :root[data-shape="round"] .ts-taginput .ts-tag button { border-radius: 50%; }
 :root[data-shape="round"] .ts-taginput .ts-tag[data-armed] { box-shadow: 0 0 0 1.5px var(--ts-danger-text); }
@@ -184,10 +180,10 @@
 :root[data-shape="round"] .ts-slider-value { border-radius: var(--ts-round-pill); padding: 4px 10px; }
 :root[data-shape="round"] .ts-rating button { border-radius: 50%; }
 :root[data-shape="round"] .ts-upload { border-radius: var(--ts-round-card); outline-offset: -10px; }
-:root[data-shape="round"] .ts-upload-list { gap: 0; padding: 6px; border-radius: 22px; background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+:root[data-shape="round"] .ts-upload-list { gap: 0; padding: 6px; border-radius: var(--ts-round-row); background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
 :root[data-shape="round"] .ts-upload-item, :root[data-shape="round"] .ts-upload-list > :is(:first-child, :last-child) { border-radius: 16px; background: transparent; box-shadow: none; }
 :root[data-shape="round"] .ts-upload-list:empty { display: none; }
-:root[data-shape="round"] .ts-input.ts-textarea { border-radius: 22px; }
+:root[data-shape="round"] .ts-input.ts-textarea { border-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-fieldset { border-radius: var(--ts-round-card); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
 
 /* ---------- 选择器 ---------- */
@@ -202,7 +198,7 @@
 :root[data-shape="round"] .ts-day[data-range-start][data-range-end] { border-radius: 50%; }
 :root[data-shape="round"] .ts-wheel::before { border-radius: var(--ts-round-pill); }
 :root[data-shape="round"] .ts-wheel:focus-within::before { box-shadow: 0 0 0 2px var(--ts-focus-ring); }
-:root[data-shape="round"] .ts-color-area { border-radius: 22px; }
+:root[data-shape="round"] .ts-color-area { border-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-color-hue { border-radius: var(--ts-round-pill); }
 :root[data-shape="round"] .ts-color-handle { border-radius: 50%; }
 :root[data-shape="round"] :is(.ts-color-preview, .ts-color-trigger-swatch, .ts-color-swatches button) { border-radius: 50%; background-image: none; }
@@ -228,10 +224,10 @@
 :root[data-shape="round"] .ts-table-wrap { border-radius: var(--ts-round-card); }
 :root[data-shape="round"] .ts-table { border-spacing: 0; margin: 0; }
 :root[data-shape="round"] .ts-table tbody tr td:is(:first-child, :last-child) { border-radius: 0; }
-:root[data-shape="round"] .ts-table tbody tr:first-child td:first-child { border-top-left-radius: 22px; }
-:root[data-shape="round"] .ts-table tbody tr:first-child td:last-child { border-top-right-radius: 22px; }
-:root[data-shape="round"] .ts-table tbody tr:last-child td:first-child { border-bottom-left-radius: 22px; }
-:root[data-shape="round"] .ts-table tbody tr:last-child td:last-child { border-bottom-right-radius: 22px; }
+:root[data-shape="round"] .ts-table tbody tr:first-child td:first-child { border-top-left-radius: var(--ts-round-row); }
+:root[data-shape="round"] .ts-table tbody tr:first-child td:last-child { border-top-right-radius: var(--ts-round-row); }
+:root[data-shape="round"] .ts-table tbody tr:last-child td:first-child { border-bottom-left-radius: var(--ts-round-row); }
+:root[data-shape="round"] .ts-table tbody tr:last-child td:last-child { border-bottom-right-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-table tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--_row-bg), var(--ts-text-primary) 2.5%); }
 @media (hover: hover) { :root[data-shape="round"] .ts-table tbody tr:hover td { background: color-mix(in srgb, var(--_row-bg), var(--ts-text-primary) 5%); } }
 :root[data-shape="round"] .ts-table tbody tr[aria-selected="true"] td { background: color-mix(in srgb, var(--ts-bg-surface), var(--ts-accent-solid) 12%); }
@@ -241,7 +237,7 @@
 :root[data-shape="round"] .ts-table-bulk :is(.ts-button, .ts-icon-button) { border-radius: var(--ts-round-pill); }
 @container (max-width: 560px) {
   :root[data-shape="round"] .ts-table[data-responsive] tbody { gap: var(--ts-round-gap); }
-  :root[data-shape="round"] .ts-table[data-responsive] tbody tr, :root[data-shape="round"] .ts-table[data-responsive] tbody tr:is(:first-child, :last-child) { border-radius: 22px; }
+  :root[data-shape="round"] .ts-table[data-responsive] tbody tr, :root[data-shape="round"] .ts-table[data-responsive] tbody tr:is(:first-child, :last-child) { border-radius: var(--ts-round-row); }
   :root[data-shape="round"] .ts-table[data-responsive] tbody tr:nth-child(even) td { background: none; }
 }
 
@@ -250,15 +246,15 @@
 :root[data-shape="round"] .ts-tree-row { border-radius: var(--ts-round-pill); }
 /* 折叠面板：一整块面，展开的那一项在面内浮出浅底 */
 :root[data-shape="round"] .ts-accordion { gap: 0; padding: 6px; border-radius: var(--ts-round-card); background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
-:root[data-shape="round"] .ts-accordion > details, :root[data-shape="round"] .ts-accordion > details:is(:first-child, :last-child) { border-radius: 22px; background: transparent; box-shadow: none; transition: background-color var(--ts-duration-fast) var(--ts-ease-standard); }
+:root[data-shape="round"] .ts-accordion > details, :root[data-shape="round"] .ts-accordion > details:is(:first-child, :last-child) { border-radius: var(--ts-round-row); background: transparent; box-shadow: none; transition: background-color var(--ts-duration-fast) var(--ts-ease-standard); }
 :root[data-shape="round"] .ts-accordion > details[open] { background: var(--ts-fill-default); }
 :root[data-shape="round"] .ts-accordion summary { padding: 0 var(--ts-space-4); }
 :root[data-shape="round"] .ts-accordion-body { padding: 0 var(--ts-space-4) var(--ts-space-4); }
 :root[data-shape="round"] .ts-tooltip { border-radius: 14px; padding: 6px 12px; }
-:root[data-shape="round"] .ts-popover { border-radius: 24px; }
+:root[data-shape="round"] .ts-popover { border-radius: var(--ts-round-menu); }
 
 /* ---------- 描述列表、时间线、统计：合成一整块 ---------- */
-:root[data-shape="round"] .ts-dl { gap: 0; padding: 6px 0; border-radius: 22px; background: var(--ts-bg-surface); }
+:root[data-shape="round"] .ts-dl { gap: 0; padding: 6px 0; border-radius: var(--ts-round-row); background: var(--ts-bg-surface); }
 :root[data-shape="round"] .ts-dl dt, :root[data-shape="round"] .ts-dl dd, :root[data-shape="round"] .ts-dl > div:is(:first-child, :last-child) :is(dt, dd) { border-radius: 0; background: transparent; }
 :root[data-shape="round"] .ts-timeline > li::before { border-radius: 50%; }
 :root[data-shape="round"] .ts-timeline > li:not(:last-child)::after { border-radius: var(--ts-round-pill); }
@@ -268,18 +264,18 @@
 /* ---------- 轮播、图片预览、空状态、代码块 ---------- */
 :root[data-shape="round"] :is(.ts-carousel-track, .ts-carousel-track > *) { border-radius: var(--ts-round-card); }
 :root[data-shape="round"] .ts-carousel-dots button { border-radius: var(--ts-round-pill); }
-:root[data-shape="round"] .ts-viewer img { border-radius: 22px; }
+:root[data-shape="round"] .ts-viewer img { border-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-viewer-tools { gap: 0; padding: 4px; border-radius: var(--ts-round-pill); background: rgb(255 255 255 / .12); }
 :root[data-shape="round"] .ts-viewer-tools .ts-icon-button, :root[data-shape="round"] .ts-viewer-tools .ts-icon-button:is(:first-child, :last-child) { border-radius: 50%; background: transparent !important; }
 :root[data-shape="round"] .ts-empty-art { gap: 6px; }
 :root[data-shape="round"] .ts-empty-art i, :root[data-shape="round"] .ts-empty-art i:is(:nth-child(1), :nth-child(3), :nth-child(7), :nth-child(9)) { border-radius: 50%; }
 :root[data-shape="round"] .ts-empty-art i:nth-child(5) { transform: translateY(-6px); }
-:root[data-shape="round"] .ts-code { border-radius: 22px; }
+:root[data-shape="round"] .ts-code { border-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-code-head { box-shadow: none; padding-inline-start: 18px; }
 :root[data-shape="round"] .ts-code pre { padding-inline: 18px; }
 
 /* ---------- 反馈 ---------- */
-:root[data-shape="round"] .ts-banner { border-radius: 22px; padding-inline: 18px; }
+:root[data-shape="round"] .ts-banner { border-radius: var(--ts-round-row); padding-inline: 18px; }
 :root[data-shape="round"] .ts-banner.ts-page-banner { border-radius: 0; }
 :root[data-shape="round"] .ts-drawer { border-radius: var(--ts-round-panel) 0 0 var(--ts-round-panel); }
 :root[data-shape="round"] .ts-drawer[data-side="left"] { border-radius: 0 var(--ts-round-panel) var(--ts-round-panel) 0; }
@@ -299,11 +295,11 @@
 :root[data-shape="round"] .ts-divider.ts-vertical { width: 0; background: none; margin: 0 var(--ts-space-3); }
 :root[data-shape="round"] .ts-divider[data-label] { justify-content: center; }
 :root[data-shape="round"] .ts-divider[data-label]::before, :root[data-shape="round"] .ts-divider[data-label]::after { display: none; }
-:root[data-shape="round"] .ts-ratio { border-radius: 22px; }
+:root[data-shape="round"] .ts-ratio { border-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-split-handle::before { border-radius: var(--ts-round-pill); }
 
 /* ---------- 移动端手势 ---------- */
-:root[data-shape="round"] .ts-list .ts-swipe, :root[data-shape="round"] .ts-list > li:is(:first-child, :last-child) > .ts-swipe { border-radius: 22px; }
+:root[data-shape="round"] .ts-list .ts-swipe, :root[data-shape="round"] .ts-list > li:is(:first-child, :last-child) > .ts-swipe { border-radius: var(--ts-round-row); }
 :root[data-shape="round"] .ts-swipe-actions { gap: 0; padding-inline-start: 0; background: transparent; }
 :root[data-shape="round"] .ts-swipe-actions > button { background-image: none; }
 :root[data-shape="round"] .ts-ptr-indicator { border-radius: 50%; }

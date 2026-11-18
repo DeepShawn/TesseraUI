@@ -164,6 +164,18 @@ public enum TesseraTile {
     public static let edge: CGFloat = 2
 }
 
+/// 圆融外观的形状数值（`.tesseraShape(.round)` 时使用）
+public enum TesseraRound {
+    public static let pill: CGFloat = 9999
+    public static let card: CGFloat = 28
+    public static let panel: CGFloat = 36
+    public static let row: CGFloat = 22
+    public static let menu: CGFloat = 24
+    public static let gap: CGFloat = 8
+    public static let groupGap: CGFloat = 0
+    public static let pressScale: CGFloat = 0.97
+}
+
 public enum TesseraFocus {
     public static let ringWidth: CGFloat = 2
     public static let ringOffset: CGFloat = 2

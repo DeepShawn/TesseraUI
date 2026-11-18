@@ -82,6 +82,13 @@ function buildWeb() {
     `  --ts-glass-saturation: ${F.material.glass.saturation * 100}%;`,
     `  --ts-tile-grout: ${F.tile.grout}px;`,
     `  --ts-tile-edge: ${F.tile.edge}px;`,
+    `  --ts-round-pill: ${F.shape.round.pill}px;`,
+    `  --ts-round-card: ${F.shape.round.card}px;`,
+    `  --ts-round-panel: ${F.shape.round.panel}px;`,
+    `  --ts-round-row: ${F.shape.round.row}px;`,
+    `  --ts-round-menu: ${F.shape.round.menu}px;`,
+    `  --ts-round-gap: ${F.shape.round.gap}px;`,
+    `  --ts-round-press-scale: ${F.shape.round.pressScale};`,
     ...Object.entries(F.z).map(([k, v]) => `  --ts-z-${k}: ${v};`),
     ...Object.entries(M.duration).map(([k, v]) => `  --ts-duration-${k}: ${v}ms;`),
     ...Object.entries(M.ease).map(
@@ -238,6 +245,18 @@ public enum TesseraTile {
     public static let edge: CGFloat = ${F.tile.edge}
 }
 
+/// 圆融外观的形状数值（\`.tesseraShape(.round)\` 时使用）
+public enum TesseraRound {
+    public static let pill: CGFloat = ${F.shape.round.pill}
+    public static let card: CGFloat = ${F.shape.round.card}
+    public static let panel: CGFloat = ${F.shape.round.panel}
+    public static let row: CGFloat = ${F.shape.round.row}
+    public static let menu: CGFloat = ${F.shape.round.menu}
+    public static let gap: CGFloat = ${F.shape.round.gap}
+    public static let groupGap: CGFloat = ${F.shape.round.groupGap}
+    public static let pressScale: CGFloat = ${F.shape.round.pressScale}
+}
+
 public enum TesseraFocus {
     public static let ringWidth: CGFloat = ${F.focus.ringWidth}
     public static let ringOffset: CGFloat = ${F.focus.ringOffset}
@@ -360,6 +379,18 @@ object TesseraOpacity {
 object TesseraTile {
     val grout = ${F.tile.grout}.dp
     val edge = ${F.tile.edge}.dp
+}
+
+/** 圆融外观的形状数值（TesseraTheme(shape = TesseraShape.Round) 时使用） */
+object TesseraRound {
+    val pill = ${F.shape.round.pill}.dp
+    val card = ${F.shape.round.card}.dp
+    val panel = ${F.shape.round.panel}.dp
+    val row = ${F.shape.round.row}.dp
+    val menu = ${F.shape.round.menu}.dp
+    val gap = ${F.shape.round.gap}.dp
+    val groupGap = ${F.shape.round.groupGap}.dp
+    const val PRESS_SCALE = ${F.shape.round.pressScale}f
 }
 
 object TesseraFocus {
@@ -517,6 +548,9 @@ ${Object.entries(F.radius).map(([k, v]) => `    <CornerRadius x:Key="TesseraRadi
     <!-- 拼贴：砖缝、砖厚 -->
     <x:Double x:Key="TesseraTileGrout">${F.tile.grout}</x:Double>
     <x:Double x:Key="TesseraTileEdge">${F.tile.edge}</x:Double>
+    <Thickness x:Key="TesseraTileEdgeThickness">0,0,0,${F.tile.edge}</Thickness>
+    <!-- 外观：tile（拼贴）。合并 TesseraShapeRound.xaml 后变为 round -->
+    <x:String x:Key="TesseraShape">${F.shape.default}</x:String>
 
     <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
     <Thickness x:Key="TesseraFocusRingThickness">${F.focus.ringWidth}</Thickness>
@@ -592,6 +626,41 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     <CornerRadius x:Key="ControlCornerRadius">${F.radius.md}</CornerRadius>
     <CornerRadius x:Key="OverlayCornerRadius">${F.radius.lg}</CornerRadius>
     <Thickness x:Key="TextControlBorderThemeThicknessFocused">1</Thickness>
+</ResourceDictionary>
+`);
+
+  // 圆融外观：合并在 TesseraTokens.xaml、TesseraTheme.xaml 之后，覆盖圆角、砖缝和砖厚
+  const RD = F.shape.round;
+  emit('platforms/windows/TesseraUI/Themes/TesseraShapeRound.xaml', `<!-- ${HEADER('').slice(1)} -->
+<!-- 圆融外观：胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线。
+     用法：在 App.xaml 中紧跟 TesseraTokens.xaml、TesseraTheme.xaml 之后合并本文件；不合并即为默认的“拼贴”外观。
+     WinUI 会把超过半高的圆角自动收成半圆，所以 ${RD.pill} 就是胶囊。 -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 成组控件内侧不留圆角、不留缝，合成一整块 -->
+    <CornerRadius x:Key="TesseraRadiusGrout">0</CornerRadius>
+    <x:Double x:Key="TesseraTileGrout">${RD.groupGap}</x:Double>
+    <!-- 去掉砖厚 -->
+    <x:Double x:Key="TesseraTileEdge">0</x:Double>
+    <Thickness x:Key="TesseraTileEdgeThickness">0</Thickness>
+
+    <CornerRadius x:Key="TesseraRadiusSm">${RD.pill}</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusMd">${F.size.md / 2}</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusLg">${RD.menu}</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusXl">${RD.card}</CornerRadius>
+    <CornerRadius x:Key="TesseraRadius2xl">${RD.panel}</CornerRadius>
+    <CornerRadius x:Key="TesseraRoundRow">${RD.row}</CornerRadius>
+    <CornerRadius x:Key="TesseraRoundPill">${RD.pill}</CornerRadius>
+    <x:Double x:Key="TesseraRoundGap">${RD.gap}</x:Double>
+    <x:Double x:Key="TesseraRoundPressScale">${RD.pressScale}</x:Double>
+    <!-- 标记：自定义控件据此切换到圆融外观 -->
+    <x:String x:Key="TesseraShape">round</x:String>
+
+    <!-- 系统控件 -->
+    <CornerRadius x:Key="ControlCornerRadius">${F.size.md / 2}</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">${RD.menu}</CornerRadius>
 </ResourceDictionary>
 `);
 

@@ -58,6 +58,13 @@
   --ts-glass-saturation: 180%;
   --ts-tile-grout: 3px;
   --ts-tile-edge: 2px;
+  --ts-round-pill: 9999px;
+  --ts-round-card: 28px;
+  --ts-round-panel: 36px;
+  --ts-round-row: 22px;
+  --ts-round-menu: 24px;
+  --ts-round-gap: 8px;
+  --ts-round-press-scale: 0.97;
   --ts-z-sticky: 100;
   --ts-z-overlay: 200;
   --ts-z-modal: 300;

@@ -387,6 +387,18 @@ object TesseraTile {
     val edge = 2.dp
 }
 
+/** 圆融外观的形状数值（TesseraTheme(shape = TesseraShape.Round) 时使用） */
+object TesseraRound {
+    val pill = 9999.dp
+    val card = 28.dp
+    val panel = 36.dp
+    val row = 22.dp
+    val menu = 24.dp
+    val gap = 8.dp
+    val groupGap = 0.dp
+    const val PRESS_SCALE = 0.97f
+}
+
 object TesseraFocus {
     val ringWidth = 2.dp
     val ringOffset = 2.dp

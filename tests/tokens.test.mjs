@@ -76,3 +76,14 @@ test('拼贴规则：内角小于外角', () => {
   assert.ok(r.grout < r.md && r.md < r.lg);
   assert.ok(tokens.foundation.tile.grout > 0 && tokens.foundation.tile.edge > 0);
 });
+
+test('圆融外观的形状令牌导出到四端', () => {
+  const r = tokens.foundation.shape.round;
+  assert.ok(read('platforms/web/dist/tokens.css').includes(`--ts-round-card: ${r.card}px;`));
+  assert.ok(read('platforms/web/dist/tessera.css').includes(':root[data-shape="round"]'));
+  assert.ok(read('platforms/apple/Sources/TesseraUI/Generated/TesseraTokens.swift').includes(`public static let card: CGFloat = ${r.card}`));
+  assert.ok(read('platforms/android/tessera/src/main/kotlin/com/tesseraui/TesseraTokens.kt').includes(`val card = ${r.card}.dp`));
+  const win = read('platforms/windows/TesseraUI/Themes/TesseraShapeRound.xaml');
+  assert.ok(win.includes(`<CornerRadius x:Key="TesseraRadiusXl">${r.card}</CornerRadius>`));
+  assert.ok(win.includes('<x:String x:Key="TesseraShape">round</x:String>'));
+});

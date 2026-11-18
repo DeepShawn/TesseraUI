@@ -475,6 +475,9 @@
     <!-- 拼贴：砖缝、砖厚 -->
     <x:Double x:Key="TesseraTileGrout">3</x:Double>
     <x:Double x:Key="TesseraTileEdge">2</x:Double>
+    <Thickness x:Key="TesseraTileEdgeThickness">0,0,0,2</Thickness>
+    <!-- 外观：tile（拼贴）。合并 TesseraShapeRound.xaml 后变为 round -->
+    <x:String x:Key="TesseraShape">tile</x:String>
 
     <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
     <Thickness x:Key="TesseraFocusRingThickness">2</Thickness>
