@@ -196,21 +196,71 @@ async function check(name, fn) {
   });
 
   console.log('数据展示');
-  await check('表格：数字列排序、三态', async () => {
-    const th = p.locator('th', { hasText: '预算' }).locator('button');
+  const budgets = () => p.$$eval('#tbl tbody tr td:nth-child(6)', (tds) => tds.map((td) => Number(td.dataset.value)));
+  await check('表格：分页（每页 6 条）', async () => {
+    assert.equal(await p.locator('#tbl tbody tr').count(), 6);
+    assert.match(await p.textContent('.ts-table-footer'), /共 23 条，第 1–6 条/);
+    await p.locator('.ts-table-footer button[aria-label="第 4 页"]').click();
+    assert.equal(await p.locator('#tbl tbody tr').count(), 5);
+    assert.match(await p.textContent('.ts-table-footer'), /第 19–23 条/);
+  });
+  await check('表格：数字列排序、三态、跨页', async () => {
+    const th = p.locator('#tbl th', { hasText: '预算' }).locator('button');
     await th.click();
-    assert.equal((await p.locator('.ts-table tbody tr td:first-child').allTextContents())[0], '图标库');
+    let v = await budgets();
+    assert.deepEqual(v, [...v].sort((a, b) => a - b));
+    assert.match(await p.textContent('.ts-table-footer'), /第 1–6 条/, '排序后回到第 1 页');
     await th.click();
-    assert.equal((await p.locator('.ts-table tbody tr td:first-child').allTextContents())[0], 'Web 组件');
+    v = await budgets();
+    assert.deepEqual(v, [...v].sort((a, b) => b - a));
+    assert.equal(await p.getAttribute('#tbl th:nth-child(6)', 'aria-sort'), 'descending');
     await th.click();
-    assert.equal((await p.locator('.ts-table tbody tr td:first-child').allTextContents())[0], '设计令牌');
+    assert.equal(await p.textContent('#tbl tbody tr:first-child td:nth-child(2)'), '设计令牌');
   });
   await check('表格：筛选与空状态', async () => {
     await p.fill('#tbl-filter', '组件');
-    assert.equal(await p.locator('.ts-table tbody tr').count(), 2);
+    assert.equal(await p.locator('#tbl tbody tr').count(), 5);
     await p.fill('#tbl-filter', '不存在');
-    assert.match(await p.textContent('.ts-table tbody'), /没有符合条件/);
+    assert.match(await p.textContent('#tbl tbody'), /没有符合条件/);
     await p.fill('#tbl-filter', '');
+  });
+  await check('表格：选择、全选半选、Shift 连选、批量栏', async () => {
+    const boxes = p.locator('#tbl tbody .ts-select-cell input');
+    await boxes.nth(0).check();
+    assert.ok(await p.isVisible('#tbl-bulk'));
+    assert.equal(await p.textContent('#tbl-bulk [data-bulk-count]'), '1');
+    assert.ok(await p.$eval('#tbl thead .ts-checkbox', (b) => b.indeterminate));
+    await boxes.nth(3).click({ modifiers: ['Shift'] });
+    assert.equal(await p.textContent('#tbl-bulk [data-bulk-count]'), '4');
+    await p.check('#tbl thead .ts-checkbox');
+    assert.equal(await p.textContent('#tbl-bulk [data-bulk-count]'), '23');
+    await p.click('#tbl-clear');
+    assert.ok(await p.isHidden('#tbl-bulk'));
+  });
+  await check('表格：批量删除', async () => {
+    const boxes = p.locator('#tbl tbody .ts-select-cell input');
+    await boxes.nth(0).check(); await boxes.nth(1).check();
+    await p.click('#tbl-del');
+    await p.waitForTimeout(400);
+    await p.click('dialog[open] .ts-danger');
+    await p.waitForTimeout(500);
+    assert.match(await p.textContent('.ts-table-footer'), /共 21 条/);
+  });
+  await check('表格：截断的备注有完整提示', async () => {
+    assert.ok(await p.locator('#tbl td.ts-truncate[data-tooltip]').count() > 0);
+  });
+  await check('表格：刷新时显示骨架行', async () => {
+    await p.click('#tbl-reload');
+    assert.ok(await p.locator('#tbl .ts-table-loading').count() > 0);
+    await p.waitForTimeout(1200);
+    assert.equal(await p.locator('#tbl .ts-table-loading').count(), 0);
+  });
+  await check('表格：窄容器变成卡片', async () => {
+    await p.$eval('#table-demo .ts-table-wrap', (w) => (w.style.width = '380px'));
+    await p.waitForTimeout(200);
+    assert.equal(await p.$eval('#tbl thead', (t) => getComputedStyle(t).display), 'none');
+    assert.equal(await p.$eval('#tbl tbody tr', (t) => getComputedStyle(t).display), 'grid');
+    await p.$eval('#table-demo .ts-table-wrap', (w) => (w.style.width = ''));
   });
   await check('树：键盘展开与选择', async () => {
     await p.click('.ts-tree-row:has-text("apple")');

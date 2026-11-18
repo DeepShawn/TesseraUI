@@ -1,52 +1,202 @@
 // 数据展示：Table、Tree、Accordion、Tooltip、Popover、Carousel、ImageViewer、CodeBlock
-import { Spring, VelocityTracker, motion as M, icon, once, uid, clamp, place, onOutside, animateIn, animateOut, emit, prefersReducedMotion, onCommittedInput } from '../core.js';
+import { Spring, VelocityTracker, motion as M, icon, once, uid, clamp, place, onOutside, animateIn, animateOut, emit, esc, prefersReducedMotion, onCommittedInput } from '../core.js';
+import { pagination } from './navigation.js';
 
 // ------------------------------------------------------------------
-// 表格：点表头排序（数字按数值、中文按拼音顺序），可配一个筛选框
+// 表格
+// - 点表头排序：升序 → 降序 → 原顺序；数字按数值、中文按拼音顺序
+// - 筛选框：输入法选定后才过滤
+// - data-selectable：选择列、全选（含半选态）、Shift 连选，选中后显示批量操作栏
+// - data-page-size：分页（与排序、筛选联动）
+// - data-sticky-first：固定首列，横向滚动后才出现分隔阴影；纵向滚动后表头出现阴影
+// - data-responsive：容器变窄时每行变成一张卡片
+// - .ts-truncate 单元格：文字被截断时自动加工具提示
 // ------------------------------------------------------------------
 const collator = new Intl.Collator('zh-Hans-CN', { numeric: true, sensitivity: 'base' });
-export function table(root, { filterInput } = {}) {
+const numOf = (s) => parseFloat(String(s).replace(/[,，¥$%\s]/g, ''));
+export function table(root, { filterInput, pageSize = Number(root.dataset.pageSize || 0), bulk } = {}) {
+  const wrap = root.closest('.ts-table-wrap') || root.parentElement;
   const tbody = root.tBodies[0];
+  const headRow = root.tHead.rows[0];
+  const selectable = root.hasAttribute('data-selectable');
+  const responsive = root.hasAttribute('data-responsive');
+  bulk ??= root.dataset.bulk ? document.getElementById(root.dataset.bulk) : null;
+
+  // 选择列
+  let allBox = null;
+  if (selectable) {
+    const th = document.createElement('th');
+    th.className = 'ts-select-cell';
+    th.innerHTML = '<input type="checkbox" class="ts-checkbox" aria-label="全选">';
+    headRow.prepend(th);
+    allBox = th.firstElementChild;
+    [...tbody.rows].forEach((r, i) => {
+      const td = document.createElement('td');
+      td.className = 'ts-select-cell';
+      const label = r.cells[0]?.textContent.trim() || `第 ${i + 1} 行`;
+      td.innerHTML = `<input type="checkbox" class="ts-checkbox" aria-label="选择 ${esc(label)}">`;
+      r.prepend(td);
+      r.setAttribute('aria-selected', 'false');
+    });
+  }
+  const heads = [...headRow.cells];
   const original = [...tbody.rows];
-  const heads = [...root.tHead.rows[0].cells];
+  // 窄屏卡片模式：给每个单元格补上列名，并包一层便于排版
+  const firstData = selectable ? 1 : 0;
+  if (responsive) original.forEach((r) => [...r.cells].forEach((td, i) => {
+    const th = heads[i];
+    const isTitle = i === firstData, isActions = th?.classList.contains('ts-actions-col'), isSelect = td.classList.contains('ts-select-cell');
+    td.dataset.label = isTitle || isActions || isSelect ? '' : th?.textContent.trim() || '';
+    if (isTitle) td.classList.add('ts-card-title');
+    if (isActions) td.classList.add('ts-actions-cell');
+    const inner = document.createElement('span');
+    inner.className = 'ts-cell-inner';
+    inner.append(...td.childNodes);
+    td.append(inner);
+  }));
+
+  // 排序
   let sortCol = -1, dir = 'none';
   const cellValue = (row, i) => { const c = row.cells[i]; return c?.dataset.value ?? c?.textContent.trim() ?? ''; };
+  const sortIcon = (th) => th.querySelector('.ts-sort .ts-icon').replaceWith(icon(th.getAttribute('aria-sort') === 'ascending' ? 'arrow-up' : th.getAttribute('aria-sort') === 'descending' ? 'arrow-down' : 'chevrons-up-down'));
   heads.forEach((th, i) => {
     if (!th.hasAttribute('data-sortable')) return;
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'ts-sort';
-    btn.append(...th.childNodes, icon('chevron-down'));
+    btn.append(...th.childNodes, icon('chevrons-up-down'));
     th.append(btn);
     th.setAttribute('aria-sort', 'none');
     btn.addEventListener('click', () => {
-      // 三态：升序 → 降序 → 原顺序
       dir = sortCol !== i ? 'ascending' : dir === 'ascending' ? 'descending' : dir === 'descending' ? 'none' : 'ascending';
       sortCol = dir === 'none' ? -1 : i;
-      heads.forEach((h) => h.hasAttribute('aria-sort') && h.setAttribute('aria-sort', 'none'));
-      if (sortCol >= 0) th.setAttribute('aria-sort', dir);
+      heads.forEach((h) => { if (h.hasAttribute('aria-sort')) { h.setAttribute('aria-sort', h === th && dir !== 'none' ? dir : 'none'); sortIcon(h); } });
+      page = 1;
       apply();
       emit(root, 'sort', { column: i, direction: dir });
     });
   });
-  let query = '';
+
+  // 筛选、分页
+  let query = '', page = 1, loading = false;
+  const colspan = heads.length;
   const empty = document.createElement('tr');
   empty.className = 'ts-table-empty';
-  empty.innerHTML = `<td colspan="${heads.length}">没有符合条件的数据</td>`;
-  const apply = () => {
+  empty.innerHTML = `<td colspan="${colspan}">没有符合条件的数据</td>`;
+  let footer = null, pager = null, info = null;
+  if (pageSize) {
+    footer = document.createElement('div');
+    footer.className = 'ts-table-footer';
+    info = document.createElement('span');
+    const pg = document.createElement('div');
+    footer.append(info, pg);
+    wrap.after(footer);
+    pager = pagination(pg, { total: 1, page: 1, onChange: (p) => { page = p; apply(false); wrap.scrollTop = 0; } });
+  }
+  let visible = original;
+  function apply(resetPage = true) {
+    if (loading) return;
     let rows = original.filter((r) => !query || r.textContent.toLowerCase().includes(query.toLowerCase()));
     if (sortCol >= 0) {
-      const numeric = rows.every((r) => !isNaN(parseFloat(cellValue(r, sortCol).replace(/[,，¥$%]/g, ''))));
+      const numeric = rows.every((r) => !isNaN(numOf(cellValue(r, sortCol))));
       rows = [...rows].sort((a, b) => {
         const x = cellValue(a, sortCol), y = cellValue(b, sortCol);
-        const c = numeric ? parseFloat(x.replace(/[,，¥$%]/g, '')) - parseFloat(y.replace(/[,，¥$%]/g, '')) : collator.compare(x, y);
+        const c = numeric ? numOf(x) - numOf(y) : collator.compare(x, y);
         return dir === 'ascending' ? c : -c;
       });
     }
-    tbody.replaceChildren(...(rows.length ? rows : [empty]));
+    visible = rows;
+    let shown = rows;
+    if (pageSize) {
+      const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+      if (resetPage === true) page = Math.min(page, pages);
+      pager.setTotal(pages);
+      if (pager.page !== page) pager.go(page);
+      shown = rows.slice((page - 1) * pageSize, page * pageSize);
+      const from = rows.length ? (page - 1) * pageSize + 1 : 0;
+      info.textContent = `共 ${rows.length} 条${rows.length ? `，第 ${from}–${from + shown.length - 1} 条` : ''}`;
+    }
+    tbody.replaceChildren(...(shown.length ? shown : [empty]));
+    syncSelection();
+    truncateTips();
+  }
+
+  // 选择
+  let anchor = null;
+  const selected = () => original.filter((r) => r.getAttribute('aria-selected') === 'true');
+  function syncSelection() {
+    if (!selectable) return;
+    const sel = selected();
+    const inView = visible.filter((r) => r.getAttribute('aria-selected') === 'true').length;
+    allBox.checked = visible.length > 0 && inView === visible.length;
+    allBox.indeterminate = inView > 0 && inView < visible.length;
+    if (bulk) {
+      bulk.hidden = sel.length === 0;
+      const c = bulk.querySelector('[data-bulk-count]');
+      if (c) c.textContent = sel.length;
+    }
+  }
+  const setRow = (r, on) => { r.setAttribute('aria-selected', on); r.querySelector('.ts-select-cell input').checked = on; };
+  const changed = () => { syncSelection(); emit(root, 'selectionchange', { rows: selected(), count: selected().length }); };
+  if (selectable) {
+    allBox.addEventListener('change', () => { visible.forEach((r) => setRow(r, allBox.checked)); changed(); });
+    tbody.addEventListener('click', (e) => {
+      const box = e.target.closest('.ts-select-cell input');
+      if (!box) return;
+      const row = box.closest('tr');
+      // Shift + 点击：从上一次点的行连选到这一行
+      if (e.shiftKey && anchor && anchor !== row) {
+        const list = [...tbody.rows];
+        const [a, b] = [list.indexOf(anchor), list.indexOf(row)].sort((x, y) => x - y);
+        list.slice(a, b + 1).forEach((r) => setRow(r, box.checked));
+      } else setRow(row, box.checked);
+      anchor = row;
+      changed();
+    });
+  }
+
+  // 滚动阴影
+  const onScroll = () => {
+    wrap.toggleAttribute('data-scrolled-x', wrap.scrollLeft > 1);
+    wrap.toggleAttribute('data-scrolled-y', wrap.scrollTop > 1);
   };
-  if (filterInput) onCommittedInput(filterInput, (v) => { query = v.trim(); apply(); });
-  return { refresh: apply };
+  wrap.addEventListener('scroll', onScroll, { passive: true });
+
+  // 截断提示
+  function truncateTips() {
+    root.querySelectorAll('.ts-truncate').forEach((td) => {
+      if (td.scrollWidth > td.clientWidth + 1) td.dataset.tooltip = td.textContent.trim();
+      else delete td.dataset.tooltip;
+    });
+  }
+  new ResizeObserver(() => truncateTips()).observe(wrap);
+
+  if (filterInput) onCommittedInput(filterInput, (v) => { query = v.trim(); page = 1; apply(); });
+  apply();
+  onScroll();
+
+  return {
+    refresh: () => apply(false),
+    get selected() { return selected(); },
+    clearSelection() { original.forEach((r) => setRow(r, false)); changed(); },
+    /** 删除行（例如批量删除后） */
+    remove(rows) { rows.forEach((r) => { const i = original.indexOf(r); if (i >= 0) original.splice(i, 1); }); changed(); apply(false); },
+    /** 加载中：用骨架行占位 */
+    setLoading(on, count = pageSize || 5) {
+      loading = on;
+      if (on) {
+        const sk = Array.from({ length: count }, () => {
+          const tr = document.createElement('tr');
+          tr.className = 'ts-table-loading';
+          tr.setAttribute('aria-hidden', 'true');
+          tr.innerHTML = heads.map((_, i) => `<td><span class="ts-skeleton" style="width:${40 + ((i * 23) % 50)}%"></span></td>`).join('');
+          return tr;
+        });
+        tbody.replaceChildren(...sk);
+        root.setAttribute('aria-busy', 'true');
+      } else { root.removeAttribute('aria-busy'); apply(false); }
+    },
+  };
 }
 
 // ------------------------------------------------------------------
@@ -419,7 +569,7 @@ export function codeBlock(root) {
 
 export function initData(root = document) {
   const $ = (sel, fn) => root.querySelectorAll(sel).forEach((el) => once(el, sel, fn));
-  $('table.ts-table', (el) => table(el, { filterInput: el.dataset.filter ? document.getElementById(el.dataset.filter) : null }));
+  $('table.ts-table', (el) => { el._tsTable = table(el, { filterInput: el.dataset.filter ? document.getElementById(el.dataset.filter) : null }); });
   $('.ts-tree', tree);
   $('.ts-accordion', accordion);
   $('.ts-carousel', carousel);

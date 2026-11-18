@@ -217,20 +217,26 @@
       <h2 class="ts-title-2">数据展示</h2>
       <p>Table、Tree、Accordion、Tooltip、Popover、DescriptionList、Timeline、Stat、Carousel、ImageViewer、EmptyState、CodeBlock、AvatarGroup、Kbd（快捷键提示，见右键菜单与命令面板）</p>
       <div class="demo-grid">
-        <div class="demo wide">
-          <div class="ts-table-toolbar"><h3 class="ts-title-3" style="margin:0;flex:1">表格 <code style="font:400 11px var(--ts-font-mono);color:var(--ts-text-tertiary)">Table</code></h3><div class="ts-input ts-sm" style="width:220px"><i data-icon="search"></i><input id="tbl-filter" placeholder="筛选" aria-label="筛选表格"></div></div>
-          <div class="ts-table-wrap">
-            <table class="ts-table" data-filter="tbl-filter" data-sticky-first>
-              <thead><tr><th data-sortable>项目</th><th data-sortable>负责人</th><th data-sortable>状态</th><th data-sortable class="ts-num">进度</th><th data-sortable class="ts-num">预算（元）</th><th data-sortable>截止日期</th></tr></thead>
-              <tbody>
-                <tr><td>设计令牌</td><td>周</td><td><span class="ts-tag ts-success">已完成</span></td><td class="ts-num">100%</td><td class="ts-num">12,000</td><td>2026-11-18</td></tr>
-                <tr><td>图标库</td><td>林</td><td><span class="ts-tag ts-success">已完成</span></td><td class="ts-num">100%</td><td class="ts-num">8,500</td><td>2026-11-18</td></tr>
-                <tr><td>Web 组件</td><td>陈</td><td><span class="ts-tag ts-accent">进行中</span></td><td class="ts-num">86%</td><td class="ts-num">36,000</td><td>2026-11-25</td></tr>
-                <tr><td>Apple 组件</td><td>赵</td><td><span class="ts-tag">未开始</span></td><td class="ts-num">0%</td><td class="ts-num">30,000</td><td>2026-12-20</td></tr>
-                <tr><td>文档站</td><td>吴</td><td><span class="ts-tag ts-warning">有风险</span></td><td class="ts-num">20%</td><td class="ts-num">15,000</td><td>2026-12-05</td></tr>
-              </tbody>
+        <div class="demo wide" id="table-demo">
+          <div class="demo-name"><h3 class="ts-title-3">表格</h3><code>Table</code></div>
+          <div class="ts-table-toolbar">
+            <div class="ts-input ts-sm" style="width:220px"><i data-icon="search"></i><input id="tbl-filter" placeholder="筛选项目、负责人…" aria-label="筛选表格"></div>
+            <div class="ts-segmented ts-sm" role="radiogroup" aria-label="行高" id="tbl-density">
+              <label><input type="radio" name="density" value="compact"><span>紧凑</span></label>
+              <label><input type="radio" name="density" value="" checked><span>标准</span></label>
+              <label><input type="radio" name="density" value="comfortable"><span>宽松</span></label>
+            </div>
+            <span class="ts-spacer" style="flex:1"></span>
+            <button class="ts-button ts-sm ts-pressable ts-state" id="tbl-reload"><i data-icon="refresh"></i>刷新</button>
+            <div class="ts-table-bulk" id="tbl-bulk" hidden><span>已选 <b data-bulk-count>0</b> 项</span><button class="ts-button ts-sm ts-pressable" id="tbl-export"><i data-icon="download"></i>导出</button><button class="ts-button ts-sm ts-pressable" id="tbl-del"><i data-icon="trash"></i>删除</button><button class="ts-icon-button ts-sm ts-pressable" id="tbl-clear" aria-label="取消选择" style="color:inherit"><i data-icon="close"></i></button></div>
+          </div>
+          <div class="ts-table-wrap" style="max-height:420px">
+            <table class="ts-table" id="tbl" data-filter="tbl-filter" data-selectable data-sticky-first data-responsive data-page-size="6" data-bulk="tbl-bulk">
+              <thead><tr><th data-sortable>项目</th><th data-sortable>负责人</th><th data-sortable>状态</th><th data-sortable class="ts-num">进度</th><th data-sortable class="ts-num">预算（元）</th><th data-sortable>截止日期</th><th>备注</th><th class="ts-num ts-actions-col"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">操作</span></th></tr></thead>
+              <tbody id="tbl-body"></tbody>
             </table>
           </div>
+          <p class="ts-caption ts-secondary" style="margin:0">勾选行出现批量操作栏，Shift + 点击可连选；表头排序为“升序 → 降序 → 原顺序”；横向滚动时首列固定；把窗口拉窄（或用手机打开），每行会变成一张卡片。</p>
         </div>
         <div class="ts-card demo">
           <div class="demo-name"><h3 class="ts-title-3">树</h3><code>Tree</code></div>
@@ -447,7 +453,35 @@ addItems(8);
 const names = { A: ['安然', '艾米'], B: ['白露', '包子'], C: ['陈晨', '程一'], D: ['丁香', '段落'], F: ['方圆'], G: ['高山', '顾北'], H: ['何夕', '韩梅'], L: ['林间', '刘洋', '陆离'], W: ['王一', '吴越'], Z: ['张三', '赵四', '周五'] };
 document.getElementById('contacts').innerHTML = Object.entries(names).map(([k, list]) => `<div class="ts-index-group" data-index="${k}">${k}</div>` + list.map((x) => `<div class="ts-list-item" style="border-radius:0;box-shadow:none;background:none;min-height:48px"><span class="ts-avatar ts-sm">${x[0]}</span><span class="ts-body-sm">${x}</span></div>`).join('')).join('');
 
+// 表格数据
+const people = ['周', '林', '陈', '赵', '吴', '王', '孙', '郑'];
+const projects = ['设计令牌', '图标库', 'Web 组件', 'Apple 组件', 'Android 组件', 'Windows 组件', '文档站', '设计工具组件库', '对比度检查', '截图对比测试', '中文输入法测试', '发布流程', '品牌插图', '动效规范', '无障碍审查', '性能基准', '示例应用', '迁移指南', '贡献指南', '主题编辑器', '移动端手势', '数据可视化配色', '多语言排版'];
+const status = [['已完成', 'ts-success'], ['进行中', 'ts-accent'], ['未开始', ''], ['有风险', 'ts-warning'], ['已暂停', 'ts-danger']];
+const notes = ['等待设计评审结论后再继续推进下一阶段', '已与各端负责人对齐', '依赖 Apple 端的编译环境', '需要补充深色模式截图', '', '进度正常', '预算可能超出，需要重新评估范围'];
+document.getElementById('tbl-body').innerHTML = projects.map((name, i) => {
+  const st = status[(i * 3) % 5], prog = st[0] === '已完成' ? 100 : st[0] === '未开始' ? 0 : (i * 17) % 95 + 3;
+  const budget = ((i * 7919) % 40 + 5) * 1000;
+  const due = `2026-${String(11 + Math.floor(i / 12)).padStart(2, '0').replace('13', '01')}-${String((i * 5) % 28 + 1).padStart(2, '0')}`;
+  return `<tr><td>${name}</td><td>${people[i % people.length]}</td><td><span class="ts-tag ${st[1]}">${st[0]}</span></td><td class="ts-num" data-value="${prog}">${prog}%</td><td class="ts-num" data-value="${budget}">${budget.toLocaleString('zh-CN')}</td><td>${due}</td><td class="ts-truncate ts-muted">${notes[i % notes.length] || '—'}</td><td class="ts-num"><span class="ts-row-actions"><button class="ts-icon-button ts-sm ts-pressable ts-state" data-tooltip="编辑" aria-label="编辑 ${name}"><i data-icon="edit"></i></button><button class="ts-icon-button ts-sm ts-pressable ts-state" data-row-delete data-tooltip="删除" aria-label="删除 ${name}"><i data-icon="trash"></i></button></span></td></tr>`;
+}).join('');
+
 T.init();
+
+// 表格：密度、刷新、批量操作、行删除
+const tbl = document.getElementById('tbl'), tblApi = tbl._tsTable;
+document.getElementById('tbl-density').addEventListener('change', (e) => { if (e.target.value) tbl.dataset.density = e.target.value; else delete tbl.dataset.density; });
+document.getElementById('tbl-reload').onclick = () => { tblApi.setLoading(true); setTimeout(() => { tblApi.setLoading(false); T.toast('已刷新'); }, 900); };
+document.getElementById('tbl-clear').onclick = () => tblApi.clearSelection();
+document.getElementById('tbl-export').onclick = () => T.toast(`已导出 ${tblApi.selected.length} 项`, { type: 'success' });
+document.getElementById('tbl-del').onclick = async () => {
+  const rows = tblApi.selected;
+  if (await T.confirm({ title: `删除 ${rows.length} 个项目？`, message: '删除后无法恢复。', confirmText: '删除', danger: true })) { tblApi.remove(rows); T.toast(`已删除 ${rows.length} 项`, { iconName: 'trash' }); }
+};
+tbl.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-row-delete]'); if (!b) return;
+  const row = b.closest('tr'), name = row.cells[1].textContent.trim();
+  if (await T.confirm({ title: `删除“${name}”？`, confirmText: '删除', danger: true })) { tblApi.remove([row]); T.toast(`已删除“${name}”`, { iconName: 'trash' }); }
+});
 
 // 主题
 document.getElementById('theme').addEventListener('change', (e) => T.setTheme(e.target.value));
