@@ -526,6 +526,75 @@ ${Object.entries(F.radius).map(([k, v]) => `    <CornerRadius x:Key="TesseraRadi
 `;
   emit('platforms/windows/TesseraUI/Themes/TesseraTokens.xaml', xaml);
 
+  // ---------- 轻量样式：把 WinUI 系统控件的资源键映射到 TesseraUI 颜色 ----------
+  // 合并到 App.xaml 后，系统控件（TextBox、ComboBox、CheckBox、菜单、对话框、导航视图等）整体换成 TesseraUI 外观。
+  // 高对比度不覆盖，交给系统配色。
+  const WINUI_BRUSHES = {
+    ApplicationPageBackgroundThemeBrush: 'bg.canvas', SolidBackgroundFillColorBaseBrush: 'bg.canvas',
+    LayerFillColorDefaultBrush: 'bg.surface', CardBackgroundFillColorDefaultBrush: 'bg.surface', CardStrokeColorDefaultBrush: 'border.surface',
+    TextFillColorPrimaryBrush: 'text.primary', TextFillColorSecondaryBrush: 'text.secondary', TextFillColorTertiaryBrush: 'text.tertiary',
+    TextOnAccentFillColorPrimaryBrush: 'text.on-solid', AccentFillColorDefaultBrush: 'accent.solid', AccentTextFillColorPrimaryBrush: 'accent.text',
+    ControlFillColorDefaultBrush: 'fill.default', ControlStrokeColorDefaultBrush: 'border.subtle', SubtleFillColorSecondaryBrush: 'state.hover', SubtleFillColorTertiaryBrush: 'state.pressed',
+    SmokeFillColorDefaultBrush: 'bg.scrim', SystemFillColorCriticalBrush: 'danger.text', SystemFillColorSuccessBrush: 'success.text', SystemFillColorCautionBrush: 'warning.text',
+    TextControlBackground: 'fill.default', TextControlBackgroundPointerOver: 'fill.default', TextControlBackgroundFocused: 'bg.surface', TextControlBackgroundDisabled: 'fill.default',
+    TextControlBorderBrush: 'border.field', TextControlBorderBrushPointerOver: 'border.field', TextControlBorderBrushFocused: 'focus.ring',
+    TextControlForeground: 'text.primary', TextControlForegroundPointerOver: 'text.primary', TextControlForegroundFocused: 'text.primary',
+    TextControlPlaceholderForeground: 'text.tertiary', TextControlPlaceholderForegroundPointerOver: 'text.tertiary', TextControlPlaceholderForegroundFocused: 'text.tertiary',
+    TextControlSelectionHighlightColor: 'selection',
+    ComboBoxBackground: 'fill.default', ComboBoxBackgroundPointerOver: 'fill.default', ComboBoxBackgroundPressed: 'fill.default', ComboBoxBackgroundFocused: 'bg.surface',
+    ComboBoxBorderBrush: 'border.field', ComboBoxBorderBrushPointerOver: 'border.field', ComboBoxForeground: 'text.primary',
+    ComboBoxDropDownBackground: 'bg.elevated', ComboBoxDropDownBorderBrush: 'border.subtle',
+    CheckBoxCheckBackgroundFillUnchecked: 'fill.default', CheckBoxCheckBackgroundStrokeUnchecked: 'border.strong',
+    CheckBoxCheckBackgroundFillChecked: 'accent.control', CheckBoxCheckBackgroundFillCheckedPointerOver: 'accent.control', CheckBoxCheckBackgroundFillCheckedPressed: 'accent.control',
+    CheckBoxCheckBackgroundStrokeChecked: 'accent.control', CheckBoxCheckGlyphForegroundChecked: 'text.on-solid',
+    RadioButtonOuterEllipseFill: 'fill.default', RadioButtonOuterEllipseStroke: 'border.strong',
+    RadioButtonOuterEllipseCheckedFill: 'accent.control', RadioButtonOuterEllipseCheckedStroke: 'accent.control', RadioButtonCheckGlyphFill: 'text.on-solid',
+    MenuFlyoutPresenterBackground: 'bg.elevated', MenuFlyoutPresenterBorderBrush: 'border.subtle', MenuFlyoutItemBackgroundPointerOver: 'state.hover',
+    MenuFlyoutItemBackgroundPressed: 'state.pressed', MenuFlyoutItemForeground: 'text.primary', MenuFlyoutSeparatorBackground: 'bg.canvas',
+    FlyoutPresenterBackground: 'bg.elevated', FlyoutBorderThemeBrush: 'border.subtle',
+    ContentDialogBackground: 'bg.elevated', ContentDialogForeground: 'text.primary', ContentDialogBorderBrush: 'border.surface', ContentDialogTopOverlay: 'bg.elevated',
+    ListViewItemBackgroundPointerOver: 'state.hover', ListViewItemBackgroundPressed: 'state.pressed', ListViewItemBackgroundSelected: 'accent.subtle',
+    ListViewItemBackgroundSelectedPointerOver: 'accent.subtle', ListViewItemForeground: 'text.primary',
+    NavigationViewDefaultPaneBackground: 'bg.canvas', NavigationViewExpandedPaneBackground: 'bg.canvas', NavigationViewTopPaneBackground: 'bg.canvas',
+    NavigationViewItemBackgroundSelected: 'accent.subtle', NavigationViewItemBackgroundSelectedPointerOver: 'accent.subtle', NavigationViewItemForegroundSelected: 'accent.text',
+    NavigationViewSelectionIndicatorForeground: 'accent.solid',
+    ProgressBarForeground: 'accent.control', ProgressBarBackground: 'fill.control-off', ProgressRingForegroundThemeBrush: 'accent.control',
+    SliderTrackValueFill: 'accent.control', SliderTrackFill: 'fill.control-off',
+    TeachingTipBackgroundBrush: 'bg.elevated', InfoBarInformationalSeverityBackgroundBrush: 'accent.subtle',
+    InfoBarSuccessSeverityBackgroundBrush: 'success.subtle', InfoBarWarningSeverityBackgroundBrush: 'warning.subtle', InfoBarErrorSeverityBackgroundBrush: 'danger.subtle',
+  };
+  const themeOverrides = (theme) => Object.entries(WINUI_BRUSHES)
+    .map(([k, t]) => `            <SolidColorBrush x:Key="${k}" Color="${toARGB(colors[t][theme])}" />`).join('\n');
+  const glaze = tokens.primitives.glaze;
+  const accent = { SystemAccentColor: glaze['600'], SystemAccentColorLight1: glaze['500'], SystemAccentColorLight2: glaze['400'], SystemAccentColorLight3: glaze['300'],
+    SystemAccentColorDark1: glaze['700'], SystemAccentColorDark2: glaze['800'], SystemAccentColorDark3: glaze['900'] };
+  emit('platforms/windows/TesseraUI/Themes/TesseraTheme.xaml', `<!-- ${HEADER('').slice(1)} -->
+<!-- 轻量样式：合并在 XamlControlsResources 与 TesseraTokens.xaml 之后，系统控件整体换成 TesseraUI 外观。 -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+${themeOverrides('light')}
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+${themeOverrides('dark')}
+        </ResourceDictionary>
+        <!-- 高对比度：不覆盖，使用用户选择的系统配色 -->
+        <ResourceDictionary x:Key="HighContrast" />
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- 主色：孔雀釉 -->
+${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1)}</Color>`).join('\n')}
+
+    <!-- 圆角：控件 ${F.radius.md}，浮层 ${F.radius.lg} -->
+    <CornerRadius x:Key="ControlCornerRadius">${F.radius.md}</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">${F.radius.lg}</CornerRadius>
+    <Thickness x:Key="TextControlBorderThemeThicknessFocused">1</Thickness>
+</ResourceDictionary>
+`);
+
   const cs = `${HEADER()}
 using System;
 using System.Numerics;

@@ -1,6 +1,6 @@
-// TesseraUI v0.2.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.3.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 export const tokens = {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "color": {
     "light": {
       "bg.canvas": "#EFEBE4FF",

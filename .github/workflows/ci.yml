@@ -61,3 +61,16 @@ jobs:
           set -o pipefail
           xcodebuild -scheme TesseraUI -destination 'generic/platform=iOS Simulator' -skipPackagePluginValidation build 2>&1 | tee build.log | grep -E "error:|warning: .*deprecated|BUILD (SUCCEEDED|FAILED)" || true
           grep -q "BUILD SUCCEEDED" build.log
+
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: platforms/windows/TesseraUI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: 编译（WinUI 3，x64）
+        run: dotnet build -c Release -p:Platform=x64

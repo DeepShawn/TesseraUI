@@ -2,10 +2,17 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>TesseraUI</RootNamespace>
-    <Version>0.2.0</Version>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <Version>0.3.0</Version>
+    <Authors>DeepShawn</Authors>
+    <Description>TesseraUI 的 WinUI 3 实现：设计令牌、系统控件的轻量样式、拼贴风格的控件模板与自定义控件。</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
