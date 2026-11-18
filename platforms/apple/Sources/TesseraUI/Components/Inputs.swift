@@ -30,6 +30,7 @@ public struct TesseraTextField: View {
     let onSubmit: (() -> Void)?
     @State private var focused = false
     @FocusState private var swiftUIFocused: Bool
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(
         _ label: String? = nil,
@@ -60,7 +61,9 @@ public struct TesseraTextField: View {
     private var isFocused: Bool { focused || swiftUIFocused }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: TesseraRadius.md, style: .continuous)
+        // 圆融：胶囊，没有凹槽和描边
+        let radius = tesseraShape.radius(tile: TesseraRadius.md)
+        let shape = RoundedRectangle(cornerRadius: radius, style: .continuous)
         VStack(alignment: .leading, spacing: 6) {
             if let label { TesseraLabel(label, style: .label) }
             HStack(spacing: TesseraSpace.s2) {
@@ -74,10 +77,10 @@ public struct TesseraTextField: View {
                         .accessibilityLabel("清除")
                 }
             }
-            .padding(.horizontal, TesseraSpace.s3)
+            .padding(.horizontal, tesseraShape == .round ? TesseraSpace.s4 : TesseraSpace.s3)
             .frame(minHeight: TesseraSize.md)
             .tesseraTile(isFocused ? TesseraColor.bgSurface : TesseraColor.fillDefault, style: isFocused ? .plain : .sunken, shape: shape)
-            .tesseraFocusGlow(isFocused || error != nil, radius: TesseraRadius.md, error: error != nil)
+            .tesseraFocusGlow(isFocused || error != nil, radius: min(radius, TesseraSize.md / 2), error: error != nil)
             .animation(.easeOut(duration: TesseraMotion.durationFast), value: isFocused)
             if let message = error ?? help {
                 TesseraLabel(message, style: .caption, color: error != nil ? TesseraColor.dangerText : TesseraColor.textSecondary)
@@ -197,6 +200,7 @@ public struct TesseraSelect<Value: Hashable>: View {
     let label: String?
     @Binding var selection: Value
     let options: [(value: Value, title: String)]
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ label: String? = nil, selection: Binding<Value>, options: [(value: Value, title: String)]) {
         self.label = label
@@ -205,7 +209,7 @@ public struct TesseraSelect<Value: Hashable>: View {
     }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: TesseraRadius.md, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous)
         let current = options.first { $0.value == selection }?.title ?? "请选择"
         VStack(alignment: .leading, spacing: 6) {
             if let label { TesseraLabel(label, style: .label) }
@@ -220,7 +224,7 @@ public struct TesseraSelect<Value: Hashable>: View {
                     Spacer(minLength: 0)
                     TesseraIcon(.chevronDown, size: 16).foregroundStyle(TesseraColor.textSecondary)
                 }
-                .padding(.horizontal, TesseraSpace.s3)
+                .padding(.horizontal, tesseraShape == .round ? TesseraSpace.s4 : TesseraSpace.s3)
                 .frame(height: TesseraSize.md)
                 .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
                 .contentShape(shape)

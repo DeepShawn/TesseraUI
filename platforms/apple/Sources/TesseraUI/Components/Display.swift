@@ -28,6 +28,7 @@ public struct TesseraTag: View {
     let text: String
     let tone: TesseraTone
     let icon: TesseraIconName?
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ text: String, tone: TesseraTone = .neutral, icon: TesseraIconName? = nil) {
         self.text = text
@@ -41,9 +42,9 @@ public struct TesseraTag: View {
             Text(text).font(.system(size: 12, weight: .semibold))
         }
         .foregroundStyle(tone.colors.foreground)
-        .padding(.horizontal, 8)
+        .padding(.horizontal, tesseraShape == .round ? 10 : 8)
         .frame(height: 24)
-        .background(tone.colors.background, in: RoundedRectangle(cornerRadius: TesseraRadius.sm, style: .continuous))
+        .background(tone.colors.background, in: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.sm), style: .continuous))
     }
 }
 
@@ -52,6 +53,7 @@ public struct TesseraBadge: View {
     let count: Int?
     let color: Color
     let max: Int
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(count: Int?, color: Color = TesseraColor.dangerSolid, max: Int = 99) {
         self.count = count
@@ -67,15 +69,15 @@ public struct TesseraBadge: View {
                     .foregroundStyle(TesseraColor.textOnSolid)
                     .padding(.horizontal, 5)
                     .frame(minWidth: 18, minHeight: 18)
-                    .background(color, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+                    .background(color, in: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: 7), style: .continuous))
                     .accessibilityLabel("\(count) 条未读")
             } else {
-                RoundedRectangle(cornerRadius: 3, style: .continuous).fill(color).frame(width: 8, height: 8)
+                RoundedRectangle(cornerRadius: tesseraShape.radius(tile: 3), style: .continuous).fill(color).frame(width: 8, height: 8)
                     .accessibilityLabel("有新消息")
             }
         }
         .padding(2)
-        .background(TesseraColor.bgSurface, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+        .background(TesseraColor.bgSurface, in: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: 9), style: .continuous))
     }
 }
 
@@ -91,6 +93,7 @@ public struct TesseraAvatar: View {
     let text: String
     let tone: TesseraTone
     let size: Size
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ text: String, tone: TesseraTone = .accent, size: Size = .md) {
         self.text = text
@@ -99,7 +102,8 @@ public struct TesseraAvatar: View {
     }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: size.side * 0.36, style: .continuous)
+        // 拼贴：36% 圆角的方砖；圆融：圆
+        let shape = RoundedRectangle(cornerRadius: tesseraShape == .round ? size.side / 2 : size.side * 0.36, style: .continuous)
         Text(String(text.prefix(2)))
             .font(.custom(TesseraFontFamily.display, fixedSize: size.font).weight(.semibold))
             .foregroundStyle(tone.colors.foreground)
@@ -113,6 +117,7 @@ public struct TesseraAvatar: View {
 public struct TesseraAvatarGroup: View {
     let names: [String]
     let max: Int
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ names: [String], max: Int = 4) {
         self.names = names
@@ -121,14 +126,17 @@ public struct TesseraAvatarGroup: View {
 
     public var body: some View {
         let tones: [TesseraTone] = [.lapis, .olive, .amethyst, .ochre, .cinnabar]
-        HStack(spacing: -6) {
+        // 圆融：描边细一些（2pt），叠得更紧
+        let ring: CGFloat = tesseraShape == .round ? 2 : TesseraTile.grout
+        let ringShape = RoundedRectangle(cornerRadius: tesseraShape == .round ? 20 : 14, style: .continuous)
+        HStack(spacing: tesseraShape == .round ? -8 : -6) {
             ForEach(Array(names.prefix(max).enumerated()), id: \.offset) { i, n in
-                TesseraAvatar(n, tone: tones[i % tones.count], size: .sm).padding(TesseraTile.grout)
-                    .background(TesseraColor.bgSurface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                TesseraAvatar(n, tone: tones[i % tones.count], size: .sm).padding(ring)
+                    .background(TesseraColor.bgSurface, in: ringShape)
             }
             if names.count > max {
-                TesseraAvatar("+\(names.count - max)", tone: .neutral, size: .sm).padding(TesseraTile.grout)
-                    .background(TesseraColor.bgSurface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                TesseraAvatar("+\(names.count - max)", tone: .neutral, size: .sm).padding(ring)
+                    .background(TesseraColor.bgSurface, in: ringShape)
             }
         }
         .accessibilityElement(children: .ignore)
@@ -142,6 +150,7 @@ public struct TesseraCard<Content: View>: View {
     let elevated: Bool
     let padding: CGFloat
     let content: Content
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(elevated: Bool = false, padding: CGFloat = TesseraSpace.s6, @ViewBuilder content: () -> Content) {
         self.elevated = elevated
@@ -150,22 +159,24 @@ public struct TesseraCard<Content: View>: View {
     }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: TesseraRadius.xl, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.xl, round: TesseraRound.card), style: .continuous)
         VStack(alignment: .leading, spacing: TesseraSpace.s4) { content }
             .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(elevated ? TesseraColor.bgElevated : TesseraColor.bgSurface, in: shape)
-            .overlay { shape.strokeBorder(TesseraColor.borderSurface, lineWidth: 1) }
+            // 圆融外观没有描边，只靠柔和的投影
+            .overlay { shape.strokeBorder(tesseraShape == .round ? .clear : TesseraColor.borderSurface, lineWidth: 1) }
             .tesseraShadow(elevated ? .level2 : .level1)
     }
 }
 
 // MARK: - 列表
 
-/// 拼贴列表：每行一块砖，砖缝分隔，首尾外角大
+/// 列表。拼贴：每行一块砖，砖缝分隔，首尾外角大；圆融：整个列表是一整块圆角面，行与行之间没有缝和线
 public struct TesseraList<Data: RandomAccessCollection, Row: View>: View where Data.Element: Identifiable {
     let data: Data
     let row: (Data.Element, TilePosition) -> Row
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ data: Data, @ViewBuilder row: @escaping (Data.Element, TilePosition) -> Row) {
         self.data = data
@@ -173,8 +184,18 @@ public struct TesseraList<Data: RandomAccessCollection, Row: View>: View where D
     }
 
     public var body: some View {
-        VStack(spacing: TesseraTile.grout) {
-            ForEach(Array(data.enumerated()), id: \.element.id) { i, item in row(item, .of(i, count: data.count)) }
+        if tesseraShape == .round {
+            let shape = RoundedRectangle(cornerRadius: TesseraRound.card, style: .continuous)
+            VStack(spacing: 0) {
+                ForEach(Array(data.enumerated()), id: \.element.id) { i, item in row(item, .of(i, count: data.count)) }
+            }
+            .padding(6)
+            .background(TesseraColor.bgSurface, in: shape)
+            .tesseraShadow(.level1)
+        } else {
+            VStack(spacing: TesseraTile.grout) {
+                ForEach(Array(data.enumerated()), id: \.element.id) { i, item in row(item, .of(i, count: data.count)) }
+            }
         }
     }
 }
@@ -186,6 +207,7 @@ public struct TesseraListItem<Leading: View, Trailing: View>: View {
     let leading: Leading
     let trailing: Trailing
     let action: (() -> Void)?
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ title: String, subtitle: String? = nil, position: TilePosition, action: (() -> Void)? = nil,
                 @ViewBuilder leading: () -> Leading, @ViewBuilder trailing: () -> Trailing) {
@@ -198,7 +220,8 @@ public struct TesseraListItem<Leading: View, Trailing: View>: View {
     }
 
     public var body: some View {
-        let shape = tileShape(position, outer: TesseraRadius.lg, vertical: true)
+        let round = tesseraShape == .round
+        let shape = round ? tileShape(.single, outer: TesseraRound.row) : tileShape(position, outer: TesseraRadius.lg, vertical: true)
         let row = HStack(spacing: TesseraSpace.s3) {
             leading
             VStack(alignment: .leading, spacing: 1) {
@@ -208,10 +231,10 @@ public struct TesseraListItem<Leading: View, Trailing: View>: View {
             Spacer(minLength: 0)
             trailing.foregroundStyle(TesseraColor.textTertiary)
         }
-        .padding(.horizontal, TesseraSpace.s4)
+        .padding(.horizontal, round ? TesseraSpace.s3 : TesseraSpace.s4)
         .padding(.vertical, TesseraSpace.s2)
         .frame(minHeight: 60)
-        .background(TesseraColor.bgSurface, in: shape)
+        .background(round ? Color.clear : TesseraColor.bgSurface, in: shape)
         .contentShape(shape)
         if let action {
             Button(action: action) { row }.buttonStyle(RowPress(shape: shape))
@@ -236,13 +259,15 @@ public extension TesseraListItem where Leading == EmptyView, Trailing == EmptyVi
 
 /// 骨架屏：光带 1.5 秒扫一次；“减弱动态效果”时静止
 public struct TesseraSkeleton: View {
-    let cornerRadius: CGFloat
+    let cornerRadius: CGFloat?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.tesseraShape) private var tesseraShape
 
-    public init(cornerRadius: CGFloat = TesseraRadius.grout) { self.cornerRadius = cornerRadius }
+    /// cornerRadius 为 nil 时：拼贴 6，圆融为胶囊
+    public init(cornerRadius: CGFloat? = nil) { self.cornerRadius = cornerRadius }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: cornerRadius ?? tesseraShape.radius(tile: TesseraRadius.grout), style: .continuous)
         TimelineView(.animation(paused: reduceMotion)) { ctx in
             let t = ctx.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 1.5) / 1.5
             GeometryReader { g in

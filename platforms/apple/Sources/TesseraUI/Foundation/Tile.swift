@@ -35,37 +35,10 @@ public func tileShape(_ position: TilePosition, outer: CGFloat, inner: CGFloat =
 public enum TesseraSurfaceStyle: Sendable { case solid, soft, sunken, plain }
 
 public extension View {
-    /// 给视图铺一块砖面：填充色 + 质感，用 shape 裁切（渐变色带随圆角裁切，边缘平滑）
+    /// 给视图铺一块砖面：填充色 + 质感，用 shape 裁切（渐变色带随圆角裁切，边缘平滑）。
+    /// 圆融外观下：实色砖改为整面柔光，浅色砖与凹槽是平的，没有砖厚、内阴影和描边。
     func tesseraTile<S: InsettableShape>(_ fill: Color, style: TesseraSurfaceStyle, shape: S, pressed: Bool = false) -> some View {
-        background {
-            ZStack {
-                shape.fill(fill)
-                switch style {
-                case .solid:
-                    VStack(spacing: 0) {
-                        LinearGradient(colors: [TesseraColor.sheen, .clear], startPoint: .top, endPoint: .bottom).frame(height: 2)
-                        Spacer(minLength: 0)
-                        LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: TesseraColor.edgeSolid, location: 0.35), .init(color: TesseraColor.edgeSolid, location: 1)],
-                                       startPoint: .top, endPoint: .bottom).frame(height: (pressed ? 1 : TesseraTile.edge) * 1.4)
-                    }
-                case .soft:
-                    VStack(spacing: 0) {
-                        Spacer(minLength: 0)
-                        LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: TesseraColor.edgeSoft, location: 0.35), .init(color: TesseraColor.edgeSoft, location: 1)],
-                                       startPoint: .top, endPoint: .bottom).frame(height: (pressed ? 1 : TesseraTile.edge) * 1.4)
-                    }
-                case .sunken:
-                    VStack(spacing: 0) {
-                        LinearGradient(colors: [TesseraColor.edgeSoft, .clear], startPoint: .top, endPoint: .bottom).frame(height: 3)
-                        Spacer(minLength: 0)
-                    }
-                case .plain:
-                    EmptyView()
-                }
-            }
-            .clipShape(shape)
-            .overlay { shape.strokeBorder(style == .sunken ? TesseraColor.borderField : .clear, lineWidth: 1) }
-        }
+        modifier(TileSurface(fill: fill, style: style, shape: shape, pressed: pressed))
     }
 
     /// 聚焦光晕：外侧 3pt 半透明光晕 + 1pt 焦点描边
@@ -82,6 +55,54 @@ public extension View {
                 .opacity(on ? 1 : 0)
         }
         .animation(.easeOut(duration: TesseraMotion.durationFast), value: on)
+    }
+}
+
+struct TileSurface<S: InsettableShape>: ViewModifier {
+    let fill: Color
+    let style: TesseraSurfaceStyle
+    let shape: S
+    let pressed: Bool
+    @Environment(\.tesseraShape) private var tesseraShape
+
+    func body(content: Content) -> some View {
+        content.background {
+            ZStack {
+                shape.fill(fill)
+                if tesseraShape == .round {
+                    if style == .solid {
+                        // 整面柔光：顶部略亮、底部略暗，没有硬边
+                        LinearGradient(stops: [.init(color: .white.opacity(0.14), location: 0), .init(color: .clear, location: 0.6)], startPoint: .top, endPoint: .bottom)
+                        LinearGradient(stops: [.init(color: .clear, location: 0.45), .init(color: .black.opacity(0.06), location: 1)], startPoint: .top, endPoint: .bottom)
+                    }
+                } else {
+                    switch style {
+                    case .solid:
+                        VStack(spacing: 0) {
+                            LinearGradient(colors: [TesseraColor.sheen, .clear], startPoint: .top, endPoint: .bottom).frame(height: 2)
+                            Spacer(minLength: 0)
+                            LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: TesseraColor.edgeSolid, location: 0.35), .init(color: TesseraColor.edgeSolid, location: 1)],
+                                           startPoint: .top, endPoint: .bottom).frame(height: (pressed ? 1 : TesseraTile.edge) * 1.4)
+                        }
+                    case .soft:
+                        VStack(spacing: 0) {
+                            Spacer(minLength: 0)
+                            LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: TesseraColor.edgeSoft, location: 0.35), .init(color: TesseraColor.edgeSoft, location: 1)],
+                                           startPoint: .top, endPoint: .bottom).frame(height: (pressed ? 1 : TesseraTile.edge) * 1.4)
+                        }
+                    case .sunken:
+                        VStack(spacing: 0) {
+                            LinearGradient(colors: [TesseraColor.edgeSoft, .clear], startPoint: .top, endPoint: .bottom).frame(height: 3)
+                            Spacer(minLength: 0)
+                        }
+                    case .plain:
+                        EmptyView()
+                    }
+                }
+            }
+            .clipShape(shape)
+            .overlay { shape.strokeBorder(style == .sunken && tesseraShape == .tile ? TesseraColor.borderField : .clear, lineWidth: 1) }
+        }
     }
 }
 

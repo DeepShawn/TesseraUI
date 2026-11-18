@@ -20,7 +20,13 @@ content
     .tesseraToast($toast)
     .tesseraDialog(isPresented: $confirm, title: "删除文件？", confirmTitle: "删除", destructive: true) { delete() }
     .tesseraSheet(isPresented: $share, title: "分享到") { ShareOptions() }
+
+// 外观：圆融（胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线）；不写即为拼贴
+ContentView()
+    .tesseraShape(.round)
 ```
+
+两种外观共用同一套组件。自定义组件可读取 `@Environment(\.tesseraShape)`，用 `radius(tile:round:)`、`groupShape(_:outer:)`、`groupGap`、`pillGap` 跟随外观；`.tesseraTile(...)` 在圆融外观下自动去掉砖厚和凹槽。
 
 ## 组件（v0.3：首批 22 个）
 

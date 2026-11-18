@@ -17,6 +17,7 @@ public struct TesseraButtonStyle: ButtonStyle {
     let fullWidth: Bool
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ variant: Variant = .primary, size: Size = .md, position: TilePosition? = nil, fullWidth: Bool = false) {
         self.variant = variant
@@ -44,19 +45,20 @@ public struct TesseraButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
-        let shape = tileShape(position ?? .single, outer: position == nil ? size.radius : TesseraRadius.lg)
+        // 拼贴：圆角方砖，成组时外角大、内角 6；圆融：胶囊，成组时合成一整条
+        let shape = tesseraShape.groupShape(position ?? .single, outer: position == nil ? size.radius : TesseraRadius.lg)
         return configuration.label
             .tesseraText(size == .lg ? TesseraTextStyle(size: 16, lineHeight: 20, weight: .semibold, family: .text, tracking: 0, relativeTo: .body) : .label)
             .lineLimit(1)
             .foregroundStyle(foreground)
-            .padding(.horizontal, variant == .text ? TesseraSpace.s3 : size.padding)
-            .padding(.bottom, variant == .text ? 0 : 1)
+            .padding(.horizontal, variant == .text ? TesseraSpace.s3 : size.padding + (tesseraShape == .round ? TesseraSpace.s1 : 0))
+            .padding(.bottom, variant == .text || tesseraShape == .round ? 0 : 1)
             .frame(maxWidth: fullWidth ? .infinity : nil, minHeight: size.height)
             .tesseraTile(fill, style: variant == .text ? .plain : (isSolid ? .solid : .soft), shape: shape, pressed: pressed)
             .overlay { if pressed { shape.fill(isSolid ? TesseraColor.stateSolidPressed : TesseraColor.statePressed) } }
             .contentShape(Rectangle())
             .frame(minWidth: TesseraSize.touchMin, minHeight: TesseraSize.touchMin)
-            .offset(y: pressed && !reduceMotion ? TesseraMotion.pressSink : 0)
+            .tesseraPress(pressed, shape: tesseraShape, reduceMotion: reduceMotion)
             .animation(pressed ? .easeOut(duration: TesseraMotion.pressDuration) : .tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: pressed)
             .opacity(isEnabled ? 1 : TesseraOpacity.disabled)
     }
@@ -96,8 +98,9 @@ public struct TesseraIconButton: View {
     private struct IconStyle: ButtonStyle {
         let filled: Bool
         @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        @Environment(\.tesseraShape) private var tesseraShape
         func makeBody(configuration: Configuration) -> some View {
-            let shape = RoundedRectangle(cornerRadius: TesseraRadius.md, style: .continuous)
+            let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous)
             configuration.label
                 .foregroundStyle(TesseraColor.textPrimary)
                 .frame(width: TesseraSize.md, height: TesseraSize.md)
@@ -105,7 +108,7 @@ public struct TesseraIconButton: View {
                 .overlay { if configuration.isPressed { shape.fill(TesseraColor.statePressed) } }
                 .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
                 .contentShape(Rectangle())
-                .offset(y: configuration.isPressed && !reduceMotion ? TesseraMotion.pressSink : 0)
+                .tesseraPress(configuration.isPressed, shape: tesseraShape, reduceMotion: reduceMotion)
                 .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: configuration.isPressed)
         }
     }
@@ -116,6 +119,7 @@ public struct TesseraSpinner: View {
     let size: CGFloat
     @State private var step = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(size: CGFloat = 20) { self.size = size }
 
@@ -128,7 +132,8 @@ public struct TesseraSpinner: View {
                 ForEach(0..<2, id: \.self) { row in
                     HStack(spacing: gap) {
                         ForEach(0..<2, id: \.self) { col in
-                            RoundedRectangle(cornerRadius: tile / 3, style: .continuous)
+                            // 圆融外观：四颗小圆点
+                            RoundedRectangle(cornerRadius: tesseraShape == .round ? tile / 2 : tile / 3, style: .continuous)
                                 .frame(width: tile, height: tile)
                                 .opacity(order.firstIndex(of: row * 2 + col) == active ? 1 : 0.25)
                         }

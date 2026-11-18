@@ -5,10 +5,11 @@ import SwiftUI
 /// 复选框：150ms 填色，勾号从左往右描出来。用法：Toggle("接收通知", isOn: $on).toggleStyle(.tesseraCheckbox)
 public struct TesseraCheckboxStyle: ToggleStyle {
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public func makeBody(configuration: Configuration) -> some View {
         let on = configuration.isOn
-        let shape = RoundedRectangle(cornerRadius: 7, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: 7, round: 8), style: .continuous)
         Button { configuration.isOn.toggle() } label: {
             HStack(spacing: TesseraSpace.s3) {
                 ZStack {
@@ -58,6 +59,7 @@ public struct TesseraRadioGroup<Value: Hashable>: View {
     let options: [(value: Value, title: String)]
     let axis: Axis
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(selection: Binding<Value>, options: [(value: Value, title: String)], axis: Axis = .horizontal) {
         self._selection = selection
@@ -75,11 +77,12 @@ public struct TesseraRadioGroup<Value: Hashable>: View {
                         ZStack {
                             if on { Color.clear.tesseraTile(TesseraColor.accentControl, style: .solid, shape: Circle()) }
                             else { Circle().fill(TesseraColor.fillDefault).overlay { Circle().strokeBorder(TesseraColor.borderStrong, lineWidth: 1.5) } }
-                            RoundedRectangle(cornerRadius: 3, style: .continuous)
+                            // 拼贴：小方砖转正落位；圆融：圆点直接放大
+                            RoundedRectangle(cornerRadius: tesseraShape == .round ? 4.5 : 3, style: .continuous)
                                 .fill(TesseraColor.textOnSolid)
-                                .frame(width: 8, height: 8)
+                                .frame(width: tesseraShape == .round ? 9 : 8, height: tesseraShape == .round ? 9 : 8)
                                 .scaleEffect(on ? 1 : 0)
-                                .rotationEffect(.degrees(on ? 0 : -45))
+                                .rotationEffect(.degrees(on || tesseraShape == .round ? 0 : -45))
                         }
                         .frame(width: 20, height: 20)
                         .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: on)
@@ -122,6 +125,7 @@ public struct TesseraSwitchStyle: ToggleStyle {
         @State private var dragPos: CGFloat? = nil
         @GestureState private var pressing = false
         @Environment(\.accessibilityReduceMotion) private var reduceMotion
+        @Environment(\.tesseraShape) private var tesseraShape
 
         private let w: CGFloat = 52, h: CGFloat = 30, pad: CGFloat = 3, thumb: CGFloat = 24, stretchMax: CGFloat = 6
 
@@ -130,8 +134,9 @@ public struct TesseraSwitchStyle: ToggleStyle {
             let travel = w - pad * 2 - thumb - stretchMax
             let pos = dragPos ?? (isOn ? 1 : 0)
             let preview = dragPos.map { $0 > 0.5 } ?? isOn
-            let track = RoundedRectangle(cornerRadius: 13, style: .continuous)
-            let thumbShape = RoundedRectangle(cornerRadius: 10, style: .continuous)
+            // 圆融：胶囊轨道 + 圆形滑块
+            let track = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: 13, round: h / 2), style: .continuous)
+            let thumbShape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: 10, round: thumb / 2), style: .continuous)
             ZStack(alignment: .leading) {
                 Color.clear.tesseraTile(preview ? TesseraColor.accentControl : TesseraColor.fillControlOff, style: .sunken, shape: track)
                 // 开 / 关标记：开启时左侧竖线，关闭时右侧小圆圈
@@ -141,6 +146,7 @@ public struct TesseraSwitchStyle: ToggleStyle {
                 }
                 Group {
                     if glass { thumbShape.fill(.ultraThinMaterial).overlay { thumbShape.strokeBorder(TesseraColor.materialGlassRim, lineWidth: 1) } }
+                    else if tesseraShape == .round { thumbShape.fill(.white) }
                     else { thumbShape.fill(.white).overlay { thumbShape.fill(LinearGradient(colors: [.clear, Color.black.opacity(0.06)], startPoint: .center, endPoint: .bottom)) } }
                 }
                 .frame(width: thumb + stretch, height: thumb)
@@ -192,6 +198,7 @@ public struct TesseraSegmentedControl: View {
     @State private var right: CGFloat = 0
     @State private var dragging = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ options: [String], selection: Binding<Int>, small: Bool = false) {
         self.options = options
@@ -200,29 +207,36 @@ public struct TesseraSegmentedControl: View {
     }
 
     public var body: some View {
+        let round = tesseraShape == .round
         let height = small ? TesseraSize.sm : TesseraSize.md
         let outer: CGFloat = small ? 11 : TesseraRadius.md
-        let gap = TesseraTile.grout
+        let gap = round ? 0 : TesseraTile.grout
+        let pill = RoundedRectangle(cornerRadius: TesseraRound.pill, style: .continuous)
+        // 圆融：一整条浅底胶囊，选中块是一颗浮起的白色胶囊；拼贴：一排砖 + 墨色选中砖
         GeometryReader { geo in
             let n = CGFloat(options.count)
             let item = (geo.size.width - gap * (n - 1)) / n
             let leftOf = { (i: Int) in CGFloat(i) * (item + gap) }
             let current = Int(((left + item / 2) / (item + gap)).rounded(.down)).clamped(0, options.count - 1)
             ZStack(alignment: .topLeading) {
-                HStack(spacing: gap) {
-                    ForEach(options.indices, id: \.self) { i in
-                        Color.clear.tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: tileShape(.of(i, count: options.count), outer: outer))
+                if !round {
+                    HStack(spacing: gap) {
+                        ForEach(options.indices, id: \.self) { i in
+                            Color.clear.tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: tileShape(.of(i, count: options.count), outer: outer))
+                        }
                     }
                 }
-                Color.clear
-                    .tesseraTile(TesseraColor.textPrimary, style: .solid, shape: tileShape(.of(current, count: options.count), outer: outer))
+                Group {
+                    if round { Color.clear.tesseraTile(TesseraColor.bgElevated, style: .solid, shape: pill) }
+                    else { Color.clear.tesseraTile(TesseraColor.textPrimary, style: .solid, shape: tileShape(.of(current, count: options.count), outer: outer)) }
+                }
                     .frame(width: max(0, right - left), height: height)
                     .offset(x: left)
-                    .shadow(color: TesseraColor.shadowColor.opacity(0.1), radius: 3, y: 1)
+                    .shadow(color: TesseraColor.shadowColor.opacity(round ? 0.14 : 0.1), radius: round ? 5 : 3, y: round ? 2 : 1)
                 HStack(spacing: gap) {
                     ForEach(options.indices, id: \.self) { i in
                         Button { selection = i } label: {
-                            TesseraLabel(options[i], style: .label, color: i == selection ? TesseraColor.bgSurface : TesseraColor.textSecondary)
+                            TesseraLabel(options[i], style: .label, color: i == selection ? (round ? TesseraColor.textPrimary : TesseraColor.bgSurface) : TesseraColor.textSecondary)
                                 .lineLimit(1)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .contentShape(Rectangle())
@@ -259,6 +273,8 @@ public struct TesseraSegmentedControl: View {
             )
         }
         .frame(height: height)
+        .padding(round ? 3 : 0)
+        .background { if round { pill.fill(TesseraColor.fillDefault) } }
         .accessibilityElement(children: .contain)
     }
 }

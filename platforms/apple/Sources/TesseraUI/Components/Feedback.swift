@@ -36,10 +36,23 @@ public extension View {
     func tesseraSheet<Content: View>(isPresented: Binding<Bool>, title: String? = nil,
                                      detents: Set<PresentationDetent> = [.medium, .large],
                                      @ViewBuilder content: @escaping () -> Content) -> some View {
-        sheet(isPresented: isPresented) {
+        modifier(SheetModifier(isPresented: isPresented, title: title, detents: detents, sheetContent: content))
+    }
+}
+
+struct SheetModifier<SheetContent: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    let title: String?
+    let detents: Set<PresentationDetent>
+    let sheetContent: () -> SheetContent
+    @Environment(\.tesseraShape) private var tesseraShape
+
+    func body(content: Content) -> some View {
+        let shape = tesseraShape
+        return content.sheet(isPresented: $isPresented) {
             VStack(alignment: .leading, spacing: TesseraSpace.s4) {
                 if let title { TesseraLabel(title, style: .title2).accessibilityAddTraits(.isHeader) }
-                content()
+                sheetContent()
                 Spacer(minLength: 0)
             }
             .padding(.horizontal, TesseraSpace.s5)
@@ -47,8 +60,10 @@ public extension View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .presentationDetents(detents)
             .presentationDragIndicator(.visible)
-            .presentationCornerRadius(TesseraRadius.s2xl)
+            .presentationCornerRadius(shape.radius(tile: TesseraRadius.s2xl, round: TesseraRound.panel))
             .presentationBackground(TesseraColor.bgElevated)
+            // sheet 是新的视图层级，外观要再传进去
+            .tesseraShape(shape)
         }
     }
 }
@@ -100,6 +115,7 @@ struct ToastModifier: ViewModifier {
 public struct TesseraToastView: View {
     let message: TesseraToastMessage
     let onAction: () -> Void
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(message: TesseraToastMessage, onAction: @escaping () -> Void = {}) {
         self.message = message
@@ -107,7 +123,8 @@ public struct TesseraToastView: View {
     }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: TesseraRadius.lg, style: .continuous)
+        // 拼贴：一块反色砖；圆融：一颗反色胶囊
+        let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.lg), style: .continuous)
         HStack(spacing: TesseraSpace.s3) {
             if let icon = message.icon { TesseraIcon(icon) }
             TesseraLabel(message.text, style: .bodySm, color: TesseraColor.textInverse).lineLimit(2)
@@ -119,7 +136,7 @@ public struct TesseraToastView: View {
             }
         }
         .foregroundStyle(TesseraColor.textInverse)
-        .padding(.leading, TesseraSpace.s4)
+        .padding(.leading, tesseraShape == .round ? TesseraSpace.s5 : TesseraSpace.s4)
         .padding(.trailing, message.actionTitle == nil ? TesseraSpace.s5 : TesseraSpace.s2)
         .frame(minHeight: 48)
         .tesseraTile(TesseraColor.bgInverse, style: .solid, shape: shape)
@@ -170,6 +187,7 @@ public struct TesseraDialogPanel: View {
     let destructive: Bool
     let onCancel: () -> Void
     let onConfirm: () -> Void
+    @Environment(\.tesseraShape) private var tesseraShape
 
     public init(title: String, message: String? = nil, confirmTitle: String, cancelTitle: String? = "取消", destructive: Bool = false,
                 onCancel: @escaping () -> Void = {}, onConfirm: @escaping () -> Void = {}) {
@@ -183,23 +201,25 @@ public struct TesseraDialogPanel: View {
     }
 
     public var body: some View {
-        let shape = RoundedRectangle(cornerRadius: TesseraRadius.s2xl, style: .continuous)
+        let round = tesseraShape == .round
+        let shape = RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.s2xl, round: TesseraRound.panel), style: .continuous)
         VStack(alignment: .leading, spacing: 0) {
             TesseraLabel(title, style: .title2).accessibilityAddTraits(.isHeader)
             if let message { TesseraLabel(message, style: .bodySm, color: TesseraColor.textSecondary).padding(.top, TesseraSpace.s2) }
-            HStack(spacing: TesseraTile.grout) {
+            // 拼贴：一组拼贴砖；圆融：两颗独立的胶囊，间距 8
+            HStack(spacing: tesseraShape.pillGap) {
                 if let cancelTitle {
-                    Button(cancelTitle, action: onCancel).buttonStyle(.tessera(.secondary, size: .lg, position: .first, fullWidth: true))
+                    Button(cancelTitle, action: onCancel).buttonStyle(.tessera(.secondary, size: .lg, position: round ? nil : .first, fullWidth: true))
                 }
                 Button(confirmTitle, action: onConfirm)
-                    .buttonStyle(.tessera(destructive ? .danger : .primary, size: .lg, position: cancelTitle == nil ? .single : .last, fullWidth: true))
+                    .buttonStyle(.tessera(destructive ? .danger : .primary, size: .lg, position: round ? nil : (cancelTitle == nil ? .single : .last), fullWidth: true))
             }
             .padding(.top, TesseraSpace.s6)
         }
         .padding(TesseraSpace.s6)
         .frame(maxWidth: 440)
         .background(TesseraColor.bgElevated, in: shape)
-        .overlay { shape.strokeBorder(TesseraColor.borderSurface, lineWidth: 1) }
+        .overlay { shape.strokeBorder(round ? .clear : TesseraColor.borderSurface, lineWidth: 1) }
         .tesseraShadow(.level3)
         .padding(TesseraSpace.s4)
     }
