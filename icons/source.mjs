@@ -1,0 +1,61 @@
+// 图标源：24×24 画布，图形在中间 20×20（2–22）。线条 1.5px，圆头圆角。
+// stroke = 线性版内容；fill = 实心版内容（可选，生成 -fill 版本）。
+export const icons = {
+  // 箭头方向
+  'arrow-left':    { stroke: '<path d="M19 12H5M11 6l-6 6 6 6"/>' },
+  'arrow-right':   { stroke: '<path d="M5 12h14M13 6l6 6-6 6"/>' },
+  'arrow-up':      { stroke: '<path d="M12 19V5M6 11l6-6 6 6"/>' },
+  'arrow-down':    { stroke: '<path d="M12 5v14M6 13l6 6 6-6"/>' },
+  'chevron-left':  { stroke: '<path d="M15 5l-7 7 7 7"/>' },
+  'chevron-right': { stroke: '<path d="M9 5l7 7-7 7"/>' },
+  'chevron-up':    { stroke: '<path d="M5 15l7-7 7 7"/>' },
+  'chevron-down':  { stroke: '<path d="M5 9l7 7 7-7"/>' },
+  'external-link': { stroke: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/>' },
+  // 通用操作
+  'plus':          { stroke: '<path d="M12 4v16M4 12h16"/>' },
+  'minus':         { stroke: '<path d="M4 12h16"/>' },
+  'close':         { stroke: '<path d="M6 6l12 12M18 6L6 18"/>' },
+  'check':         { stroke: '<path d="M4 12.5l5 5L20 6.5"/>' },
+  'search':        { stroke: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/>' },
+  'edit':          { stroke: '<path d="M4 20h4L19 9a2.83 2.83 0 0 0-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/>' },
+  'trash':         { stroke: '<path d="M4 6h16M9 6V4.5A.5.5 0 0 1 9.5 4h5a.5.5 0 0 1 .5.5V6"/><path d="M6 6l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v5M14 11v5"/>' },
+  'copy':          { stroke: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>' },
+  'share':         { stroke: '<path d="M12 4v11M8 8l4-4 4 4"/><path d="M8 11H7a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2h-1"/>' },
+  'download':      { stroke: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>' },
+  'upload':        { stroke: '<path d="M12 15V4M7 9l5-5 5 5M5 20h14"/>' },
+  'refresh':       { stroke: '<path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v4h-4"/>' },
+  'filter':        { stroke: '<path d="M4 6h16M7 12h10M10 18h4"/>' },
+  'more':          { stroke: '<circle cx="5" cy="12" r="1.25" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.25" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.25" fill="currentColor" stroke="none"/>' },
+  'heart':         { stroke: '<path d="M12 20s-8-4.6-8-10.5A4.5 4.5 0 0 1 12 6.6a4.5 4.5 0 0 1 8 2.9C20 15.4 12 20 12 20z"/>',
+                     fill:   '<path d="M12 20s-8-4.6-8-10.5A4.5 4.5 0 0 1 12 6.6a4.5 4.5 0 0 1 8 2.9C20 15.4 12 20 12 20z" fill="currentColor"/>' },
+  'star':          { stroke: '<path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.85L12 16.9l-5.25 2.75 1-5.85L3.5 9.7l5.9-.9L12 3.5z"/>',
+                     fill:   '<path d="M12 3.5l2.6 5.3 5.9.9-4.25 4.1 1 5.85L12 16.9l-5.25 2.75 1-5.85L3.5 9.7l5.9-.9L12 3.5z" fill="currentColor"/>' },
+  // 导航
+  'home':          { stroke: '<path d="M4 10.5L12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1v-8.5z"/>',
+                     fill:   '<path d="M4 10.5L12 4l8 6.5V19a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1v-8.5z" fill="currentColor"/>' },
+  'menu':          { stroke: '<path d="M4 7h16M4 12h16M4 17h16"/>' },
+  'settings':      { stroke: '<circle cx="12" cy="12" r="3"/><path d="M12 2.75l2 1.2 2.3-.2 1.1 2 2 1.15-.2 2.3 1.05 1.8-1.05 1.8.2 2.3-2 1.15-1.1 2-2.3-.2-2 1.2-2-1.2-2.3.2-1.1-2-2-1.15.2-2.3L2.75 12 3.8 10.2l-.2-2.3 2-1.15 1.1-2 2.3.2 2-1.2z"/>' },
+  // 状态
+  'info':          { stroke: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.75" r="1" fill="currentColor" stroke="none"/>' },
+  'success':       { stroke: '<circle cx="12" cy="12" r="9"/><path d="M8 12.25l2.75 2.75L16 9.5"/>',
+                     fill:   '<path fill="currentColor" fill-rule="evenodd" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm4.53 7.03a.75.75 0 0 0-1.06-1.06l-4.72 4.72-2.22-2.22a.75.75 0 0 0-1.06 1.06l2.75 2.75a.75.75 0 0 0 1.06 0l5.25-5.25z"/>' },
+  'warning':       { stroke: '<path d="M10.27 4.5a2 2 0 0 1 3.46 0l7 12.1A2 2 0 0 1 19 19.6H5a2 2 0 0 1-1.73-3l7-12.1z"/><path d="M12 9.5v4"/><circle cx="12" cy="16.5" r="1" fill="currentColor" stroke="none"/>' },
+  'error':         { stroke: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>' },
+  // 通讯、用户
+  'bell':          { stroke: '<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15L6 16z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>' },
+  'mail':          { stroke: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2.5 6.5L12 13l9.5-6.5"/>' },
+  'message':       { stroke: '<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 4V6z"/>' },
+  'user':          { stroke: '<circle cx="12" cy="8" r="4"/><path d="M4 20.5c.8-3.8 4-6 8-6s7.2 2.2 8 6"/>',
+                     fill:   '<circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20.5c.8-3.8 4-6 8-6s7.2 2.2 8 6z" fill="currentColor"/>' },
+  'lock':          { stroke: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/><path d="M12 14.5v2"/>' },
+  'eye':           { stroke: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>' },
+  // 文件、媒体
+  'file':          { stroke: '<path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/><path d="M14 2v6h6"/>' },
+  'folder':        { stroke: '<path d="M2 7a2 2 0 0 1 2-2h5l2 2.5h9a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z"/>' },
+  'image':         { stroke: '<rect x="2" y="4" width="20" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M22 16l-5-5-9 9"/>' },
+  'play':          { stroke: '<path d="M7 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 7 5.2z"/>',
+                     fill:   '<path d="M7 5.2v13.6a1 1 0 0 0 1.5.86l11-6.8a1 1 0 0 0 0-1.72l-11-6.8A1 1 0 0 0 7 5.2z" fill="currentColor"/>' },
+  'pause':         { stroke: '<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>' },
+  // 商务
+  'cart':          { stroke: '<path d="M2.5 3.5h2.2l2.3 11.2a1.5 1.5 0 0 0 1.47 1.2h9.06a1.5 1.5 0 0 0 1.46-1.15L21 7H5.6"/><circle cx="9" cy="20" r="1.25"/><circle cx="17" cy="20" r="1.25"/>' },
+};

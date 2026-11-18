@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- TesseraUI v0.1.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
+<resources>
+    <color name="tessera_bg_canvas">#FFF5F5F7</color>
+    <color name="tessera_bg_surface">#FFFFFFFF</color>
+    <color name="tessera_bg_elevated">#FFFFFFFF</color>
+    <color name="tessera_bg_elevated_2">#FFFFFFFF</color>
+    <color name="tessera_bg_scrim">#52000000</color>
+    <color name="tessera_fill_control_off">#FFC7C7CC</color>
+    <color name="tessera_fill_default">#0D000000</color>
+    <color name="tessera_text_primary">#FF1D1D1F</color>
+    <color name="tessera_text_secondary">#FF68686D</color>
+    <color name="tessera_text_tertiary">#FF8E8E93</color>
+    <color name="tessera_text_on_solid">#FFFFFFFF</color>
+    <color name="tessera_border_subtle">#0F000000</color>
+    <color name="tessera_border_strong">#7A000000</color>
+    <color name="tessera_border_surface">#00000000</color>
+    <color name="tessera_border_field">#00000000</color>
+    <color name="tessera_accent_solid">#FF5B5BD6</color>
+    <color name="tessera_accent_text">#FF5252CF</color>
+    <color name="tessera_accent_control">#FF5B5BD6</color>
+    <color name="tessera_accent_subtle">#1A5B5BD6</color>
+    <color name="tessera_danger_solid">#FFC0292E</color>
+    <color name="tessera_danger_text">#FFC0292E</color>
+    <color name="tessera_danger_subtle">#1AC0292E</color>
+    <color name="tessera_success_solid">#FF146B3A</color>
+    <color name="tessera_success_text">#FF146B3A</color>
+    <color name="tessera_success_subtle">#1A146B3A</color>
+    <color name="tessera_warning_solid">#FF9A5100</color>
+    <color name="tessera_warning_text">#FF9A5100</color>
+    <color name="tessera_warning_subtle">#1A9A5100</color>
+    <color name="tessera_focus_glow">#405B5BD6</color>
+    <color name="tessera_focus_ring">#FF5252CF</color>
+    <color name="tessera_selection">#335B5BD6</color>
+    <color name="tessera_state_hover">#0F000000</color>
+    <color name="tessera_state_pressed">#1A000000</color>
+    <color name="tessera_state_solid_hover">#14FFFFFF</color>
+    <color name="tessera_state_solid_pressed">#14000000</color>
+    <color name="tessera_material_glass">#B8FFFFFF</color>
+    <color name="tessera_shadow_color">#FF000000</color>
+</resources>

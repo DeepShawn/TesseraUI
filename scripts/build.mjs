@@ -1,0 +1,502 @@
+// TesseraUI token 构建：tokens/*.json → 四端平台文件。
+// 用法：node scripts/build.mjs
+import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { dirname, join, relative } from 'node:path';
+import {
+  ROOT, THEMES, loadTokens, resolveSemanticColors, springParams, springToCssLinear,
+  toHex, toHex8, toARGB, toCssColor, camel, pascal, kebab,
+} from './lib.mjs';
+
+const tokens = loadTokens();
+const { foundation: F, motion: M, version } = tokens;
+const colors = resolveSemanticColors(tokens);
+const springs = Object.fromEntries(Object.entries(M.spring).map(([k, v]) => [k, { ...springParams(v), default: !!v.default }]));
+
+const HEADER = (c = '//') => `${c} TesseraUI v${version} — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。`;
+const written = [];
+function emit(path, content) {
+  const full = join(ROOT, path);
+  mkdirSync(dirname(full), { recursive: true });
+  writeFileSync(full, content.endsWith('\n') ? content : content + '\n');
+  written.push(relative(ROOT, full));
+}
+
+// 阴影：深色模式不透明度统一改为 40%
+const shadowLayers = (level, theme) =>
+  F.shadow[level].map((l) => ({ ...l, alpha: theme.startsWith('dark') ? F.shadow.$darkAlpha : l.alpha }));
+const SHADOW_LEVELS = ['1', '2', '3'];
+const textStyles = Object.entries(F.font.style);
+const weightNum = (w) => F.font.weight[w];
+
+// ==================================================================
+// Web：CSS 自定义属性 + ESM + JSON
+// ==================================================================
+function buildWeb() {
+  const colorBlock = (theme, onlyOverrides = false) =>
+    Object.entries(colors)
+      .filter(([, v]) => !onlyOverrides || v.$hcOverride[theme])
+      .map(([name, v]) => `  --ts-${kebab(name)}: ${toCssColor(v[theme])};`)
+      .join('\n');
+  const shadowBlock = (theme) =>
+    SHADOW_LEVELS.map(
+      (lv) => `  --ts-shadow-${lv}: ${shadowLayers(lv, theme).map((l) => `0 ${l.y}px ${l.blur}px rgb(0 0 0 / ${l.alpha})`).join(', ')};`,
+    ).join('\n');
+
+  const family = (list) => list.map((f) => (/[\s]/.test(f) && !f.includes('-apple') ? `"${f}"` : f)).join(', ');
+  const sans = family([...F.font.family.latin, ...F.font.family.cjk.web, ...F.font.family.fallback.web]);
+
+  const springCss = Object.entries(springs).map(([k, s]) => {
+    const { css, settleMs } = springToCssLinear(s);
+    return `  --ts-spring-${k}: ${css};\n  --ts-spring-${k}-duration: ${settleMs}ms;`;
+  });
+
+  const lines = [
+    `/* ${HEADER('').slice(1)} */`,
+    '',
+    '/* ---------- 非颜色 token ---------- */',
+    ':root {',
+    `  --ts-font-sans: ${sans};`,
+    `  --ts-font-mono: ${family(F.font.family.mono)};`,
+    `  --ts-font-weight-regular: ${F.font.weight.regular};`,
+    `  --ts-font-weight-semibold: ${F.font.weight.semibold};`,
+    ...textStyles.map(
+      ([k, s]) => `  --ts-font-${k}: ${weightNum(s.weight)} ${s.size}px/${s.lineHeight}px var(--ts-font-sans);`,
+    ),
+    `  --ts-line-height-reading: ${F.font.readingLineHeight};`,
+    ...Object.entries(F.space).map(([k, v]) => `  --ts-space-${k}: ${v}px;`),
+    ...Object.entries(F.size).map(([k, v]) => `  --ts-size-${k}: ${v}px;`),
+    ...Object.entries(F.radius).map(([k, v]) => `  --ts-radius-${k}: ${v}px;`),
+    `  --ts-border-width: ${F.border.width}px;`,
+    `  --ts-focus-ring-width: ${F.focus.ringWidth}px;`,
+    `  --ts-focus-ring-offset: ${F.focus.ringOffset}px;`,
+    `  --ts-focus-glow-width: ${F.focus.glowWidth}px;`,
+    `  --ts-opacity-disabled: ${F.opacity.disabled};`,
+    `  --ts-glass-blur: ${F.material.glass.blur}px;`,
+    `  --ts-glass-saturation: ${F.material.glass.saturation * 100}%;`,
+    ...Object.entries(F.z).map(([k, v]) => `  --ts-z-${k}: ${v};`),
+    ...Object.entries(M.duration).map(([k, v]) => `  --ts-duration-${k}: ${v}ms;`),
+    ...Object.entries(M.ease).map(
+      ([k, v]) => `  --ts-ease-${k}: ${Array.isArray(v) ? `cubic-bezier(${v.join(', ')})` : v};`,
+    ),
+    ...springCss,
+    `  --ts-press-scale: ${M.press.scale};`,
+    '}',
+    '',
+    '/* ---------- 颜色：浅色（默认） ---------- */',
+    ':root {',
+    '  color-scheme: light;',
+    colorBlock('light'),
+    shadowBlock('light'),
+    '}',
+    '',
+    '/* ---------- 颜色：深色（跟随系统，或 data-theme="dark"） ---------- */',
+    '@media (prefers-color-scheme: dark) {',
+    '  :root:not([data-theme="light"]) {',
+    '    color-scheme: dark;',
+    colorBlock('dark').replace(/^/gm, '  '),
+    shadowBlock('dark').replace(/^/gm, '  '),
+    '  }',
+    '}',
+    ':root[data-theme="dark"] {',
+    '  color-scheme: dark;',
+    colorBlock('dark'),
+    shadowBlock('dark'),
+    '}',
+    '',
+    '/* ---------- 增强对比度（跟随系统，或 data-contrast="more"） ---------- */',
+    '@media (prefers-contrast: more) {',
+    `  :root:not([data-contrast="normal"]) {\n${colorBlock('light-hc', true).replace(/^/gm, '  ')}\n  }`,
+    `  :root[data-theme="dark"]:not([data-contrast="normal"]) {\n${colorBlock('dark-hc', true).replace(/^/gm, '  ')}\n  }`,
+    '}',
+    '@media (prefers-contrast: more) and (prefers-color-scheme: dark) {',
+    `  :root:not([data-theme="light"]):not([data-contrast="normal"]) {\n${colorBlock('dark-hc', true).replace(/^/gm, '  ')}\n  }`,
+    '}',
+    `:root[data-contrast="more"] {\n${colorBlock('light-hc', true)}\n}`,
+    `:root[data-contrast="more"][data-theme="dark"] {\n${colorBlock('dark-hc', true)}\n}`,
+    '@media (prefers-color-scheme: dark) {',
+    `  :root[data-contrast="more"]:not([data-theme="light"]) {\n${colorBlock('dark-hc', true).replace(/^/gm, '  ')}\n  }`,
+    '}',
+  ];
+  emit('platforms/web/dist/tokens.css', lines.join('\n'));
+
+  // 扁平 JSON：给设计工具、文档站、测试用
+  const flat = { version, color: {}, shadow: {}, spring: springs, foundation: F, motion: M };
+  for (const theme of THEMES) {
+    flat.color[theme] = Object.fromEntries(Object.entries(colors).map(([n, v]) => [n, toHex8(v[theme])]));
+    flat.shadow[theme] = Object.fromEntries(SHADOW_LEVELS.map((lv) => [lv, shadowLayers(lv, theme)]));
+  }
+  // 组件样式和运行时：tessera.css = tokens + 组件
+  const componentsCss = readFileSync(join(ROOT, 'platforms/web/src/components.css'), 'utf8');
+  emit('platforms/web/dist/tessera.css', lines.join('\n') + '\n\n' + componentsCss);
+  emit('platforms/web/dist/tessera.js', `${HEADER()}\n` + readFileSync(join(ROOT, 'platforms/web/src/tessera.js'), 'utf8'));
+
+  emit('platforms/web/dist/tokens.json', JSON.stringify(flat, null, 2));
+  emit(
+    'platforms/web/dist/tokens.mjs',
+    `${HEADER()}\nexport const tokens = ${JSON.stringify(flat, null, 2)};\nexport default tokens;`,
+  );
+}
+
+// ==================================================================
+// Apple：SwiftUI（iOS 17 / macOS 14 起）
+// ==================================================================
+function buildApple() {
+  const rgba = (c) => `0x${toHex8(c).slice(1)}`;
+  const colorLines = Object.entries(colors).map(([name, v]) => {
+    const doc = v.$description ? `    /// ${v.$description}\n` : '';
+    return `${doc}    public static let ${camel(name)} = Color.tessera(light: ${rgba(v.light)}, dark: ${rgba(v.dark)}, lightHC: ${rgba(v['light-hc'])}, darkHC: ${rgba(v['dark-hc'])})`;
+  });
+  const swiftKey = (k) => (/^\d/.test(k) ? `s${k}` : camel(k)); // Swift 标识符不能以数字开头
+  const shadowSwift = (lv) => {
+    const L = shadowLayers(lv, 'light'), D = shadowLayers(lv, 'dark');
+    return `    public static let level${lv} = TesseraShadow(layers: [${L.map((l, i) => `.init(y: ${l.y}, blur: ${l.blur}, lightOpacity: ${l.alpha}, darkOpacity: ${D[i].alpha})`).join(', ')}])`;
+  };
+  const ease = (v) => (Array.isArray(v) ? v : null);
+
+  const swift = `${HEADER()}
+import SwiftUI
+
+// MARK: - 颜色
+
+public enum TesseraColor {
+${colorLines.join('\n')}
+}
+
+// MARK: - 字体
+
+public enum TesseraFontFamily {
+    /// 英文和数字。需把字体文件加入 App 并在 Info.plist 注册；未注册时 SwiftUI 自动回退到系统字体。
+    public static let latin = "${F.font.family.latin[0]}"
+    /// 中文由系统自动回退到苹方，无需额外处理。
+    public static let cjk = "${F.font.family.cjk.apple[0]}"
+}
+
+public struct TesseraTextStyle: Sendable {
+    public let size: CGFloat
+    public let lineHeight: CGFloat
+    public let weight: Font.Weight
+    public let relativeTo: Font.TextStyle
+}
+
+public extension TesseraTextStyle {
+${textStyles
+  .map(([k, s]) => {
+    const rel = { display: '.largeTitle', 'title-1': '.title', 'title-2': '.title2', 'title-3': '.title3', body: '.body', 'body-sm': '.subheadline', label: '.subheadline', caption: '.caption' }[k];
+    return `    static let ${camel(k)} = TesseraTextStyle(size: ${s.size}, lineHeight: ${s.lineHeight}, weight: ${s.weight === 'semibold' ? '.semibold' : '.regular'}, relativeTo: ${rel})`;
+  })
+  .join('\n')}
+}
+
+// MARK: - 间距、尺寸、圆角
+
+public enum TesseraSpace {
+${Object.entries(F.space).map(([k, v]) => `    public static let ${swiftKey(k)}: CGFloat = ${v}`).join('\n')}
+}
+
+public enum TesseraSize {
+${Object.entries(F.size).map(([k, v]) => `    public static let ${swiftKey(k)}: CGFloat = ${v}`).join('\n')}
+}
+
+/// 使用时搭配 \`RoundedRectangle(cornerRadius:style: .continuous)\`，即连续曲率圆角。
+public enum TesseraRadius {
+${Object.entries(F.radius).map(([k, v]) => `    public static let ${swiftKey(k)}: CGFloat = ${v}`).join('\n')}
+}
+
+public enum TesseraFocus {
+    public static let ringWidth: CGFloat = ${F.focus.ringWidth}
+    public static let ringOffset: CGFloat = ${F.focus.ringOffset}
+    public static let glowWidth: CGFloat = ${F.focus.glowWidth}
+}
+
+public enum TesseraOpacity {
+    public static let disabled: Double = ${F.opacity.disabled}
+}
+
+// MARK: - 阴影
+
+public struct TesseraShadowLayer: Sendable {
+    public let y: CGFloat
+    public let blur: CGFloat
+    public let lightOpacity: Double
+    public let darkOpacity: Double
+}
+
+public struct TesseraShadow: Sendable {
+    public let layers: [TesseraShadowLayer]
+${SHADOW_LEVELS.map(shadowSwift).join('\n')}
+}
+
+// MARK: - 动效
+
+public enum TesseraMotion {
+${Object.entries(springs)
+  .map(([k, s]) => `    /// 刚度 ${s.stiffness}，阻尼 ${s.damping}${s.default ? '（默认）' : ''}\n    public static let ${k} = Animation.spring(duration: ${s.duration}, bounce: ${s.bounce})`)
+  .join('\n')}
+${Object.entries(M.duration).map(([k, v]) => `    public static let duration${pascal(k)}: Double = ${v / 1000}`).join('\n')}
+${Object.entries(M.ease)
+  .filter(([, v]) => ease(v))
+  .map(([k, v]) => `    public static func ${camel('ease-' + k)}(_ duration: Double) -> Animation { .timingCurve(${v.join(', ')}, duration: duration) }`)
+  .join('\n')}
+    public static let pressScale: CGFloat = ${M.press.scale}
+    public static let flingVelocity: CGFloat = ${M.gesture.flingVelocity}
+    public static let staggerStep: Double = ${M.stagger.step / 1000}
+    public static let staggerMaxItems = ${M.stagger.maxItems}
+    public static let toastDuration: Double = ${M.toast.duration / 1000}
+    public static let toastDurationWithAction: Double = ${M.toast.durationWithAction / 1000}
+}
+
+// MARK: - 层级
+
+public enum TesseraZ {
+${Object.entries(F.z).map(([k, v]) => `    public static let ${camel(k)}: Double = ${v}`).join('\n')}
+}
+`;
+  emit('platforms/apple/Sources/TesseraUI/Generated/TesseraTokens.swift', swift);
+}
+
+// ==================================================================
+// Android：Jetpack Compose + 传统 View 的 XML 资源
+// ==================================================================
+function buildAndroid() {
+  const pkg = 'com.tesseraui';
+  const argb = (c) => `Color(0x${toARGB(c).slice(1)})`;
+  const names = Object.keys(colors);
+  const set = (theme) =>
+    `TesseraColors(\n${names.map((n) => `    ${camel(n)} = ${argb(colors[n][theme])},`).join('\n')}\n)`;
+  const ktKey = (k) => (/^\d/.test(k) ? `s${k}` : camel(k));
+
+  const kt = `${HEADER()}
+package ${pkg}
+
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.SpringSpec
+import androidx.compose.animation.core.spring
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+@Immutable
+data class TesseraColors(
+${names.map((n) => `    ${colors[n].$description ? `/** ${colors[n].$description} */ ` : ''}val ${camel(n)}: Color,`).join('\n')}
+)
+
+val TesseraLightColors = ${set('light')}
+
+val TesseraDarkColors = ${set('dark')}
+
+val TesseraLightHighContrastColors = ${set('light-hc')}
+
+val TesseraDarkHighContrastColors = ${set('dark-hc')}
+
+object TesseraType {
+${textStyles
+  .map(([k, s]) => `    val ${camel(k)} = TextStyle(fontSize = ${s.size}.sp, lineHeight = ${s.lineHeight}.sp, fontWeight = FontWeight.${s.weight === 'semibold' ? 'SemiBold' : 'Normal'})`)
+  .join('\n')}
+    const val READING_LINE_HEIGHT = ${F.font.readingLineHeight}f
+}
+
+object TesseraSpace {
+${Object.entries(F.space).map(([k, v]) => `    val ${ktKey(k)} = ${v}.dp`).join('\n')}
+}
+
+object TesseraSize {
+${Object.entries(F.size).map(([k, v]) => `    val ${ktKey(k)} = ${v}.dp`).join('\n')}
+}
+
+object TesseraRadius {
+${Object.entries(F.radius).map(([k, v]) => `    val ${ktKey(k)} = ${v}.dp`).join('\n')}
+}
+
+object TesseraFocus {
+    val ringWidth = ${F.focus.ringWidth}.dp
+    val ringOffset = ${F.focus.ringOffset}.dp
+    val glowWidth = ${F.focus.glowWidth}.dp
+}
+
+object TesseraElevation {
+    /** 阴影层：y 偏移、模糊半径、浅色不透明度、深色不透明度 */
+    data class Layer(val y: Float, val blur: Float, val lightAlpha: Float, val darkAlpha: Float)
+${SHADOW_LEVELS.map((lv) => {
+    const L = shadowLayers(lv, 'light'), D = shadowLayers(lv, 'dark');
+    return `    val level${lv} = listOf(${L.map((l, i) => `Layer(${l.y}f, ${l.blur}f, ${l.alpha}f, ${D[i].alpha}f)`).join(', ')})`;
+  }).join('\n')}
+}
+
+object TesseraMotion {
+${Object.entries(springs)
+  .map(([k, s]) => `    /** 时长 ${s.duration}s，回弹 ${s.bounce}${s.default ? '（默认）' : ''} */\n    fun <T> ${k}(): SpringSpec<T> = spring(dampingRatio = ${s.dampingRatio}f, stiffness = ${s.stiffness}f)`)
+  .join('\n')}
+${Object.entries(M.duration).map(([k, v]) => `    const val DURATION_${k.toUpperCase()} = ${v}`).join('\n')}
+${Object.entries(M.ease)
+  .map(([k, v]) => `    val Ease${pascal(k)} = ${Array.isArray(v) ? `CubicBezierEasing(${v.map((n) => n + 'f').join(', ')})` : 'LinearEasing'}`)
+  .join('\n')}
+    const val PRESS_SCALE = ${M.press.scale}f
+    const val FLING_VELOCITY_DP = ${M.gesture.flingVelocity}f
+    const val STAGGER_STEP = ${M.stagger.step}
+    const val STAGGER_MAX_ITEMS = ${M.stagger.maxItems}
+    const val TOAST_DURATION = ${M.toast.duration}L
+    const val TOAST_DURATION_WITH_ACTION = ${M.toast.durationWithAction}L
+}
+
+object TesseraZ {
+${Object.entries(F.z).map(([k, v]) => `    const val ${k.toUpperCase()} = ${v}f`).join('\n')}
+}
+`;
+  emit('platforms/android/tessera/src/main/kotlin/com/tesseraui/TesseraTokens.kt', kt);
+
+  // 传统 View 系统：values / values-night
+  const xml = (theme) =>
+    `<?xml version="1.0" encoding="utf-8"?>\n<!-- ${HEADER('').slice(1)} -->\n<resources>\n${names
+      .map((n) => `    <color name="tessera_${kebab(n).replace(/-/g, '_')}">${toARGB(colors[n][theme])}</color>`)
+      .join('\n')}\n</resources>`;
+  emit('platforms/android/tessera/src/main/res/values/tessera_colors.xml', xml('light'));
+  emit('platforms/android/tessera/src/main/res/values-night/tessera_colors.xml', xml('dark'));
+  emit(
+    'platforms/android/tessera/src/main/res/values/tessera_dimens.xml',
+    `<?xml version="1.0" encoding="utf-8"?>\n<!-- ${HEADER('').slice(1)} -->\n<resources>\n${[
+      ...Object.entries(F.space).map(([k, v]) => `    <dimen name="tessera_space_${k}">${v}dp</dimen>`),
+      ...Object.entries(F.size).map(([k, v]) => `    <dimen name="tessera_size_${k.replace(/-/g, '_')}">${v}dp</dimen>`),
+      ...Object.entries(F.radius).map(([k, v]) => `    <dimen name="tessera_radius_${k}">${v}dp</dimen>`),
+      ...textStyles.map(([k, s]) => `    <dimen name="tessera_font_${k.replace(/-/g, '_')}">${s.size}sp</dimen>`),
+    ].join('\n')}\n</resources>`,
+  );
+}
+
+// ==================================================================
+// Windows：WinUI 3 / XAML ResourceDictionary + C# 动效常量
+// ==================================================================
+// 增强对比度时 Windows 使用系统的高对比度主题色，这里把每个语义 token 映射到系统色。
+const WIN_HC = {
+  'bg.': 'SystemColorWindowColor',
+  'fill.default': 'SystemColorWindowColor',
+  'text.primary': 'SystemColorWindowTextColor',
+  'text.secondary': 'SystemColorWindowTextColor',
+  'text.tertiary': 'SystemColorGrayTextColor',
+  'text.on-solid': 'SystemColorHighlightTextColor',
+  'border.': 'SystemColorWindowTextColor',
+  'accent.text': 'SystemColorHotlightColor',
+  'accent.': 'SystemColorHighlightColor',
+  '.text': 'SystemColorWindowTextColor',
+  '.solid': 'SystemColorHighlightColor',
+  '.subtle': 'SystemColorWindowColor',
+  'focus.': 'SystemColorHighlightColor',
+  selection: 'SystemColorHighlightColor',
+  'state.': null, // 叠加层在高对比度下不使用
+  'material.': 'SystemColorWindowColor',
+  'shadow.': null,
+};
+function winHcFor(name) {
+  for (const [k, v] of Object.entries(WIN_HC)) {
+    if (name === k || name.startsWith(k) || (k.startsWith('.') && name.endsWith(k))) return v;
+  }
+  return 'SystemColorWindowTextColor';
+}
+
+function buildWindows() {
+  const key = (n) => `Tessera${pascal(n)}`;
+  const themeDict = (theme) =>
+    Object.entries(colors)
+      .map(([n, v]) => `            <Color x:Key="${key(n)}Color">${toARGB(v[theme])}</Color>\n            <SolidColorBrush x:Key="${key(n)}Brush" Color="${toARGB(v[theme])}" />`)
+      .join('\n');
+  const hcDict = Object.keys(colors)
+    .map((n) => {
+      const sys = winHcFor(n);
+      return sys
+        ? `            <StaticResource x:Key="${key(n)}Color" ResourceKey="${sys}" />\n            <SolidColorBrush x:Key="${key(n)}Brush" Color="{ThemeResource ${sys}}" />`
+        : `            <Color x:Key="${key(n)}Color">#00000000</Color>\n            <SolidColorBrush x:Key="${key(n)}Brush" Color="Transparent" />`;
+    })
+    .join('\n');
+  const fontFamily = [...F.font.family.latin, ...F.font.family.cjk.windows, F.font.family.fallback.windows].join(', ');
+  const xaml = `<!-- ${HEADER('').slice(1)} -->
+<!-- 用法：在 App.xaml 的 MergedDictionaries 里引用本文件（放在 XamlControlsResources 之后）。 -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+${themeDict('light')}
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+${themeDict('dark')}
+        </ResourceDictionary>
+        <!-- Windows 的“对比度主题”由用户自选配色，组件必须使用系统色，不能用自己的色值。 -->
+        <ResourceDictionary x:Key="HighContrast">
+${hcDict}
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- 字体：英文 ${F.font.family.latin[0]}，中文${F.font.family.cjk.windows[0]}，回退 ${F.font.family.fallback.windows} -->
+    <FontFamily x:Key="TesseraFontFamily">${fontFamily}</FontFamily>
+    <FontFamily x:Key="TesseraMonoFontFamily">${F.font.family.mono.filter((f) => f !== 'monospace').join(', ')}</FontFamily>
+${textStyles
+  .map(([k, s]) => `    <Style x:Key="Tessera${pascal(k)}TextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="${s.size}" />
+        <Setter Property="LineHeight" Value="${s.lineHeight}" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="${s.weight === 'semibold' ? 'SemiBold' : 'Normal'}" />
+    </Style>`)
+  .join('\n')}
+
+    <!-- 间距、尺寸 -->
+${Object.entries(F.space).map(([k, v]) => `    <x:Double x:Key="TesseraSpace${k}">${v}</x:Double>`).join('\n')}
+${Object.entries(F.size).map(([k, v]) => `    <x:Double x:Key="TesseraSize${pascal(k)}">${v}</x:Double>`).join('\n')}
+
+    <!-- 圆角。WinUI 的 CornerRadius 是普通圆弧，没有连续曲率；胶囊形用 高度 ÷ 2。 -->
+${Object.entries(F.radius).map(([k, v]) => `    <CornerRadius x:Key="TesseraRadius${pascal(k)}">${v}</CornerRadius>`).join('\n')}
+
+    <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
+    <Thickness x:Key="TesseraFocusRingThickness">${F.focus.ringWidth}</Thickness>
+    <Thickness x:Key="TesseraFocusRingMargin">-${F.focus.ringOffset + F.focus.ringWidth}</Thickness>
+    <x:Double x:Key="TesseraDisabledOpacity">${F.opacity.disabled}</x:Double>
+</ResourceDictionary>
+`;
+  emit('platforms/windows/TesseraUI/Themes/TesseraTokens.xaml', xaml);
+
+  const cs = `${HEADER()}
+using System;
+using System.Numerics;
+
+namespace TesseraUI
+{
+    /// <summary>弹簧参数。WinUI Composition 的 SpringNaturalMotionAnimation 使用 DampingRatio + Period，Period 即本库的“时长”。</summary>
+    public readonly record struct TesseraSpring(float DampingRatio, TimeSpan Period, float Stiffness, float Damping);
+
+    public static class TesseraMotion
+    {
+${Object.entries(springs)
+  .map(([k, s]) => `        public static readonly TesseraSpring ${pascal(k)} = new(${s.dampingRatio}f, TimeSpan.FromMilliseconds(${s.duration * 1000}), ${s.stiffness}f, ${s.damping}f);`)
+  .join('\n')}
+${Object.entries(M.duration).map(([k, v]) => `        public static readonly TimeSpan Duration${pascal(k)} = TimeSpan.FromMilliseconds(${v});`).join('\n')}
+${Object.entries(M.ease)
+  .filter(([, v]) => Array.isArray(v))
+  .map(([k, v]) => `        public static readonly (Vector2 P1, Vector2 P2) Ease${pascal(k)} = (new(${v[0]}f, ${v[1]}f), new(${v[2]}f, ${v[3]}f));`)
+  .join('\n')}
+        public const float PressScale = ${M.press.scale}f;
+        public const float FlingVelocity = ${M.gesture.flingVelocity}f;
+        public const int StaggerStepMs = ${M.stagger.step};
+        public const int StaggerMaxItems = ${M.stagger.maxItems};
+        public const int ToastDurationMs = ${M.toast.duration};
+        public const int ToastDurationWithActionMs = ${M.toast.durationWithAction};
+    }
+
+    public static class TesseraZ
+    {
+${Object.entries(F.z).map(([k, v]) => `        public const int ${pascal(k)} = ${v};`).join('\n')}
+    }
+}
+`;
+  emit('platforms/windows/TesseraUI/Generated/TesseraTokens.g.cs', cs);
+}
+
+buildWeb();
+buildApple();
+buildAndroid();
+buildWindows();
+console.log(`TesseraUI v${version}：已生成 ${written.length} 个文件`);
+for (const f of written) console.log('  ' + f);

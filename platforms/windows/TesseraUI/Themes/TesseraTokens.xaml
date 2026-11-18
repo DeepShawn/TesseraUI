@@ -1,0 +1,329 @@
+<!-- TesseraUI v0.1.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
+<!-- 用法：在 App.xaml 的 MergedDictionaries 里引用本文件（放在 XamlControlsResources 之后）。 -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="TesseraBgCanvasColor">#FFF5F5F7</Color>
+            <SolidColorBrush x:Key="TesseraBgCanvasBrush" Color="#FFF5F5F7" />
+            <Color x:Key="TesseraBgSurfaceColor">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraBgSurfaceBrush" Color="#FFFFFFFF" />
+            <Color x:Key="TesseraBgElevatedColor">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraBgElevatedBrush" Color="#FFFFFFFF" />
+            <Color x:Key="TesseraBgElevated2Color">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraBgElevated2Brush" Color="#FFFFFFFF" />
+            <Color x:Key="TesseraBgScrimColor">#52000000</Color>
+            <SolidColorBrush x:Key="TesseraBgScrimBrush" Color="#52000000" />
+            <Color x:Key="TesseraFillControlOffColor">#FFC7C7CC</Color>
+            <SolidColorBrush x:Key="TesseraFillControlOffBrush" Color="#FFC7C7CC" />
+            <Color x:Key="TesseraFillDefaultColor">#0D000000</Color>
+            <SolidColorBrush x:Key="TesseraFillDefaultBrush" Color="#0D000000" />
+            <Color x:Key="TesseraTextPrimaryColor">#FF1D1D1F</Color>
+            <SolidColorBrush x:Key="TesseraTextPrimaryBrush" Color="#FF1D1D1F" />
+            <Color x:Key="TesseraTextSecondaryColor">#FF68686D</Color>
+            <SolidColorBrush x:Key="TesseraTextSecondaryBrush" Color="#FF68686D" />
+            <Color x:Key="TesseraTextTertiaryColor">#FF8E8E93</Color>
+            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="#FF8E8E93" />
+            <Color x:Key="TesseraTextOnSolidColor">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraTextOnSolidBrush" Color="#FFFFFFFF" />
+            <Color x:Key="TesseraBorderSubtleColor">#0F000000</Color>
+            <SolidColorBrush x:Key="TesseraBorderSubtleBrush" Color="#0F000000" />
+            <Color x:Key="TesseraBorderStrongColor">#7A000000</Color>
+            <SolidColorBrush x:Key="TesseraBorderStrongBrush" Color="#7A000000" />
+            <Color x:Key="TesseraBorderSurfaceColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraBorderSurfaceBrush" Color="#00000000" />
+            <Color x:Key="TesseraBorderFieldColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraBorderFieldBrush" Color="#00000000" />
+            <Color x:Key="TesseraAccentSolidColor">#FF5B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraAccentSolidBrush" Color="#FF5B5BD6" />
+            <Color x:Key="TesseraAccentTextColor">#FF5252CF</Color>
+            <SolidColorBrush x:Key="TesseraAccentTextBrush" Color="#FF5252CF" />
+            <Color x:Key="TesseraAccentControlColor">#FF5B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraAccentControlBrush" Color="#FF5B5BD6" />
+            <Color x:Key="TesseraAccentSubtleColor">#1A5B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraAccentSubtleBrush" Color="#1A5B5BD6" />
+            <Color x:Key="TesseraDangerSolidColor">#FFC0292E</Color>
+            <SolidColorBrush x:Key="TesseraDangerSolidBrush" Color="#FFC0292E" />
+            <Color x:Key="TesseraDangerTextColor">#FFC0292E</Color>
+            <SolidColorBrush x:Key="TesseraDangerTextBrush" Color="#FFC0292E" />
+            <Color x:Key="TesseraDangerSubtleColor">#1AC0292E</Color>
+            <SolidColorBrush x:Key="TesseraDangerSubtleBrush" Color="#1AC0292E" />
+            <Color x:Key="TesseraSuccessSolidColor">#FF146B3A</Color>
+            <SolidColorBrush x:Key="TesseraSuccessSolidBrush" Color="#FF146B3A" />
+            <Color x:Key="TesseraSuccessTextColor">#FF146B3A</Color>
+            <SolidColorBrush x:Key="TesseraSuccessTextBrush" Color="#FF146B3A" />
+            <Color x:Key="TesseraSuccessSubtleColor">#1A146B3A</Color>
+            <SolidColorBrush x:Key="TesseraSuccessSubtleBrush" Color="#1A146B3A" />
+            <Color x:Key="TesseraWarningSolidColor">#FF9A5100</Color>
+            <SolidColorBrush x:Key="TesseraWarningSolidBrush" Color="#FF9A5100" />
+            <Color x:Key="TesseraWarningTextColor">#FF9A5100</Color>
+            <SolidColorBrush x:Key="TesseraWarningTextBrush" Color="#FF9A5100" />
+            <Color x:Key="TesseraWarningSubtleColor">#1A9A5100</Color>
+            <SolidColorBrush x:Key="TesseraWarningSubtleBrush" Color="#1A9A5100" />
+            <Color x:Key="TesseraFocusGlowColor">#405B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraFocusGlowBrush" Color="#405B5BD6" />
+            <Color x:Key="TesseraFocusRingColor">#FF5252CF</Color>
+            <SolidColorBrush x:Key="TesseraFocusRingBrush" Color="#FF5252CF" />
+            <Color x:Key="TesseraSelectionColor">#335B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraSelectionBrush" Color="#335B5BD6" />
+            <Color x:Key="TesseraStateHoverColor">#0F000000</Color>
+            <SolidColorBrush x:Key="TesseraStateHoverBrush" Color="#0F000000" />
+            <Color x:Key="TesseraStatePressedColor">#1A000000</Color>
+            <SolidColorBrush x:Key="TesseraStatePressedBrush" Color="#1A000000" />
+            <Color x:Key="TesseraStateSolidHoverColor">#14FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraStateSolidHoverBrush" Color="#14FFFFFF" />
+            <Color x:Key="TesseraStateSolidPressedColor">#14000000</Color>
+            <SolidColorBrush x:Key="TesseraStateSolidPressedBrush" Color="#14000000" />
+            <Color x:Key="TesseraMaterialGlassColor">#B8FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassBrush" Color="#B8FFFFFF" />
+            <Color x:Key="TesseraShadowColorColor">#FF000000</Color>
+            <SolidColorBrush x:Key="TesseraShadowColorBrush" Color="#FF000000" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <Color x:Key="TesseraBgCanvasColor">#FF111113</Color>
+            <SolidColorBrush x:Key="TesseraBgCanvasBrush" Color="#FF111113" />
+            <Color x:Key="TesseraBgSurfaceColor">#FF1A1A1D</Color>
+            <SolidColorBrush x:Key="TesseraBgSurfaceBrush" Color="#FF1A1A1D" />
+            <Color x:Key="TesseraBgElevatedColor">#FF232327</Color>
+            <SolidColorBrush x:Key="TesseraBgElevatedBrush" Color="#FF232327" />
+            <Color x:Key="TesseraBgElevated2Color">#FF2C2C31</Color>
+            <SolidColorBrush x:Key="TesseraBgElevated2Brush" Color="#FF2C2C31" />
+            <Color x:Key="TesseraBgScrimColor">#8F000000</Color>
+            <SolidColorBrush x:Key="TesseraBgScrimBrush" Color="#8F000000" />
+            <Color x:Key="TesseraFillControlOffColor">#FF48484E</Color>
+            <SolidColorBrush x:Key="TesseraFillControlOffBrush" Color="#FF48484E" />
+            <Color x:Key="TesseraFillDefaultColor">#14FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraFillDefaultBrush" Color="#14FFFFFF" />
+            <Color x:Key="TesseraTextPrimaryColor">#FFEDEDF0</Color>
+            <SolidColorBrush x:Key="TesseraTextPrimaryBrush" Color="#FFEDEDF0" />
+            <Color x:Key="TesseraTextSecondaryColor">#FFA1A1A8</Color>
+            <SolidColorBrush x:Key="TesseraTextSecondaryBrush" Color="#FFA1A1A8" />
+            <Color x:Key="TesseraTextTertiaryColor">#FF68686D</Color>
+            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="#FF68686D" />
+            <Color x:Key="TesseraTextOnSolidColor">#FFFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraTextOnSolidBrush" Color="#FFFFFFFF" />
+            <Color x:Key="TesseraBorderSubtleColor">#14FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraBorderSubtleBrush" Color="#14FFFFFF" />
+            <Color x:Key="TesseraBorderStrongColor">#7AFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraBorderStrongBrush" Color="#7AFFFFFF" />
+            <Color x:Key="TesseraBorderSurfaceColor">#14FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraBorderSurfaceBrush" Color="#14FFFFFF" />
+            <Color x:Key="TesseraBorderFieldColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraBorderFieldBrush" Color="#00000000" />
+            <Color x:Key="TesseraAccentSolidColor">#FF5B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraAccentSolidBrush" Color="#FF5B5BD6" />
+            <Color x:Key="TesseraAccentTextColor">#FF9C9CF0</Color>
+            <SolidColorBrush x:Key="TesseraAccentTextBrush" Color="#FF9C9CF0" />
+            <Color x:Key="TesseraAccentControlColor">#FF6E6EE3</Color>
+            <SolidColorBrush x:Key="TesseraAccentControlBrush" Color="#FF6E6EE3" />
+            <Color x:Key="TesseraAccentSubtleColor">#335B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraAccentSubtleBrush" Color="#335B5BD6" />
+            <Color x:Key="TesseraDangerSolidColor">#FFC0292E</Color>
+            <SolidColorBrush x:Key="TesseraDangerSolidBrush" Color="#FFC0292E" />
+            <Color x:Key="TesseraDangerTextColor">#FFFF6B6B</Color>
+            <SolidColorBrush x:Key="TesseraDangerTextBrush" Color="#FFFF6B6B" />
+            <Color x:Key="TesseraDangerSubtleColor">#33C0292E</Color>
+            <SolidColorBrush x:Key="TesseraDangerSubtleBrush" Color="#33C0292E" />
+            <Color x:Key="TesseraSuccessSolidColor">#FF146B3A</Color>
+            <SolidColorBrush x:Key="TesseraSuccessSolidBrush" Color="#FF146B3A" />
+            <Color x:Key="TesseraSuccessTextColor">#FF4CC38A</Color>
+            <SolidColorBrush x:Key="TesseraSuccessTextBrush" Color="#FF4CC38A" />
+            <Color x:Key="TesseraSuccessSubtleColor">#33146B3A</Color>
+            <SolidColorBrush x:Key="TesseraSuccessSubtleBrush" Color="#33146B3A" />
+            <Color x:Key="TesseraWarningSolidColor">#FF9A5100</Color>
+            <SolidColorBrush x:Key="TesseraWarningSolidBrush" Color="#FF9A5100" />
+            <Color x:Key="TesseraWarningTextColor">#FFF5A524</Color>
+            <SolidColorBrush x:Key="TesseraWarningTextBrush" Color="#FFF5A524" />
+            <Color x:Key="TesseraWarningSubtleColor">#339A5100</Color>
+            <SolidColorBrush x:Key="TesseraWarningSubtleBrush" Color="#339A5100" />
+            <Color x:Key="TesseraFocusGlowColor">#665B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraFocusGlowBrush" Color="#665B5BD6" />
+            <Color x:Key="TesseraFocusRingColor">#FF9C9CF0</Color>
+            <SolidColorBrush x:Key="TesseraFocusRingBrush" Color="#FF9C9CF0" />
+            <Color x:Key="TesseraSelectionColor">#335B5BD6</Color>
+            <SolidColorBrush x:Key="TesseraSelectionBrush" Color="#335B5BD6" />
+            <Color x:Key="TesseraStateHoverColor">#0FFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraStateHoverBrush" Color="#0FFFFFFF" />
+            <Color x:Key="TesseraStatePressedColor">#1AFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraStatePressedBrush" Color="#1AFFFFFF" />
+            <Color x:Key="TesseraStateSolidHoverColor">#14FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraStateSolidHoverBrush" Color="#14FFFFFF" />
+            <Color x:Key="TesseraStateSolidPressedColor">#14000000</Color>
+            <SolidColorBrush x:Key="TesseraStateSolidPressedBrush" Color="#14000000" />
+            <Color x:Key="TesseraMaterialGlassColor">#B81A1A1D</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassBrush" Color="#B81A1A1D" />
+            <Color x:Key="TesseraShadowColorColor">#FF000000</Color>
+            <SolidColorBrush x:Key="TesseraShadowColorBrush" Color="#FF000000" />
+        </ResourceDictionary>
+        <!-- Windows 的“对比度主题”由用户自选配色，组件必须使用系统色，不能用自己的色值。 -->
+        <ResourceDictionary x:Key="HighContrast">
+            <StaticResource x:Key="TesseraBgCanvasColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraBgCanvasBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraBgSurfaceColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraBgSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraBgElevatedColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraBgElevatedBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraBgElevated2Color" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraBgElevated2Brush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraBgScrimColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraBgScrimBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraFillControlOffColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraFillControlOffBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraFillDefaultColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraFillDefaultBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraTextPrimaryColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraTextPrimaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraTextSecondaryColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraTextSecondaryBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraTextTertiaryColor" ResourceKey="SystemColorGrayTextColor" />
+            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="{ThemeResource SystemColorGrayTextColor}" />
+            <StaticResource x:Key="TesseraTextOnSolidColor" ResourceKey="SystemColorHighlightTextColor" />
+            <SolidColorBrush x:Key="TesseraTextOnSolidBrush" Color="{ThemeResource SystemColorHighlightTextColor}" />
+            <StaticResource x:Key="TesseraBorderSubtleColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraBorderSubtleBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraBorderStrongColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraBorderStrongBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraBorderSurfaceColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraBorderSurfaceBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraBorderFieldColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraBorderFieldBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraAccentSolidColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraAccentSolidBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraAccentTextColor" ResourceKey="SystemColorHotlightColor" />
+            <SolidColorBrush x:Key="TesseraAccentTextBrush" Color="{ThemeResource SystemColorHotlightColor}" />
+            <StaticResource x:Key="TesseraAccentControlColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraAccentControlBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraAccentSubtleColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraAccentSubtleBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraDangerSolidColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraDangerSolidBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraDangerTextColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraDangerTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraDangerSubtleColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraDangerSubtleBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraSuccessSolidColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraSuccessSolidBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraSuccessTextColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraSuccessTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraSuccessSubtleColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraSuccessSubtleBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraWarningSolidColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraWarningSolidBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraWarningTextColor" ResourceKey="SystemColorWindowTextColor" />
+            <SolidColorBrush x:Key="TesseraWarningTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraWarningSubtleColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraWarningSubtleBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraFocusGlowColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraFocusGlowBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraFocusRingColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraFocusRingBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <StaticResource x:Key="TesseraSelectionColor" ResourceKey="SystemColorHighlightColor" />
+            <SolidColorBrush x:Key="TesseraSelectionBrush" Color="{ThemeResource SystemColorHighlightColor}" />
+            <Color x:Key="TesseraStateHoverColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraStateHoverBrush" Color="Transparent" />
+            <Color x:Key="TesseraStatePressedColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraStatePressedBrush" Color="Transparent" />
+            <Color x:Key="TesseraStateSolidHoverColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraStateSolidHoverBrush" Color="Transparent" />
+            <Color x:Key="TesseraStateSolidPressedColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraStateSolidPressedBrush" Color="Transparent" />
+            <StaticResource x:Key="TesseraMaterialGlassColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraMaterialGlassBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <Color x:Key="TesseraShadowColorColor">#00000000</Color>
+            <SolidColorBrush x:Key="TesseraShadowColorBrush" Color="Transparent" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <!-- 字体：英文 Plus Jakarta Sans，中文Microsoft YaHei UI，回退 Segoe UI Variable -->
+    <FontFamily x:Key="TesseraFontFamily">Plus Jakarta Sans, Microsoft YaHei UI, Segoe UI Variable</FontFamily>
+    <FontFamily x:Key="TesseraMonoFontFamily">JetBrains Mono, SF Mono, Cascadia Code, Menlo, Consolas</FontFamily>
+    <Style x:Key="TesseraDisplayTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="40" />
+        <Setter Property="LineHeight" Value="48" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="TesseraTitle1TextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="LineHeight" Value="40" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="TesseraTitle2TextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="LineHeight" Value="32" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="TesseraTitle3TextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="LineHeight" Value="28" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="TesseraBodyTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="LineHeight" Value="26" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style x:Key="TesseraBodySmTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="22" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style x:Key="TesseraLabelTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="TesseraCaptionTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineHeight" Value="18" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+
+    <!-- 间距、尺寸 -->
+    <x:Double x:Key="TesseraSpace0">0</x:Double>
+    <x:Double x:Key="TesseraSpace1">4</x:Double>
+    <x:Double x:Key="TesseraSpace2">8</x:Double>
+    <x:Double x:Key="TesseraSpace3">12</x:Double>
+    <x:Double x:Key="TesseraSpace4">16</x:Double>
+    <x:Double x:Key="TesseraSpace5">20</x:Double>
+    <x:Double x:Key="TesseraSpace6">24</x:Double>
+    <x:Double x:Key="TesseraSpace8">32</x:Double>
+    <x:Double x:Key="TesseraSpace10">40</x:Double>
+    <x:Double x:Key="TesseraSpace12">48</x:Double>
+    <x:Double x:Key="TesseraSpace16">64</x:Double>
+    <x:Double x:Key="TesseraSizeSm">32</x:Double>
+    <x:Double x:Key="TesseraSizeMd">40</x:Double>
+    <x:Double x:Key="TesseraSizeLg">48</x:Double>
+    <x:Double x:Key="TesseraSizeTouchMin">44</x:Double>
+
+    <!-- 圆角。WinUI 的 CornerRadius 是普通圆弧，没有连续曲率；胶囊形用 高度 ÷ 2。 -->
+    <CornerRadius x:Key="TesseraRadiusXs">6</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusSm">8</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusMd">12</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusLg">16</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusXl">20</CornerRadius>
+    <CornerRadius x:Key="TesseraRadius2xl">28</CornerRadius>
+    <CornerRadius x:Key="TesseraRadiusFull">9999</CornerRadius>
+
+    <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
+    <Thickness x:Key="TesseraFocusRingThickness">2</Thickness>
+    <Thickness x:Key="TesseraFocusRingMargin">-4</Thickness>
+    <x:Double x:Key="TesseraDisabledOpacity">0.4</x:Double>
+</ResourceDictionary>

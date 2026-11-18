@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TesseraUI v0.1 预览</title>
+<link rel="stylesheet" href="../platforms/web/dist/tessera.css">
+<style>
+  body { margin: 0; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 0 32px 96px; }
+  @media (max-width: 639px) { .page { padding: 0 16px 64px; } }
+  header.ts-navbar { justify-content: space-between; padding: 0 max(16px, calc((100vw - 1200px) / 2 + 32px)); }
+  .brand { display: flex; align-items: center; gap: 10px; font: var(--ts-font-label); font-size: 16px; }
+  .brand-mark { width: 24px; height: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .brand-mark i { border-radius: 4px; background: var(--ts-accent-solid); }
+  .brand-mark i:nth-child(2), .brand-mark i:nth-child(3) { opacity: .45; }
+  .controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .hero { padding: 72px 0 40px; }
+  .hero p { max-width: 640px; color: var(--ts-text-secondary); margin: 12px 0 0; }
+  section { margin-top: 48px; }
+  section > h2 { margin: 0 0 4px; }
+  section > p.ts-secondary { margin: 0 0 20px; font: var(--ts-font-body-sm); color: var(--ts-text-secondary); }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 900px) { .g2, .g3 { grid-template-columns: 1fr; } }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .stack { display: grid; gap: 16px; align-content: start; }
+  .card-title { font: var(--ts-font-title-3); margin: 0 0 16px; }
+  .eyebrow { font: var(--ts-font-caption); color: var(--ts-text-tertiary); margin: 0 0 8px; letter-spacing: .02em; }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 12px; }
+  .swatch { border-radius: var(--ts-radius-lg); overflow: hidden; background: var(--ts-bg-surface); box-shadow: var(--ts-shadow-1), 0 0 0 1px var(--ts-border-surface); }
+  .swatch-color { height: 64px; position: relative; background:
+    repeating-conic-gradient(var(--ts-fill-default) 0 25%, transparent 0 50%) 0 0 / 12px 12px; }
+  .swatch-color::after { content: ""; position: absolute; inset: 0; background: var(--c); box-shadow: inset 0 -1px 0 var(--ts-border-subtle); }
+  .swatch-meta { padding: 10px 12px; display: grid; gap: 2px; }
+  .swatch-meta code { font: 600 12px/18px var(--ts-font-mono); }
+  .swatch-meta span { font: var(--ts-font-caption); color: var(--ts-text-secondary); font-family: var(--ts-font-mono); }
+
+  .type-row { display: grid; grid-template-columns: 140px 1fr; align-items: baseline; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--ts-border-subtle); }
+  .type-row:last-child { border: 0; }
+  .type-row code { font: var(--ts-font-caption); color: var(--ts-text-secondary); font-family: var(--ts-font-mono); }
+
+  .radii { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-end; }
+  .radius-box { width: 88px; height: 88px; background: var(--ts-accent-subtle); border: 1.5px solid var(--ts-accent-text); display: grid; place-items: center; font: var(--ts-font-caption); color: var(--ts-accent-text); }
+  .shadows { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .shadow-box { height: 120px; border-radius: var(--ts-radius-xl); background: var(--ts-bg-elevated); display: grid; place-items: center; font: var(--ts-font-label); color: var(--ts-text-secondary); }
+
+  .springs { display: grid; gap: 14px; }
+  .lane { display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: 16px; }
+  .track { position: relative; height: 40px; border-radius: 999px; background: var(--ts-fill-default); }
+  .ball { position: absolute; top: 4px; left: 4px; width: 32px; height: 32px; border-radius: 50%; background: var(--ts-accent-solid); box-shadow: var(--ts-shadow-1); }
+  .lane small { display: block; color: var(--ts-text-tertiary); font: var(--ts-font-caption); font-family: var(--ts-font-mono); }
+  .drag-zone { position: relative; height: 160px; border-radius: var(--ts-radius-xl); background: var(--ts-fill-default); overflow: hidden; touch-action: none; }
+  .drag-puck { position: absolute; left: calc(50% - 32px); top: calc(50% - 32px); width: 64px; height: 64px; border-radius: 20px; background: var(--ts-accent-solid); color: var(--ts-text-on-solid); display: grid; place-items: center; cursor: grab; box-shadow: var(--ts-shadow-2); user-select: none; }
+
+  .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+  .icon-cell { display: grid; place-items: center; gap: 8px; padding: 16px 4px 12px; border-radius: var(--ts-radius-md); color: var(--ts-text-primary); }
+  .icon-cell .ts-icon { width: 24px; height: 24px; }
+  .icon-cell span:last-child { font: 400 11px/14px var(--ts-font-mono); color: var(--ts-text-secondary); text-align: center; word-break: break-all; }
+  .icon-cell:hover { background: var(--ts-state-hover); }
+  .icon-sizes { display: flex; gap: 20px; align-items: center; color: var(--ts-text-primary); }
+
+  .phone { width: 360px; height: 720px; border-radius: 48px; padding: 10px; background: #0B0B0C; box-shadow: var(--ts-shadow-3); margin: 0 auto; }
+  .phone-screen { height: 100%; border-radius: 38px; overflow: hidden; background: var(--ts-bg-canvas); display: grid; grid-template-rows: auto 1fr auto; position: relative; }
+  .phone-status { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font: 600 14px/1 var(--ts-font-sans); }
+  .phone-body { overflow: auto; padding: 8px 16px 16px; }
+  .phone .ts-navbar { position: static; height: 48px; padding: 0 8px; box-shadow: none; background: transparent; backdrop-filter: none; }
+  .phone-hero { padding: 4px 4px 16px; }
+  .phone-hero h3 { margin: 0; }
+  .stat { display: grid; gap: 2px; }
+  .stat b { font: var(--ts-font-title-2); font-variant-numeric: tabular-nums; }
+  .stat span { font: var(--ts-font-caption); color: var(--ts-text-secondary); }
+
+  .platforms td, .platforms th { text-align: left; padding: 12px 16px 12px 0; border-bottom: 1px solid var(--ts-border-subtle); font: var(--ts-font-body-sm); vertical-align: top; }
+  .platforms th { font: var(--ts-font-label); color: var(--ts-text-secondary); }
+  .platforms code { font: 12px/18px var(--ts-font-mono); }
+  pre.code { margin: 0; padding: 16px 20px; border-radius: var(--ts-radius-md); background: var(--ts-fill-default); overflow: auto; font: 13px/20px var(--ts-font-mono); }
+  table { border-collapse: collapse; width: 100%; }
+
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 250ms; }
+</style>
+</head>
+<body>
+<header class="ts-navbar">
+  <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>TesseraUI <span class="ts-tag ts-accent">v0.1</span></div>
+  <div class="controls">
+    <div class="ts-segmented ts-sm" role="radiogroup" aria-label="主题" id="theme">
+      <label><input type="radio" name="theme" value="system" checked><span>跟随系统</span></label>
+      <label><input type="radio" name="theme" value="light"><span>浅色</span></label>
+      <label><input type="radio" name="theme" value="dark"><span>深色</span></label>
+    </div>
+    <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch ts-sm" id="contrast">增强对比度</label>
+    <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch ts-sm" id="motion">减弱动态</label>
+  </div>
+</header>
+
+<main class="page">
+  <div class="hero">
+    <p class="eyebrow">APPLE · ANDROID · WINDOWS · WEB</p>
+    <h1 class="ts-display" style="margin:0">一套 token，四端一致</h1>
+    <p class="ts-body">TesseraUI 是一套干净、圆润、流畅的 UI 设计标准库。所有颜色、字体、间距、圆角、阴影和动效都写在一份 JSON 里，自动导出到 SwiftUI、Jetpack Compose、WinUI 3 和 Web；浅色、深色、增强对比度只靠切换 token。这一页本身就是用 Web 端的组件搭出来的。</p>
+    <div class="row" style="margin-top:24px">
+      <button class="ts-button ts-primary ts-lg ts-pressable ts-state" onclick="document.getElementById('components').scrollIntoView({behavior:'smooth'})">看组件 <i data-icon="arrow-down"></i></button>
+      <button class="ts-button ts-lg ts-pressable ts-state" onclick="document.getElementById('platforms').scrollIntoView({behavior:'smooth'})">四端导出</button>
+    </div>
+  </div>
+
+  <!-- ============ 颜色 ============ -->
+  <section>
+    <h2 class="ts-title-2">颜色</h2>
+    <p class="ts-secondary">语义 token，组件只引用这一层。切换右上角的主题和对比度，色值实时变化；240 项对比度检查全部通过 WCAG AA。</p>
+    <div class="swatches" id="swatches"></div>
+  </section>
+
+  <!-- ============ 字体 ============ -->
+  <section>
+    <h2 class="ts-title-2">字体</h2>
+    <p class="ts-secondary">英文和数字用 Plus Jakarta Sans；中文用各平台的系统黑体（苹方 / 思源黑体 / 微软雅黑）。只用 400 和 600 两种字重。</p>
+    <div class="ts-card" id="type"></div>
+  </section>
+
+  <!-- ============ 圆角与阴影 ============ -->
+  <section class="grid g2">
+    <div>
+      <h2 class="ts-title-2">圆角</h2>
+      <p class="ts-secondary">单行控件一律胶囊形；支持的浏览器上自动使用连续曲率（squircle）。</p>
+      <div class="ts-card"><div class="radii" id="radii"></div></div>
+    </div>
+    <div>
+      <h2 class="ts-title-2">阴影</h2>
+      <p class="ts-secondary">深色模式阴影改为 40% 不透明度，并补 1px 描边。</p>
+      <div class="ts-card" style="background:var(--ts-bg-canvas)"><div class="shadows">
+        <div class="shadow-box" style="box-shadow:var(--ts-shadow-1),0 0 0 1px var(--ts-border-surface)">shadow.1</div>
+        <div class="shadow-box" style="box-shadow:var(--ts-shadow-2),0 0 0 1px var(--ts-border-surface)">shadow.2</div>
+        <div class="shadow-box" style="box-shadow:var(--ts-shadow-3),0 0 0 1px var(--ts-border-surface)">shadow.3</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ 动效 ============ -->
+  <section>
+    <h2 class="ts-title-2">动效</h2>
+    <p class="ts-secondary">位移和缩放都用弹簧；动画随时可以打断，松手时继承手指的速度。</p>
+    <div class="grid g2">
+      <div class="ts-card">
+        <p class="card-title">三档弹簧</p>
+        <div class="springs" id="springs"></div>
+        <div class="row" style="margin-top:20px">
+          <button class="ts-button ts-primary ts-pressable ts-state" id="play"><i data-icon="play-fill"></i>播放</button>
+          <span class="ts-caption ts-secondary">播放中再点一次，可以看到动画从当前位置和速度接着走</span>
+        </div>
+      </div>
+      <div class="ts-card">
+        <p class="card-title">拖一下，然后甩出去</p>
+        <div class="drag-zone" id="drag"><div class="drag-puck"><i data-icon="star-fill"></i></div></div>
+        <p class="ts-caption ts-secondary" style="margin:12px 0 0">拖动 1:1 跟手；松手后 bouncy 弹簧带着你的速度回到中心；拖出边界有橡皮筋阻力。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 图标 ============ -->
+  <section>
+    <h2 class="ts-title-2">图标</h2>
+    <p class="ts-secondary">24×24 画布、1.5px 圆头线条、单色 currentColor；实心版加 <code>-fill</code> 后缀。v0.1 先画了 <span id="icon-count"></span> 个，首批目标约 150 个。</p>
+    <div class="ts-card">
+      <div class="icons" id="icons"></div>
+    </div>
+  </section>
+
+  <!-- ============ 组件 ============ -->
+  <section id="components">
+    <h2 class="ts-title-2">组件</h2>
+    <p class="ts-secondary">底层沿用原生元素（button、input、dialog），保留键盘、读屏和输入法支持；外观全部重画。</p>
+
+    <div class="grid g2">
+      <div class="ts-card stack">
+        <p class="card-title" style="margin:0">按钮</p>
+        <div class="row">
+          <button class="ts-button ts-primary ts-pressable ts-state">主要按钮</button>
+          <button class="ts-button ts-pressable ts-state">次要按钮</button>
+          <button class="ts-button ts-text ts-pressable ts-state">文字按钮</button>
+          <button class="ts-button ts-danger ts-pressable ts-state">删除</button>
+        </div>
+        <div class="row">
+          <button class="ts-button ts-primary ts-sm ts-pressable ts-state">小 32</button>
+          <button class="ts-button ts-primary ts-pressable ts-state">中 40</button>
+          <button class="ts-button ts-primary ts-lg ts-pressable ts-state">大 48</button>
+          <button class="ts-button ts-primary ts-pressable ts-state" aria-busy="true">加载中</button>
+          <button class="ts-button ts-primary" disabled>禁用</button>
+        </div>
+        <div class="row">
+          <button class="ts-icon-button ts-pressable ts-state" aria-label="搜索"><i data-icon="search"></i></button>
+          <button class="ts-icon-button ts-filled ts-pressable ts-state" aria-label="分享"><i data-icon="share"></i></button>
+          <button class="ts-icon-button ts-filled ts-pressable ts-state" aria-label="通知，3 条未读"><i data-icon="bell"></i><span class="ts-badge ts-dot"></span></button>
+          <button class="ts-icon-button ts-filled ts-pressable ts-state" aria-label="更多" id="menu-trigger"><i data-icon="more"></i></button>
+          <button class="ts-button ts-pressable ts-state"><i data-icon="plus"></i>新建</button>
+        </div>
+      </div>
+
+      <div class="ts-card stack">
+        <p class="card-title" style="margin:0">输入</p>
+        <div class="ts-field">
+          <label class="ts-field-label" for="f-name">昵称</label>
+          <div class="ts-input"><input id="f-name" placeholder="输入昵称" maxlength="20"></div>
+          <div class="ts-field-help"><span>试试用拼音输入法打字：选定汉字之前不计数</span><span id="f-count">0 / 20</span></div>
+        </div>
+        <div class="ts-field" data-invalid>
+          <label class="ts-field-label" for="f-mail">邮箱</label>
+          <div class="ts-input"><i data-icon="mail"></i><input id="f-mail" value="hello@" aria-invalid="true" aria-describedby="f-mail-err"></div>
+          <div class="ts-field-help" id="f-mail-err">邮箱格式不正确</div>
+        </div>
+        <div class="row" style="flex-wrap:nowrap">
+          <div class="ts-input" style="flex:1"><i data-icon="search"></i><input type="search" placeholder="搜索" aria-label="搜索" id="f-search"></div>
+          <div class="ts-input ts-select" style="width:140px"><select aria-label="排序"><option>最近更新</option><option>名称</option><option>大小</option></select></div>
+        </div>
+      </div>
+
+      <div class="ts-card stack">
+        <p class="card-title" style="margin:0">选择</p>
+        <div class="row" style="gap:24px">
+          <label class="ts-check"><input type="checkbox" class="ts-checkbox" checked>接收通知</label>
+          <label class="ts-check"><input type="checkbox" class="ts-checkbox">自动更新</label>
+          <label class="ts-check"><input type="checkbox" class="ts-checkbox" id="indet">部分选中</label>
+          <label class="ts-check"><input type="checkbox" class="ts-checkbox" disabled>禁用</label>
+        </div>
+        <div class="row" style="gap:24px" role="radiogroup" aria-label="清晰度">
+          <label class="ts-check"><input type="radio" class="ts-radio" name="q" checked>标清</label>
+          <label class="ts-check"><input type="radio" class="ts-radio" name="q">高清</label>
+          <label class="ts-check"><input type="radio" class="ts-radio" name="q">原画</label>
+        </div>
+        <div class="row" style="gap:24px">
+          <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch" checked>Wi-Fi</label>
+          <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch">蓝牙</label>
+          <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch" disabled>飞行模式</label>
+        </div>
+        <div class="ts-segmented" role="radiogroup" aria-label="时间范围" style="width:100%">
+          <label><input type="radio" name="range" checked><span>日</span></label>
+          <label><input type="radio" name="range"><span>周</span></label>
+          <label><input type="radio" name="range"><span>月</span></label>
+          <label><input type="radio" name="range"><span>全年</span></label>
+        </div>
+      </div>
+
+      <div class="ts-card stack">
+        <p class="card-title" style="margin:0">标签页、标签、头像</p>
+        <div class="ts-tabs" role="tablist" aria-label="示例标签页">
+          <button class="ts-tab" role="tab" aria-selected="true">概览</button>
+          <button class="ts-tab" role="tab">活动记录</button>
+          <button class="ts-tab" role="tab">成员</button>
+          <button class="ts-tab" role="tab">设置</button>
+        </div>
+        <div class="row">
+          <span class="ts-tag">默认</span>
+          <span class="ts-tag ts-accent">进行中</span>
+          <span class="ts-tag ts-success"><i data-icon="check"></i>已完成</span>
+          <span class="ts-tag ts-warning">即将到期</span>
+          <span class="ts-tag ts-danger">已逾期</span>
+          <span class="ts-badge">8</span>
+          <span class="ts-badge">99+</span>
+        </div>
+        <div class="row" style="gap:20px">
+          <span class="ts-avatar ts-lg">林<span class="ts-badge ts-dot" style="background:var(--ts-success-solid)"></span></span>
+          <span class="ts-avatar">AB</span>
+          <span class="ts-avatar ts-sm">周</span>
+          <span class="ts-avatar-group">
+            <span class="ts-avatar ts-sm">陈</span><span class="ts-avatar ts-sm" style="--_tint:var(--ts-success-subtle);color:var(--ts-success-text)">吴</span><span class="ts-avatar ts-sm" style="--_tint:var(--ts-warning-subtle);color:var(--ts-warning-text)">赵</span><span class="ts-avatar ts-sm" style="--_tint:var(--ts-fill-default);color:var(--ts-text-secondary)">+5</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="stack">
+        <ul class="ts-list" data-stagger id="list">
+          <li><button class="ts-list-item ts-state"><span class="ts-avatar">设</span><span class="ts-grow"><span class="ts-label">设计评审</span><span class="ts-caption">今天 14:00 · 3 号会议室</span></span><i data-icon="chevron-right"></i></button></li>
+          <li><button class="ts-list-item ts-state"><span class="ts-avatar" style="--_tint:var(--ts-success-subtle);color:var(--ts-success-text)">发</span><span class="ts-grow"><span class="ts-label">v0.1 发布检查</span><span class="ts-caption">对比度 240/240 通过</span></span><span class="ts-tag ts-success">就绪</span></button></li>
+          <li><button class="ts-list-item ts-state"><span class="ts-avatar" style="--_tint:var(--ts-warning-subtle);color:var(--ts-warning-text)">图</span><span class="ts-grow"><span class="ts-label">首批图标</span><span class="ts-caption">44 / 150</span></span><i data-icon="chevron-right"></i></button></li>
+        </ul>
+        <div class="ts-card" aria-busy="true" aria-label="加载中">
+          <div class="row" style="flex-wrap:nowrap;align-items:flex-start">
+            <span class="ts-skeleton ts-circle" style="width:40px;height:40px;flex:none"></span>
+            <div style="flex:1;display:grid;gap:10px;padding-top:4px">
+              <span class="ts-skeleton" style="width:40%"></span>
+              <span class="ts-skeleton" style="width:90%"></span>
+              <span class="ts-skeleton" style="width:70%"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ts-card stack">
+        <p class="card-title" style="margin:0">反馈与浮层</p>
+        <p class="ts-body-sm ts-secondary" style="margin:0">点开看看：对话框从 0.96 缩放进场、关闭更快；提示消息 bouncy 进场，可以上滑关掉；底部抽屉可以拖动、甩动，停在两个档位。</p>
+        <div class="row">
+          <button class="ts-button ts-primary ts-pressable ts-state" id="open-dialog">对话框</button>
+          <button class="ts-button ts-pressable ts-state" id="open-toast">提示消息</button>
+          <button class="ts-button ts-pressable ts-state" id="open-toast-action">带操作的提示</button>
+          <button class="ts-button ts-pressable ts-state" id="open-sheet">底部抽屉</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 手机示例 ============ -->
+  <section>
+    <h2 class="ts-title-2">放在一起</h2>
+    <p class="ts-secondary">手机尺寸下的一个页面：毛玻璃底部标签栏、卡片、列表。</p>
+    <div class="phone">
+      <div class="phone-screen">
+        <div>
+          <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+          <div class="ts-navbar">
+            <button class="ts-icon-button ts-pressable ts-state" aria-label="菜单"><i data-icon="menu"></i></button>
+            <span class="ts-navbar-title"></span>
+            <button class="ts-icon-button ts-pressable ts-state" aria-label="通知"><i data-icon="bell"></i><span class="ts-badge">3</span></button>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="phone-hero"><p class="ts-caption ts-secondary" style="margin:0">11 月 18 日 星期三</p><h3 class="ts-title-1">早上好</h3></div>
+          <div class="ts-card" style="padding:20px;display:grid;gap:16px">
+            <div class="row" style="justify-content:space-between"><span class="ts-label">本周进度</span><span class="ts-tag ts-accent">第 47 周</span></div>
+            <div class="row" style="justify-content:space-between">
+              <div class="stat"><b>12</b><span>已完成</span></div>
+              <div class="stat"><b>5</b><span>进行中</span></div>
+              <div class="stat"><b>2</b><span>已逾期</span></div>
+            </div>
+            <button class="ts-button ts-primary ts-pressable ts-state" style="width:100%">查看详情</button>
+          </div>
+          <p class="ts-label" style="margin:20px 4px 8px">待办</p>
+          <ul class="ts-list">
+            <li><label class="ts-list-item"><input type="checkbox" class="ts-checkbox" checked><span class="ts-grow"><span class="ts-body-sm">确认主色</span></span></label></li>
+            <li><label class="ts-list-item"><input type="checkbox" class="ts-checkbox"><span class="ts-grow"><span class="ts-body-sm">定首批图标清单</span></span></label></li>
+            <li><label class="ts-list-item"><input type="checkbox" class="ts-checkbox"><span class="ts-grow"><span class="ts-body-sm">选首发平台</span></span></label></li>
+          </ul>
+        </div>
+        <nav class="ts-tabbar" role="tablist" aria-label="主导航" id="tabbar">
+          <button class="ts-tabbar-item" role="tab" aria-selected="true" data-icon-name="home"><i data-icon="home-fill"></i>首页</button>
+          <button class="ts-tabbar-item" role="tab" data-icon-name="star"><i data-icon="star"></i>收藏</button>
+          <button class="ts-tabbar-item" role="tab" data-icon-name="message"><i data-icon="message"></i>消息</button>
+          <button class="ts-tabbar-item" role="tab" data-icon-name="user"><i data-icon="user"></i>我的</button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 四端 ============ -->
+  <section id="platforms">
+    <h2 class="ts-title-2">四端导出</h2>
+    <p class="ts-secondary"><code>npm run build</code> 把 <code>tokens/*.json</code> 导出成各平台的原生格式。</p>
+    <div class="ts-card">
+      <table class="platforms">
+        <thead><tr><th>平台</th><th>产物</th><th>浅色 / 深色 / 增强对比度</th><th>弹簧</th></tr></thead>
+        <tbody>
+          <tr><td>Apple<br><span class="ts-caption ts-secondary">SwiftUI · iOS 17 / macOS 14</span></td><td><code>TesseraTokens.swift</code><br><code>TesseraButtonStyle</code></td><td>动态 UIColor / NSColor，跟随系统外观与“增强对比度”</td><td><code>.spring(duration:bounce:)</code></td></tr>
+          <tr><td>Android<br><span class="ts-caption ts-secondary">Jetpack Compose · minSdk 24</span></td><td><code>TesseraTokens.kt</code>、<code>TesseraTheme</code><br><code>values(-night)/tessera_*.xml</code></td><td>四套 <code>TesseraColors</code>，Android 14+ 跟随系统对比度</td><td><code>spring(dampingRatio, stiffness)</code></td></tr>
+          <tr><td>Windows<br><span class="ts-caption ts-secondary">WinUI 3 · Windows App SDK</span></td><td><code>TesseraTokens.xaml</code>、<code>TesseraButton.xaml</code><br><code>TesseraTokens.g.cs</code></td><td>ThemeDictionaries：Light / Dark / HighContrast（映射到系统色）</td><td>Composition <code>DampingRatio + Period</code></td></tr>
+          <tr><td>Web<br><span class="ts-caption ts-secondary">CSS + 原生 ES 模块</span></td><td><code>tessera.css</code>、<code>tessera.js</code><br><code>tokens.json / tokens.mjs</code></td><td><code>prefers-color-scheme</code>、<code>prefers-contrast</code>，或 <code>data-theme</code> 手动切换</td><td>CSS <code>linear()</code> + JS 弹簧</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- 浮层 -->
+<div class="ts-menu" id="menu">
+  <button class="ts-menu-item"><i data-icon="edit"></i>编辑<span class="ts-kbd">⌘E</span></button>
+  <button class="ts-menu-item"><i data-icon="copy"></i>复制<span class="ts-kbd">⌘C</span></button>
+  <button class="ts-menu-item"><i data-icon="share"></i>分享</button>
+  <div class="ts-menu-sep" role="separator"></div>
+  <button class="ts-menu-item ts-danger"><i data-icon="trash"></i>删除</button>
+</div>
+
+<dialog class="ts-dialog" id="dialog" aria-labelledby="dlg-title">
+  <h2 class="ts-dialog-title" id="dlg-title">发布 v0.1？</h2>
+  <p class="ts-dialog-body">发布后会生成 0.1.0 标签和更新日志，四端产物同步打包。这一步可以随时回滚。</p>
+  <div class="ts-dialog-actions">
+    <button class="ts-button ts-pressable ts-state" data-close>再想想</button>
+    <button class="ts-button ts-primary ts-pressable ts-state" data-close="ok">发布</button>
+  </div>
+</dialog>
+
+<div class="ts-sheet" id="sheet" aria-label="分享到">
+  <div class="ts-sheet-handle"></div>
+  <h3 class="ts-title-3" style="margin:4px 0 4px">分享到</h3>
+  <p class="ts-body-sm ts-secondary" style="margin:0 0 16px">按住顶部的横条拖动；快速往上甩会切到全屏档，往下甩会关闭。</p>
+  <ul class="ts-list" style="box-shadow:none;background:var(--ts-fill-default)">
+    <li><button class="ts-list-item ts-state"><i data-icon="copy" style="color:var(--ts-text-primary)"></i><span class="ts-grow ts-body-sm">复制链接</span></button></li>
+    <li><button class="ts-list-item ts-state"><i data-icon="mail" style="color:var(--ts-text-primary)"></i><span class="ts-grow ts-body-sm">通过邮件发送</span></button></li>
+    <li><button class="ts-list-item ts-state"><i data-icon="message" style="color:var(--ts-text-primary)"></i><span class="ts-grow ts-body-sm">发消息</span></button></li>
+    <li><button class="ts-list-item ts-state"><i data-icon="download" style="color:var(--ts-text-primary)"></i><span class="ts-grow ts-body-sm">保存到本地</span></button></li>
+  </ul>
+</div>
+
+<script type="module">
+import T, { Spring } from '../platforms/web/dist/tessera.js';
+import { tokens } from '../platforms/web/dist/tokens.mjs';
+import { icons } from '../platforms/web/dist/icons.mjs';
+
+// 颜色色卡（读取当前计算值，主题切换后刷新）
+const swatchEl = document.getElementById('swatches');
+const names = Object.keys(tokens.color.light).filter((n) => !n.startsWith('shadow.'));
+swatchEl.innerHTML = names.map((n) => `<div class="swatch"><div class="swatch-color" style="--c:var(--ts-${n.replace(/\./g, '-')})"></div><div class="swatch-meta"><code>${n}</code><span data-var="--ts-${n.replace(/\./g, '-')}"></span></div></div>`).join('');
+const refreshSwatches = () => {
+  const cs = getComputedStyle(document.documentElement);
+  for (const s of swatchEl.querySelectorAll('[data-var]')) s.textContent = cs.getPropertyValue(s.dataset.var).trim();
+};
+
+// 字体
+const tf = tokens.foundation.font.style;
+document.getElementById('type').innerHTML = Object.entries(tf).map(([k, s]) => `<div class="type-row"><code>${k}<br>${s.size}/${s.lineHeight} · ${s.weight === 'semibold' ? 600 : 400}</code><span class="ts-${k}">${k.startsWith('body') || k === 'caption' ? '被水磨过的石头没有棱角 The quick brown fox 0123456789' : '干净、圆润、流畅 Tessera 2026'}</span></div>`).join('');
+
+// 圆角
+document.getElementById('radii').innerHTML = Object.entries(tokens.foundation.radius).map(([k, v]) => `<div class="radius-box" style="border-radius:${Math.min(v, 44)}px">${k}<br>${v === 9999 ? 'full' : v}</div>`).join('');
+
+// 弹簧赛道
+const springsEl = document.getElementById('springs');
+const balls = Object.entries(tokens.spring).map(([k, s]) => {
+  const lane = document.createElement('div');
+  lane.className = 'lane';
+  lane.innerHTML = `<div><span class="ts-label">${k}</span><small>${s.duration}s · bounce ${s.bounce}</small><small>k ${s.stiffness} · c ${s.damping}</small></div><div class="track"><div class="ball"></div></div>`;
+  springsEl.append(lane);
+  const track = lane.querySelector('.track'), ball = lane.querySelector('.ball');
+  return { track, spring: new Spring(0, k, (v) => (ball.style.transform = `translateX(${v}px)`)) };
+});
+let side = 0;
+document.getElementById('play').onclick = () => {
+  side = 1 - side;
+  for (const b of balls) b.spring.to(side * (b.track.clientWidth - 40));
+};
+
+// 拖拽 + 甩动
+{
+  const zone = document.getElementById('drag'), puck = zone.querySelector('.drag-puck');
+  const x = new Spring(0, 'bouncy'), y = new Spring(0, 'bouncy');
+  const render = () => (puck.style.transform = `translate(${x.value}px, ${y.value}px)`);
+  x.onUpdate = y.onUpdate = render;
+  let start = null, pts = [];
+  const rb = (d, dim) => (1 - 1 / ((Math.abs(d) * 0.55) / dim + 1)) * dim * Math.sign(d);
+  puck.addEventListener('pointerdown', (e) => { puck.setPointerCapture(e.pointerId); x.stop(); y.stop(); start = { px: e.clientX, py: e.clientY, x: x.value, y: y.value }; pts = []; puck.style.cursor = 'grabbing'; });
+  puck.addEventListener('pointermove', (e) => {
+    if (!start) return;
+    const t = performance.now(); pts.push({ x: e.clientX, y: e.clientY, t }); while (pts.length > 2 && t - pts[0].t > 100) pts.shift();
+    const lx = zone.clientWidth / 2 - 32, ly = zone.clientHeight / 2 - 32;
+    let nx = start.x + e.clientX - start.px, ny = start.y + e.clientY - start.py;
+    if (Math.abs(nx) > lx) nx = Math.sign(nx) * lx + rb(nx - Math.sign(nx) * lx, 80);
+    if (Math.abs(ny) > ly) ny = Math.sign(ny) * ly + rb(ny - Math.sign(ny) * ly, 80);
+    x.set(nx); y.set(ny);
+  });
+  puck.addEventListener('pointerup', () => {
+    start = null; puck.style.cursor = '';
+    const [a, b] = [pts[0], pts.at(-1)];
+    const dt = a && b && b.t > a.t ? (b.t - a.t) / 1000 : 0;
+    x.to(0, { velocity: dt ? (b.x - a.x) / dt : 0 }); y.to(0, { velocity: dt ? (b.y - a.y) / dt : 0 });
+  });
+}
+
+// 图标
+const iconNames = Object.keys(icons);
+document.getElementById('icon-count').textContent = `${iconNames.filter((n) => !n.endsWith('-fill')).length} 个（另有 ${iconNames.filter((n) => n.endsWith('-fill')).length} 个实心版）`;
+document.getElementById('icons').innerHTML = iconNames.map((n) => `<div class="icon-cell" title="${n}"><span class="ts-icon">${icons[n]}</span><span>${n}</span></div>`).join('');
+
+T.init();
+document.getElementById('indet').indeterminate = true;
+
+// 主题、对比度、减弱动态
+document.getElementById('theme').addEventListener('change', (e) => { T.setTheme(e.target.value); requestAnimationFrame(refreshSwatches); });
+document.getElementById('contrast').addEventListener('change', (e) => { T.setContrast(e.target.checked); requestAnimationFrame(refreshSwatches); });
+document.getElementById('motion').addEventListener('change', (e) => { if (e.target.checked) document.documentElement.dataset.motion = 'reduce'; else delete document.documentElement.dataset.motion; });
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refreshSwatches);
+refreshSwatches();
+
+// 中文输入法：选定之前不计数
+const nameInput = document.getElementById('f-name');
+T.onCommittedInput(nameInput, (v) => (document.getElementById('f-count').textContent = `${[...v].length} / 20`));
+
+// 浮层
+T.menu(document.getElementById('menu-trigger'), document.getElementById('menu'));
+const dlg = document.getElementById('dialog');
+document.getElementById('open-dialog').onclick = () => T.openDialog(dlg);
+dlg.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => { T.closeDialog(dlg, b.dataset.close); if (b.dataset.close === 'ok') setTimeout(() => T.toast('已发布 v0.1.0', { type: 'success' }), 160); }));
+document.getElementById('open-toast').onclick = () => T.toast('已保存到相册', { type: 'success' });
+document.getElementById('open-toast-action').onclick = () => T.toast('已删除 3 个文件', { iconName: 'trash', action: { label: '撤销', onClick: () => T.toast('已恢复') } });
+const sheet = T.bottomSheet(document.getElementById('sheet'));
+document.getElementById('open-sheet').onclick = sheet.open;
+
+// 底部标签栏：选中的图标从线性切换成实心
+const tabbar = document.getElementById('tabbar');
+tabbar.addEventListener('click', (e) => {
+  const item = e.target.closest('.ts-tabbar-item'); if (!item) return;
+  for (const t of tabbar.children) {
+    const on = t === item; t.setAttribute('aria-selected', on);
+    const n = t.dataset.iconName + (on && icons[t.dataset.iconName + '-fill'] ? '-fill' : '');
+    t.querySelector('.ts-icon').innerHTML = icons[n];
+  }
+});
+</script>
+</body>
+</html>

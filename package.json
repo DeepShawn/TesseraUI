@@ -1,0 +1,16 @@
+{
+  "name": "tesseraui",
+  "version": "0.1.0",
+  "description": "TesseraUI：Apple、Android、Windows、Web 四端统一的 UI 设计标准库",
+  "type": "module",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "node scripts/build.mjs && node scripts/build-icons.mjs",
+    "check:contrast": "node scripts/check-contrast.mjs --report docs/contrast-report.md",
+    "check:icons": "node scripts/check-icons.mjs",
+    "test": "npm run build && npm run check:contrast && npm run check:icons && node --test tests/*.test.mjs",
+    "demo": "npm run build && npx --yes http-server -c-1 -p 5173 ."
+  },
+  "engines": { "node": ">=18" }
+}

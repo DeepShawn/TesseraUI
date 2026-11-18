@@ -1,0 +1,47 @@
+{
+  "$description": "语义颜色。组件只引用这一层。值可以是 {色板引用}，或 {color, alpha} 表示带不透明度的颜色。light/dark 必填；light-hc/dark-hc 只写与普通模式不同的项（增强对比度）。",
+  "bg.canvas":        { "light": "{gray.50}",  "dark": "{gray.950}" },
+  "bg.surface":       { "light": "{gray.0}",   "dark": "{gray.925}" },
+  "bg.elevated":      { "light": "{gray.0}",   "dark": "{gray.850}" },
+  "bg.elevated-2":    { "light": "{gray.0}",   "dark": "{gray.800}" },
+  "bg.scrim":         { "light": { "color": "{black}", "alpha": 0.32 }, "dark": { "color": "{black}", "alpha": 0.56 } },
+  "fill.control-off": { "$description": "开关关闭时的轨道", "light": "{gray.300}", "dark": "{gray.700}", "light-hc": "{gray.500}", "dark-hc": "{gray.500}" },
+  "fill.default":     { "light": { "color": "{black}", "alpha": 0.05 }, "dark": { "color": "{white}", "alpha": 0.08 } },
+
+  "text.primary":     { "light": "{gray.900}", "dark": "{gray.100}" },
+  "text.secondary":   { "light": "{gray.600}", "dark": "{gray.400}", "light-hc": "{gray.700}", "dark-hc": "{gray.300}" },
+  "text.tertiary":    { "light": "{gray.500}", "dark": "{gray.600}", "light-hc": "{gray.600}", "dark-hc": "{gray.400}" },
+  "text.on-solid":    { "light": "{white}",    "dark": "{white}" },
+
+  "border.subtle":    { "light": { "color": "{black}", "alpha": 0.06 }, "dark": { "color": "{white}", "alpha": 0.08 }, "light-hc": { "color": "{black}", "alpha": 0.24 }, "dark-hc": { "color": "{white}", "alpha": 0.28 } },
+  "border.strong":    { "light": { "color": "{black}", "alpha": 0.48 }, "dark": { "color": "{white}", "alpha": 0.48 } },
+  "border.surface":   { "$description": "卡片、浮层的外描边：浅色没有，深色用 subtle，增强对比度用 strong", "light": "transparent", "dark": { "color": "{white}", "alpha": 0.08 }, "light-hc": { "color": "{black}", "alpha": 0.48 }, "dark-hc": { "color": "{white}", "alpha": 0.48 } },
+  "border.field":     { "$description": "输入框描边：平时没有，增强对比度时补上", "light": "transparent", "dark": "transparent", "light-hc": { "color": "{black}", "alpha": 0.48 }, "dark-hc": { "color": "{white}", "alpha": 0.48 } },
+
+  "accent.solid":     { "light": "{indigo.500}", "dark": "{indigo.500}" },
+  "accent.text":      { "light": "{indigo.600}", "dark": "{indigo.400}" },
+  "accent.control":   { "$description": "非文字的实色控件：开关开启、复选框和单选选中、滑块轨道。深色下调亮，保证对底色 ≥ 3:1", "light": "{indigo.500}", "dark": "{indigo.450}" },
+  "accent.subtle":    { "light": { "color": "{indigo.500}", "alpha": 0.10 }, "dark": { "color": "{indigo.500}", "alpha": 0.20 } },
+
+  "danger.solid":     { "light": "{red.600}",    "dark": "{red.600}" },
+  "danger.text":      { "light": "{red.600}",    "dark": "{red.400}" },
+  "danger.subtle":    { "light": { "color": "{red.600}", "alpha": 0.10 }, "dark": { "color": "{red.600}", "alpha": 0.20 } },
+  "success.solid":    { "light": "{green.700}",  "dark": "{green.700}" },
+  "success.text":     { "light": "{green.700}",  "dark": "{green.400}" },
+  "success.subtle":   { "light": { "color": "{green.700}", "alpha": 0.10 }, "dark": { "color": "{green.700}", "alpha": 0.20 } },
+  "warning.solid":    { "light": "{orange.700}", "dark": "{orange.700}" },
+  "warning.text":     { "light": "{orange.700}", "dark": "{orange.400}" },
+  "warning.subtle":   { "light": { "color": "{orange.700}", "alpha": 0.10 }, "dark": { "color": "{orange.700}", "alpha": 0.20 } },
+
+  "focus.glow":       { "light": { "color": "{indigo.500}", "alpha": 0.25 }, "dark": { "color": "{indigo.500}", "alpha": 0.40 } },
+  "focus.ring":       { "light": "{indigo.600}", "dark": "{indigo.400}" },
+  "selection":        { "light": { "color": "{indigo.500}", "alpha": 0.20 }, "dark": { "color": "{indigo.500}", "alpha": 0.20 } },
+
+  "state.hover":         { "light": { "color": "{black}", "alpha": 0.06 }, "dark": { "color": "{white}", "alpha": 0.06 } },
+  "state.pressed":       { "light": { "color": "{black}", "alpha": 0.10 }, "dark": { "color": "{white}", "alpha": 0.10 } },
+  "state.solid-hover":   { "light": { "color": "{white}", "alpha": 0.08 }, "dark": { "color": "{white}", "alpha": 0.08 } },
+  "state.solid-pressed": { "light": { "color": "{black}", "alpha": 0.08 }, "dark": { "color": "{black}", "alpha": 0.08 } },
+
+  "material.glass":   { "light": { "color": "{white}", "alpha": 0.72 }, "dark": { "color": "{gray.925}", "alpha": 0.72 } },
+  "shadow.color":     { "light": "{black}", "dark": "{black}" }
+}

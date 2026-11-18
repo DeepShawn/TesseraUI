@@ -1,0 +1,52 @@
+{
+  "$description": "非颜色基础 token。单位：长度为 px（iOS pt / Android dp / Windows epx 按 1:1 换算），时间为 ms。",
+  "font": {
+    "family": {
+      "latin": ["Plus Jakarta Sans"],
+      "cjk": {
+        "apple":   ["PingFang SC"],
+        "android": ["Noto Sans CJK SC", "Source Han Sans SC"],
+        "windows": ["Microsoft YaHei UI"],
+        "web":     ["PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei UI", "Microsoft YaHei"]
+      },
+      "fallback": {
+        "apple":   "system-ui",
+        "android": "sans-serif",
+        "windows": "Segoe UI Variable",
+        "web":     ["system-ui", "-apple-system", "Segoe UI Variable", "Segoe UI", "Roboto", "sans-serif"]
+      },
+      "mono": ["JetBrains Mono", "SF Mono", "Cascadia Code", "Menlo", "Consolas", "monospace"]
+    },
+    "weight": { "regular": 400, "semibold": 600 },
+    "style": {
+      "display": { "size": 40, "lineHeight": 48, "weight": "semibold" },
+      "title-1": { "size": 32, "lineHeight": 40, "weight": "semibold" },
+      "title-2": { "size": 24, "lineHeight": 32, "weight": "semibold" },
+      "title-3": { "size": 20, "lineHeight": 28, "weight": "semibold" },
+      "body":    { "size": 16, "lineHeight": 26, "weight": "regular" },
+      "body-sm": { "size": 14, "lineHeight": 22, "weight": "regular" },
+      "label":   { "size": 14, "lineHeight": 20, "weight": "semibold" },
+      "caption": { "size": 12, "lineHeight": 18, "weight": "regular" }
+    },
+    "readingLineHeight": 1.75
+  },
+  "space": { "0": 0, "1": 4, "2": 8, "3": 12, "4": 16, "5": 20, "6": 24, "8": 32, "10": 40, "12": 48, "16": 64 },
+  "size": { "sm": 32, "md": 40, "lg": 48, "touch-min": 44 },
+  "radius": { "xs": 6, "sm": 8, "md": 12, "lg": 16, "xl": 20, "2xl": 28, "full": 9999 },
+  "border": { "width": 1 },
+  "focus": { "ringWidth": 2, "ringOffset": 2, "glowWidth": 3 },
+  "opacity": { "disabled": 0.4 },
+  "shadow": {
+    "1": [ { "y": 1, "blur": 2,  "alpha": 0.04 }, { "y": 4,  "blur": 12, "alpha": 0.04 } ],
+    "2": [ { "y": 2, "blur": 6,  "alpha": 0.06 }, { "y": 12, "blur": 32, "alpha": 0.08 } ],
+    "3": [ { "y": 4, "blur": 12, "alpha": 0.08 }, { "y": 24, "blur": 64, "alpha": 0.12 } ],
+    "$darkAlpha": 0.4
+  },
+  "material": { "glass": { "blur": 20, "saturation": 1.8 } },
+  "z": { "sticky": 100, "overlay": 200, "modal": 300, "popover": 400, "toast": 500, "tooltip": 600 },
+  "breakpoint": {
+    "phone":   { "max": 639,  "columns": 4,  "gutter": 16, "margin": 16 },
+    "tablet":  { "min": 640,  "max": 1024, "columns": 8, "gutter": 24, "margin": 32 },
+    "desktop": { "min": 1025, "columns": 12, "gutter": 24, "maxContent": 1200 }
+  }
+}

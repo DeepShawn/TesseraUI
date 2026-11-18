@@ -1,0 +1,259 @@
+/* TesseraUI v0.1.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 */
+
+/* ---------- 非颜色 token ---------- */
+:root {
+  --ts-font-sans: "Plus Jakarta Sans", "PingFang SC", "Source Han Sans SC", "Noto Sans CJK SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI Variable", "Segoe UI", Roboto, sans-serif;
+  --ts-font-mono: "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --ts-font-weight-regular: 400;
+  --ts-font-weight-semibold: 600;
+  --ts-font-display: 600 40px/48px var(--ts-font-sans);
+  --ts-font-title-1: 600 32px/40px var(--ts-font-sans);
+  --ts-font-title-2: 600 24px/32px var(--ts-font-sans);
+  --ts-font-title-3: 600 20px/28px var(--ts-font-sans);
+  --ts-font-body: 400 16px/26px var(--ts-font-sans);
+  --ts-font-body-sm: 400 14px/22px var(--ts-font-sans);
+  --ts-font-label: 600 14px/20px var(--ts-font-sans);
+  --ts-font-caption: 400 12px/18px var(--ts-font-sans);
+  --ts-line-height-reading: 1.75;
+  --ts-space-0: 0px;
+  --ts-space-1: 4px;
+  --ts-space-2: 8px;
+  --ts-space-3: 12px;
+  --ts-space-4: 16px;
+  --ts-space-5: 20px;
+  --ts-space-6: 24px;
+  --ts-space-8: 32px;
+  --ts-space-10: 40px;
+  --ts-space-12: 48px;
+  --ts-space-16: 64px;
+  --ts-size-sm: 32px;
+  --ts-size-md: 40px;
+  --ts-size-lg: 48px;
+  --ts-size-touch-min: 44px;
+  --ts-radius-xs: 6px;
+  --ts-radius-sm: 8px;
+  --ts-radius-md: 12px;
+  --ts-radius-lg: 16px;
+  --ts-radius-xl: 20px;
+  --ts-radius-2xl: 28px;
+  --ts-radius-full: 9999px;
+  --ts-border-width: 1px;
+  --ts-focus-ring-width: 2px;
+  --ts-focus-ring-offset: 2px;
+  --ts-focus-glow-width: 3px;
+  --ts-opacity-disabled: 0.4;
+  --ts-glass-blur: 20px;
+  --ts-glass-saturation: 180%;
+  --ts-z-sticky: 100;
+  --ts-z-overlay: 200;
+  --ts-z-modal: 300;
+  --ts-z-popover: 400;
+  --ts-z-toast: 500;
+  --ts-z-tooltip: 600;
+  --ts-duration-instant: 100ms;
+  --ts-duration-fast: 150ms;
+  --ts-duration-normal: 250ms;
+  --ts-duration-slow: 350ms;
+  --ts-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ts-ease-enter: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ts-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ts-ease-linear: linear;
+  --ts-spring-snappy: linear(0, 0.0265, 0.0905, 0.1763, 0.2723, 0.3705, 0.4656, 0.5539, 0.6337, 0.7039, 0.7645, 0.8159, 0.8586, 0.8936, 0.9219, 0.9443, 0.9618, 0.9752, 0.9852, 0.9926, 0.9976, 1.0012, 1.0036, 1.0049, 1.0056, 1.0058, 1.0056, 1.0053, 1.0048, 1.0042, 1.0036, 1.0031, 1.0026, 1.0021, 1.0017, 1.0014, 1.0011, 1.0008, 1.0006, 1.0005, 1);
+  --ts-spring-snappy-duration: 460ms;
+  --ts-spring-smooth: linear(0, 0.0262, 0.0879, 0.1658, 0.2542, 0.3433, 0.4287, 0.5079, 0.5773, 0.6411, 0.6971, 0.7455, 0.7872, 0.8216, 0.8519, 0.8773, 0.8987, 0.9165, 0.9309, 0.9433, 0.9536, 0.962, 0.969, 0.9745, 0.9793, 0.9831, 0.9863, 0.9889, 0.9909, 0.9926, 0.994, 0.9952, 0.9961, 0.9968, 0.9974, 0.9979, 0.9983, 0.9986, 0.9989, 0.9991, 1);
+  --ts-spring-smooth-duration: 616ms;
+  --ts-spring-bouncy: linear(0, 0.0223, 0.0786, 0.1595, 0.2509, 0.3474, 0.4436, 0.5357, 0.6233, 0.6999, 0.7673, 0.8254, 0.8743, 0.9156, 0.9479, 0.9732, 0.9926, 1.0067, 1.0169, 1.0232, 1.0268, 1.0283, 1.0282, 1.0269, 1.0249, 1.0224, 1.0197, 1.017, 1.0142, 1.0117, 1.0094, 1.0074, 1.0056, 1.0041, 1.0029, 1.0018, 1.001, 1.0004, 1, 0.9996, 1);
+  --ts-spring-bouncy-duration: 704ms;
+  --ts-press-scale: 0.97;
+}
+
+/* ---------- 颜色：浅色（默认） ---------- */
+:root {
+  color-scheme: light;
+  --ts-bg-canvas: #F5F5F7;
+  --ts-bg-surface: #FFFFFF;
+  --ts-bg-elevated: #FFFFFF;
+  --ts-bg-elevated-2: #FFFFFF;
+  --ts-bg-scrim: rgb(0 0 0 / 0.32);
+  --ts-fill-control-off: #C7C7CC;
+  --ts-fill-default: rgb(0 0 0 / 0.05);
+  --ts-text-primary: #1D1D1F;
+  --ts-text-secondary: #68686D;
+  --ts-text-tertiary: #8E8E93;
+  --ts-text-on-solid: #FFFFFF;
+  --ts-border-subtle: rgb(0 0 0 / 0.06);
+  --ts-border-strong: rgb(0 0 0 / 0.48);
+  --ts-border-surface: transparent;
+  --ts-border-field: transparent;
+  --ts-accent-solid: #5B5BD6;
+  --ts-accent-text: #5252CF;
+  --ts-accent-control: #5B5BD6;
+  --ts-accent-subtle: rgb(91 91 214 / 0.1);
+  --ts-danger-solid: #C0292E;
+  --ts-danger-text: #C0292E;
+  --ts-danger-subtle: rgb(192 41 46 / 0.1);
+  --ts-success-solid: #146B3A;
+  --ts-success-text: #146B3A;
+  --ts-success-subtle: rgb(20 107 58 / 0.1);
+  --ts-warning-solid: #9A5100;
+  --ts-warning-text: #9A5100;
+  --ts-warning-subtle: rgb(154 81 0 / 0.1);
+  --ts-focus-glow: rgb(91 91 214 / 0.25);
+  --ts-focus-ring: #5252CF;
+  --ts-selection: rgb(91 91 214 / 0.2);
+  --ts-state-hover: rgb(0 0 0 / 0.06);
+  --ts-state-pressed: rgb(0 0 0 / 0.1);
+  --ts-state-solid-hover: rgb(255 255 255 / 0.08);
+  --ts-state-solid-pressed: rgb(0 0 0 / 0.08);
+  --ts-material-glass: rgb(255 255 255 / 0.72);
+  --ts-shadow-color: #000000;
+  --ts-shadow-1: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.04);
+  --ts-shadow-2: 0 2px 6px rgb(0 0 0 / 0.06), 0 12px 32px rgb(0 0 0 / 0.08);
+  --ts-shadow-3: 0 4px 12px rgb(0 0 0 / 0.08), 0 24px 64px rgb(0 0 0 / 0.12);
+}
+
+/* ---------- 颜色：深色（跟随系统，或 data-theme="dark"） ---------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ts-bg-canvas: #111113;
+    --ts-bg-surface: #1A1A1D;
+    --ts-bg-elevated: #232327;
+    --ts-bg-elevated-2: #2C2C31;
+    --ts-bg-scrim: rgb(0 0 0 / 0.56);
+    --ts-fill-control-off: #48484E;
+    --ts-fill-default: rgb(255 255 255 / 0.08);
+    --ts-text-primary: #EDEDF0;
+    --ts-text-secondary: #A1A1A8;
+    --ts-text-tertiary: #68686D;
+    --ts-text-on-solid: #FFFFFF;
+    --ts-border-subtle: rgb(255 255 255 / 0.08);
+    --ts-border-strong: rgb(255 255 255 / 0.48);
+    --ts-border-surface: rgb(255 255 255 / 0.08);
+    --ts-border-field: transparent;
+    --ts-accent-solid: #5B5BD6;
+    --ts-accent-text: #9C9CF0;
+    --ts-accent-control: #6E6EE3;
+    --ts-accent-subtle: rgb(91 91 214 / 0.2);
+    --ts-danger-solid: #C0292E;
+    --ts-danger-text: #FF6B6B;
+    --ts-danger-subtle: rgb(192 41 46 / 0.2);
+    --ts-success-solid: #146B3A;
+    --ts-success-text: #4CC38A;
+    --ts-success-subtle: rgb(20 107 58 / 0.2);
+    --ts-warning-solid: #9A5100;
+    --ts-warning-text: #F5A524;
+    --ts-warning-subtle: rgb(154 81 0 / 0.2);
+    --ts-focus-glow: rgb(91 91 214 / 0.4);
+    --ts-focus-ring: #9C9CF0;
+    --ts-selection: rgb(91 91 214 / 0.2);
+    --ts-state-hover: rgb(255 255 255 / 0.06);
+    --ts-state-pressed: rgb(255 255 255 / 0.1);
+    --ts-state-solid-hover: rgb(255 255 255 / 0.08);
+    --ts-state-solid-pressed: rgb(0 0 0 / 0.08);
+    --ts-material-glass: rgb(26 26 29 / 0.72);
+    --ts-shadow-color: #000000;
+    --ts-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.4);
+    --ts-shadow-2: 0 2px 6px rgb(0 0 0 / 0.4), 0 12px 32px rgb(0 0 0 / 0.4);
+    --ts-shadow-3: 0 4px 12px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.4);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ts-bg-canvas: #111113;
+  --ts-bg-surface: #1A1A1D;
+  --ts-bg-elevated: #232327;
+  --ts-bg-elevated-2: #2C2C31;
+  --ts-bg-scrim: rgb(0 0 0 / 0.56);
+  --ts-fill-control-off: #48484E;
+  --ts-fill-default: rgb(255 255 255 / 0.08);
+  --ts-text-primary: #EDEDF0;
+  --ts-text-secondary: #A1A1A8;
+  --ts-text-tertiary: #68686D;
+  --ts-text-on-solid: #FFFFFF;
+  --ts-border-subtle: rgb(255 255 255 / 0.08);
+  --ts-border-strong: rgb(255 255 255 / 0.48);
+  --ts-border-surface: rgb(255 255 255 / 0.08);
+  --ts-border-field: transparent;
+  --ts-accent-solid: #5B5BD6;
+  --ts-accent-text: #9C9CF0;
+  --ts-accent-control: #6E6EE3;
+  --ts-accent-subtle: rgb(91 91 214 / 0.2);
+  --ts-danger-solid: #C0292E;
+  --ts-danger-text: #FF6B6B;
+  --ts-danger-subtle: rgb(192 41 46 / 0.2);
+  --ts-success-solid: #146B3A;
+  --ts-success-text: #4CC38A;
+  --ts-success-subtle: rgb(20 107 58 / 0.2);
+  --ts-warning-solid: #9A5100;
+  --ts-warning-text: #F5A524;
+  --ts-warning-subtle: rgb(154 81 0 / 0.2);
+  --ts-focus-glow: rgb(91 91 214 / 0.4);
+  --ts-focus-ring: #9C9CF0;
+  --ts-selection: rgb(91 91 214 / 0.2);
+  --ts-state-hover: rgb(255 255 255 / 0.06);
+  --ts-state-pressed: rgb(255 255 255 / 0.1);
+  --ts-state-solid-hover: rgb(255 255 255 / 0.08);
+  --ts-state-solid-pressed: rgb(0 0 0 / 0.08);
+  --ts-material-glass: rgb(26 26 29 / 0.72);
+  --ts-shadow-color: #000000;
+  --ts-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.4);
+  --ts-shadow-2: 0 2px 6px rgb(0 0 0 / 0.4), 0 12px 32px rgb(0 0 0 / 0.4);
+  --ts-shadow-3: 0 4px 12px rgb(0 0 0 / 0.4), 0 24px 64px rgb(0 0 0 / 0.4);
+}
+
+/* ---------- 增强对比度（跟随系统，或 data-contrast="more"） ---------- */
+@media (prefers-contrast: more) {
+  :root:not([data-contrast="normal"]) {
+    --ts-fill-control-off: #8E8E93;
+    --ts-text-secondary: #48484E;
+    --ts-text-tertiary: #68686D;
+    --ts-border-subtle: rgb(0 0 0 / 0.24);
+    --ts-border-surface: rgb(0 0 0 / 0.48);
+    --ts-border-field: rgb(0 0 0 / 0.48);
+  }
+  :root[data-theme="dark"]:not([data-contrast="normal"]) {
+    --ts-fill-control-off: #8E8E93;
+    --ts-text-secondary: #C7C7CC;
+    --ts-text-tertiary: #A1A1A8;
+    --ts-border-subtle: rgb(255 255 255 / 0.28);
+    --ts-border-surface: rgb(255 255 255 / 0.48);
+    --ts-border-field: rgb(255 255 255 / 0.48);
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-contrast="normal"]) {
+    --ts-fill-control-off: #8E8E93;
+    --ts-text-secondary: #C7C7CC;
+    --ts-text-tertiary: #A1A1A8;
+    --ts-border-subtle: rgb(255 255 255 / 0.28);
+    --ts-border-surface: rgb(255 255 255 / 0.48);
+    --ts-border-field: rgb(255 255 255 / 0.48);
+  }
+}
+:root[data-contrast="more"] {
+  --ts-fill-control-off: #8E8E93;
+  --ts-text-secondary: #48484E;
+  --ts-text-tertiary: #68686D;
+  --ts-border-subtle: rgb(0 0 0 / 0.24);
+  --ts-border-surface: rgb(0 0 0 / 0.48);
+  --ts-border-field: rgb(0 0 0 / 0.48);
+}
+:root[data-contrast="more"][data-theme="dark"] {
+  --ts-fill-control-off: #8E8E93;
+  --ts-text-secondary: #C7C7CC;
+  --ts-text-tertiary: #A1A1A8;
+  --ts-border-subtle: rgb(255 255 255 / 0.28);
+  --ts-border-surface: rgb(255 255 255 / 0.48);
+  --ts-border-field: rgb(255 255 255 / 0.48);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-contrast="more"]:not([data-theme="light"]) {
+    --ts-fill-control-off: #8E8E93;
+    --ts-text-secondary: #C7C7CC;
+    --ts-text-tertiary: #A1A1A8;
+    --ts-border-subtle: rgb(255 255 255 / 0.28);
+    --ts-border-surface: rgb(255 255 255 / 0.48);
+    --ts-border-field: rgb(255 255 255 / 0.48);
+  }
+}
