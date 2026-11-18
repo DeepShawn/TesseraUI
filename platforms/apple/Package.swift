@@ -14,5 +14,9 @@ let package = Package(
             path: "Sources/TesseraUI",
             resources: [.process("Resources")]
         ),
+        // macOS 示例 App：swift run TesseraSample
+        .executableTarget(name: "TesseraSample", dependencies: ["TesseraUI"], path: "Sources/TesseraSample"),
+        // 截图测试（macOS）：swift test，图片写到 .build/snapshots
+        .testTarget(name: "TesseraUITests", dependencies: ["TesseraUI"], path: "Tests/TesseraUITests"),
     ]
 )

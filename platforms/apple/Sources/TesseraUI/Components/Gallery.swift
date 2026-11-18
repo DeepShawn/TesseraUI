@@ -16,7 +16,10 @@ public struct TesseraGallery: View {
     @State private var dialog = false
     @State private var sheet = false
 
-    public init() {}
+    private let scrolls: Bool
+
+    /// - Parameter scrolls: 截图测试传 false：ImageRenderer 画不出系统滚动视图，内容需要直接排开
+    public init(scrolls: Bool = true) { self.scrolls = scrolls }
 
     private struct Row: Identifiable { let id: Int; let title: String; let subtitle: String; let tone: TesseraTone }
     private let rows = [Row(id: 0, title: "设计评审", subtitle: "今天 14:00 · 3 号会议室", tone: .lapis),
@@ -27,7 +30,18 @@ public struct TesseraGallery: View {
         VStack(spacing: 0) {
             TesseraNavBar("组件", leading: { TesseraIconButton(.chevronLeft, label: "返回") {} },
                           trailing: { TesseraIconButton(.bell, label: "通知", badge: 3) {} })
-            ScrollView(showsIndicators: false) {
+            if scrolls { ScrollView(showsIndicators: false) { content } } else { content }
+            TesseraTabBar([.init("首页", icon: .home, selectedIcon: .homeFill), .init("收藏", icon: .star, selectedIcon: .starFill),
+                           .init("消息", icon: .message, selectedIcon: .messageFill, badge: 5), .init("我的", icon: .user, selectedIcon: .userFill)],
+                          selection: $barTab)
+        }
+        .background(TesseraColor.bgCanvas)
+        .tesseraToast($toast)
+        .tesseraDialog(isPresented: $dialog, title: "发布 v0.3？", message: "发布后会生成 0.3.0 标签和更新日志。", confirmTitle: "发布") {}
+        .tesseraSheet(isPresented: $sheet, title: "分享到") { TesseraLabel("复制链接") }
+    }
+
+    private var content: some View {
                 VStack(alignment: .leading, spacing: TesseraSpace.s5) {
                     TesseraLabel("早上好", style: .title1)
                     HStack(spacing: TesseraSpace.s2) {
@@ -68,15 +82,6 @@ public struct TesseraGallery: View {
                     }
                 }
                 .padding(TesseraSpace.s5)
-            }
-            TesseraTabBar([.init("首页", icon: .home, selectedIcon: .homeFill), .init("收藏", icon: .star, selectedIcon: .starFill),
-                           .init("消息", icon: .message, selectedIcon: .messageFill, badge: 5), .init("我的", icon: .user, selectedIcon: .userFill)],
-                          selection: $barTab)
-        }
-        .background(TesseraColor.bgCanvas)
-        .tesseraToast($toast)
-        .tesseraDialog(isPresented: $dialog, title: "发布 v0.3？", message: "发布后会生成 0.3.0 标签和更新日志。", confirmTitle: "发布") {}
-        .tesseraSheet(isPresented: $sheet, title: "分享到") { TesseraLabel("复制链接") }
     }
 }
 

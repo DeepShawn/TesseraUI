@@ -91,6 +91,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: 编译（macOS）
         run: swift build
+      - name: 截图（ImageRenderer）
+        run: TESSERA_SNAPSHOT_DIR=$PWD/snapshots swift test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: apple-snapshots
+          path: platforms/apple/snapshots/
       - name: 编译（iOS 模拟器）
         run: |
           set -o pipefail

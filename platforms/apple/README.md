@@ -65,6 +65,8 @@ ContentView()
 ```bash
 swift build                                                            # macOS
 xcodebuild -scheme TesseraUI -destination 'generic/platform=iOS Simulator' build
+swift test                                                             # 截图：三种外观 × 浅色 / 深色 / 增强对比度配色，写到 .build/snapshots
+swift run TesseraSample                                                # macOS 示例 App：切换外观与浅色 / 深色
 ```
 
-持续集成在 macOS 机器上执行以上两步。`Generated/` 与 `Resources/TesseraIcons.xcassets` 由 `npm run build` 生成，请勿手动修改。
+持续集成在 macOS 机器上执行以上步骤，截图上传为 `apple-snapshots`。截图用 ImageRenderer 渲染，有两个限制：系统原生控件（文本输入框、系统菜单按钮）画不出来，会是空白；增强对比度只切换了配色，描边由系统设置决定，需在真机或 Xcode 预览里检查。iOS 示例请在 Xcode 中打开本包，使用 `Gallery.swift` 的预览或把 `TesseraGallery()` 放进自己的 App。`Generated/` 与 `Resources/TesseraIcons.xcassets` 由 `npm run build` 生成，请勿手动修改。
