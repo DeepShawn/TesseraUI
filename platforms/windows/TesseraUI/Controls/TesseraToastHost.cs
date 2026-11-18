@@ -13,7 +13,7 @@ namespace TesseraUI
 {
     /// <summary>
     /// 提示消息宿主：放在页面根 Grid 的最上层（跨所有行列）。
-    /// 消息是一块反色砖，从顶部落下（bouncy 弹簧），停留 3 秒（带操作 5 秒），可向上滑走；出现时由读屏朗读。
+    /// 消息是一块反色砖（圆融外观下是一颗反色胶囊），从顶部落下（bouncy 弹簧），停留 3 秒（带操作 5 秒），可向上滑走；出现时由读屏朗读。
     /// <code>ToastHost.Show("已保存", icon: "check");</code>
     /// </summary>
     public sealed partial class TesseraToastHost : Grid
@@ -54,17 +54,19 @@ namespace TesseraUI
                 row.Children.Add(action);
             }
 
+            var round = TesseraResources.IsRound;
             var toast = new Border
             {
                 Child = row,
                 MinHeight = 48,
                 MaxWidth = 480,
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Padding = new Thickness(16, 0, actionTitle is null ? 20 : 8, 0),
-                CornerRadius = new CornerRadius(18),
+                Padding = new Thickness(round ? 20 : 16, 0, actionTitle is null ? 20 : 8, 0),
+                CornerRadius = new CornerRadius(round ? 999 : 18),
                 Background = TesseraResources.Brush("TesseraBgInverseBrush"),
                 BorderBrush = TesseraResources.Brush("TesseraEdgeSolidBrush"),
-                BorderThickness = new Thickness(0, 0, 0, 2),
+                // 拼贴有 2px 砖厚，圆融没有
+                BorderThickness = new Thickness(0, 0, 0, round ? 0 : 2),
                 ManipulationMode = ManipulationModes.TranslateY | ManipulationModes.TranslateInertia,
             };
             AutomationProperties.SetName(toast, text);

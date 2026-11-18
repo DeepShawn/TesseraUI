@@ -18,6 +18,7 @@ namespace TesseraUI
     /// <summary>
     /// 分段控件：凹槽里一块会滑动的砖。可以点选，也可以从任意一格按下后左右拖动，松手吸附到最近的一格（snappy 弹簧）。
     /// Glass = true 时滑块换成毛玻璃（半透明 + 亮边）。键盘：左右方向键、Home / End。
+    /// 圆融外观（合并 TesseraShapeRound.xaml）下：一整条浅底胶囊，选中块是一颗浮起的白色胶囊。
     /// </summary>
     public sealed partial class TesseraSegmentedControl : ContentControl
     {
@@ -56,9 +57,7 @@ namespace TesseraUI
             VerticalContentAlignment = VerticalAlignment.Stretch;
             MinHeight = 40;
 
-            _track.CornerRadius = new CornerRadius(14 + Pad);
             _track.BorderThickness = new Thickness(1);
-            _thumb.CornerRadius = new CornerRadius(14);
             _thumb.Margin = new Thickness(Pad);
             _labels.Margin = new Thickness(Pad);
             _root.Children.Add(_track);
@@ -83,15 +82,21 @@ namespace TesseraUI
 
         private void ApplyTrackStyle()
         {
+            var round = TesseraResources.IsRound;
+            // 拼贴：圆角 14 的凹槽；圆融：胶囊，没有描边
+            _track.CornerRadius = new CornerRadius(round ? 999 : 14 + Pad);
+            _thumb.CornerRadius = new CornerRadius(round ? 999 : 14);
             _track.Background = Res("TesseraFillDefaultBrush");
             _track.BorderBrush = Res("TesseraBorderSubtleBrush");
+            _track.BorderThickness = new Thickness(round ? 0 : 1);
         }
 
         private void ApplyThumbStyle()
         {
-            _thumb.Background = Res(Glass ? "TesseraMaterialGlassThumbBrush" : "TesseraBgSurfaceBrush");
+            var round = TesseraResources.IsRound;
+            _thumb.Background = Res(Glass ? "TesseraMaterialGlassThumbBrush" : round ? "TesseraBgElevatedBrush" : "TesseraBgSurfaceBrush");
             _thumb.BorderBrush = Res(Glass ? "TesseraMaterialGlassRimBrush" : "TesseraBorderSurfaceBrush");
-            _thumb.BorderThickness = new Thickness(1);
+            _thumb.BorderThickness = new Thickness(Glass || !round ? 1 : 0);
         }
 
         private void Rebuild()

@@ -124,6 +124,8 @@
             <SolidColorBrush x:Key="TesseraMaterialGlassThumbBrush" Color="#9EFFFFFF" />
             <Color x:Key="TesseraMaterialGlassRimColor">#BFFFFFFF</Color>
             <SolidColorBrush x:Key="TesseraMaterialGlassRimBrush" Color="#BFFFFFFF" />
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="#FFFBF9F5" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="Transparent" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="TesseraBgCanvasColor">#FF151310</Color>
@@ -244,6 +246,8 @@
             <SolidColorBrush x:Key="TesseraMaterialGlassThumbBrush" Color="#801E1C18" />
             <Color x:Key="TesseraMaterialGlassRimColor">#33FFFFFF</Color>
             <SolidColorBrush x:Key="TesseraMaterialGlassRimBrush" Color="#33FFFFFF" />
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="#FF1E1C18" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="Transparent" />
         </ResourceDictionary>
         <!-- Windows 的“对比度主题”由用户自选配色，组件必须使用系统色，不能用自己的色值。 -->
         <ResourceDictionary x:Key="HighContrast">
@@ -365,6 +369,8 @@
             <SolidColorBrush x:Key="TesseraMaterialGlassThumbBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <StaticResource x:Key="TesseraMaterialGlassRimColor" ResourceKey="SystemColorWindowColor" />
             <SolidColorBrush x:Key="TesseraMaterialGlassRimBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="Transparent" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -478,6 +484,24 @@
     <Thickness x:Key="TesseraTileEdgeThickness">0,0,0,2</Thickness>
     <!-- 外观：tile（拼贴）。合并 TesseraShapeRound.xaml 后变为 round -->
     <x:String x:Key="TesseraShape">tile</x:String>
+    <!-- 随外观变化的数值。控件模板用 ThemeResource 引用，合并 TesseraShapeRound.xaml 后自动换成圆融的值 -->
+    <x:Double x:Key="TesseraPressSinkY">1</x:Double>
+    <x:Double x:Key="TesseraPressScale">1</x:Double>
+    <x:Double x:Key="TesseraTileEdgeOpacity">1</x:Double>
+    <x:Double x:Key="TesseraRoundSheenOpacity">0</x:Double>
+    <CornerRadius x:Key="TesseraSwitchTrackRadius">13</CornerRadius>
+    <CornerRadius x:Key="TesseraSwitchThumbRadius">10</CornerRadius>
+    <CornerRadius x:Key="TesseraCheckboxRadius">7</CornerRadius>
+    <CornerRadius x:Key="TesseraBadgeRadius">7</CornerRadius>
+    <CornerRadius x:Key="TesseraAvatarRadius">14</CornerRadius>
+    <CornerRadius x:Key="TesseraMenuItemRadius">14</CornerRadius>
+    <CornerRadius x:Key="TesseraSkeletonRadius">6</CornerRadius>
+    <CornerRadius x:Key="TesseraListContainerRadius">18</CornerRadius>
+    <CornerRadius x:Key="TesseraListItemRadius">6</CornerRadius>
+    <Thickness x:Key="TesseraListItemMargin">0,0,0,3</Thickness>
+    <Thickness x:Key="TesseraListContainerPadding">0</Thickness>
+    <Thickness x:Key="TesseraSurfaceBorderThickness">1</Thickness>
+    <Thickness x:Key="TesseraNavBarBorderThickness">0,0,0,1</Thickness>
 
     <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
     <Thickness x:Key="TesseraFocusRingThickness">2</Thickness>

@@ -492,7 +492,9 @@ function buildWindows() {
   const themeDict = (theme) =>
     Object.entries(colors)
       .map(([n, v]) => `            <Color x:Key="${key(n)}Color">${toARGB(v[theme])}</Color>\n            <SolidColorBrush x:Key="${key(n)}Brush" Color="${toARGB(v[theme])}" />`)
-      .join('\n');
+      .join('\n') +
+    // 外观相关的画刷：拼贴时列表行是砖面色、列表外框透明；圆融时相反（见 TesseraShapeRound.xaml）
+    `\n            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="${toARGB(colors['bg.surface'][theme])}" />\n            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="Transparent" />`;
   const hcDict = Object.keys(colors)
     .map((n) => {
       const sys = winHcFor(n);
@@ -500,7 +502,8 @@ function buildWindows() {
         ? `            <StaticResource x:Key="${key(n)}Color" ResourceKey="${sys}" />\n            <SolidColorBrush x:Key="${key(n)}Brush" Color="{ThemeResource ${sys}}" />`
         : `            <Color x:Key="${key(n)}Color">#00000000</Color>\n            <SolidColorBrush x:Key="${key(n)}Brush" Color="Transparent" />`;
     })
-    .join('\n');
+    .join('\n') +
+    `\n            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="{ThemeResource SystemColorWindowColor}" />\n            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="Transparent" />`;
   const fontFamily = [...F.font.family.latin, ...F.font.family.cjk.windows, F.font.family.fallback.windows].join(', ');
   const displayFamily = [...F.font.family.display, ...F.font.family.cjkSerif.windows, F.font.family.fallback.windows].join(', ');
   const xaml = `<!-- ${HEADER('').slice(1)} -->
@@ -551,6 +554,24 @@ ${Object.entries(F.radius).map(([k, v]) => `    <CornerRadius x:Key="TesseraRadi
     <Thickness x:Key="TesseraTileEdgeThickness">0,0,0,${F.tile.edge}</Thickness>
     <!-- 外观：tile（拼贴）。合并 TesseraShapeRound.xaml 后变为 round -->
     <x:String x:Key="TesseraShape">${F.shape.default}</x:String>
+    <!-- 随外观变化的数值。控件模板用 ThemeResource 引用，合并 TesseraShapeRound.xaml 后自动换成圆融的值 -->
+    <x:Double x:Key="TesseraPressSinkY">${M.press.sink}</x:Double>
+    <x:Double x:Key="TesseraPressScale">1</x:Double>
+    <x:Double x:Key="TesseraTileEdgeOpacity">1</x:Double>
+    <x:Double x:Key="TesseraRoundSheenOpacity">0</x:Double>
+    <CornerRadius x:Key="TesseraSwitchTrackRadius">13</CornerRadius>
+    <CornerRadius x:Key="TesseraSwitchThumbRadius">10</CornerRadius>
+    <CornerRadius x:Key="TesseraCheckboxRadius">7</CornerRadius>
+    <CornerRadius x:Key="TesseraBadgeRadius">7</CornerRadius>
+    <CornerRadius x:Key="TesseraAvatarRadius">14</CornerRadius>
+    <CornerRadius x:Key="TesseraMenuItemRadius">14</CornerRadius>
+    <CornerRadius x:Key="TesseraSkeletonRadius">${F.radius.grout}</CornerRadius>
+    <CornerRadius x:Key="TesseraListContainerRadius">${F.radius.lg}</CornerRadius>
+    <CornerRadius x:Key="TesseraListItemRadius">${F.radius.grout}</CornerRadius>
+    <Thickness x:Key="TesseraListItemMargin">0,0,0,${F.tile.grout}</Thickness>
+    <Thickness x:Key="TesseraListContainerPadding">0</Thickness>
+    <Thickness x:Key="TesseraSurfaceBorderThickness">1</Thickness>
+    <Thickness x:Key="TesseraNavBarBorderThickness">0,0,0,1</Thickness>
 
     <!-- 焦点框：对应 WinUI 的 FocusVisualPrimaryThickness / FocusVisualMargin -->
     <Thickness x:Key="TesseraFocusRingThickness">${F.focus.ringWidth}</Thickness>
@@ -657,6 +678,42 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     <x:Double x:Key="TesseraRoundPressScale">${RD.pressScale}</x:Double>
     <!-- 标记：自定义控件据此切换到圆融外观 -->
     <x:String x:Key="TesseraShape">round</x:String>
+
+    <!-- 按压：轻捏，不下沉；去掉砖厚，实色控件加整面柔光 -->
+    <x:Double x:Key="TesseraPressSinkY">0</x:Double>
+    <x:Double x:Key="TesseraPressScale">${RD.pressScale}</x:Double>
+    <x:Double x:Key="TesseraTileEdgeOpacity">0</x:Double>
+    <x:Double x:Key="TesseraRoundSheenOpacity">1</x:Double>
+    <CornerRadius x:Key="TesseraSwitchTrackRadius">15</CornerRadius>
+    <CornerRadius x:Key="TesseraSwitchThumbRadius">12</CornerRadius>
+    <CornerRadius x:Key="TesseraCheckboxRadius">8</CornerRadius>
+    <CornerRadius x:Key="TesseraBadgeRadius">9</CornerRadius>
+    <CornerRadius x:Key="TesseraAvatarRadius">20</CornerRadius>
+    <CornerRadius x:Key="TesseraMenuItemRadius">${RD.menu - 6}</CornerRadius>
+    <CornerRadius x:Key="TesseraSkeletonRadius">${RD.pill}</CornerRadius>
+    <!-- 列表：整个列表是一整块圆角面，行与行之间没有缝 -->
+    <CornerRadius x:Key="TesseraListContainerRadius">${RD.card}</CornerRadius>
+    <CornerRadius x:Key="TesseraListItemRadius">${RD.row}</CornerRadius>
+    <Thickness x:Key="TesseraListItemMargin">0</Thickness>
+    <Thickness x:Key="TesseraListContainerPadding">6</Thickness>
+    <!-- 没有描边和分割线 -->
+    <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
+    <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].light)}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].dark)}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="{ThemeResource SystemColorWindowColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 
     <!-- 系统控件 -->
     <CornerRadius x:Key="ControlCornerRadius">${F.size.md / 2}</CornerRadius>

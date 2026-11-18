@@ -91,8 +91,7 @@ namespace TesseraUI
 
             _panel.Child = stack;
             _panel.VerticalAlignment = VerticalAlignment.Bottom;
-            _panel.CornerRadius = new CornerRadius(32, 32, 0, 0);
-            _panel.BorderThickness = new Thickness(1, 1, 1, 0);
+
             _panel.TabFocusNavigation = KeyboardNavigationMode.Cycle; // 焦点留在面板内
             AutomationProperties.SetIsDialog(_panel, true);
 
@@ -107,6 +106,11 @@ namespace TesseraUI
 
         private void ApplyColors()
         {
+            // 拼贴：圆角 32，有描边；圆融：圆角 36，没有描边
+            var round = TesseraResources.IsRound;
+            var r = round ? 36 : 32;
+            _panel.CornerRadius = new CornerRadius(r, r, 0, 0);
+            _panel.BorderThickness = round ? new Thickness(0) : new Thickness(1, 1, 1, 0);
             _scrim.Background = TesseraResources.Brush("TesseraBgScrimBrush");
             _panel.Background = TesseraResources.Brush("TesseraBgElevatedBrush");
             _panel.BorderBrush = TesseraResources.Brush("TesseraBorderSurfaceBrush");

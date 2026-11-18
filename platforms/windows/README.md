@@ -15,10 +15,14 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
             <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraTheme.xaml" />
             <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraButton.xaml" />
             <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraControls.xaml" />
+            <!-- 可选：圆融外观（胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线）。不合并即为拼贴 -->
+            <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraShapeRound.xaml" />
         </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
 </Application.Resources>
 ```
+
+两种外观共用同一套样式和控件：样式里随外观变化的圆角、描边、砖厚、按压都用 `ThemeResource` 引用，`TesseraShapeRound.xaml` 放在最后合并即可整体覆盖；C# 控件通过 `TesseraResources.IsRound` 判断外观。
 
 | 文件 | 内容 |
 |---|---|
@@ -26,6 +30,7 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 | `Themes/TesseraTheme.xaml` | 系统控件的轻量样式：把强调色、控件圆角、输入框 / 下拉 / 菜单 / 对话框 / 列表 / 导航等的画刷换成 TesseraUI。合并后，未指定样式的系统控件也会接近 TesseraUI 外观。生成文件 |
 | `Themes/TesseraButton.xaml` | 按钮：主要、次要、文字、危险 |
 | `Themes/TesseraControls.xaml` | 其余控件的样式与模板 |
+| `Themes/TesseraShapeRound.xaml` | 圆融外观：覆盖圆角、砖缝、砖厚、按压等数值。可选，生成文件 |
 | `Controls/*.cs` | 系统中没有对应控件、或系统控件无法改成 TesseraUI 交互的自定义控件 |
 | `Generated/*.g.cs` | 动效常量、层级、图标路径数据。生成文件 |
 
@@ -46,7 +51,7 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 | TabBar / Tabs | 使用系统 `NavigationView`（底部 / 侧边）与 `SelectorBar`（标签页）；颜色与圆角由 `TesseraTheme.xaml` 提供 |
 | Menu | `<MenuFlyout MenuFlyoutPresenterStyle="{StaticResource TesseraMenuFlyoutPresenterStyle}">`，菜单项用 `TesseraMenuFlyoutItemStyle` |
 | Card | `<Border Style="{StaticResource TesseraCardStyle}">` |
-| List | `<ListView ItemContainerStyle="{StaticResource TesseraListViewItemStyle}" />`：每项一块砖，砖缝 3；外层用圆角 18 的 `Border` 裁切 |
+| List | `<Border Style="{StaticResource TesseraListContainerStyle}"><ListView ItemContainerStyle="{StaticResource TesseraListViewItemStyle}" /></Border>`：拼贴每项一块砖、砖缝 3；圆融整个列表是一整块面 |
 | Avatar | `<Border Style="{StaticResource TesseraAvatarStyle}"><TextBlock Style="{StaticResource TesseraAvatarTextStyle}" Text="林" /></Border>` |
 | Badge | `<Border Style="{StaticResource TesseraBadgeStyle}"><TextBlock Style="{StaticResource TesseraBadgeTextStyle}" Text="3" /></Border>` |
 | Tag | `<Border Style="{StaticResource TesseraAccentTagStyle}"><TextBlock Style="{StaticResource TesseraTagTextStyle}" Text="新" /></Border>`，另有 `Success`、`Warning`、`Danger` 及中性 `TesseraTagStyle` |

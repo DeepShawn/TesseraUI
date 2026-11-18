@@ -14,6 +14,14 @@ namespace TesseraUI
         public static double Double(string key, double fallback) =>
             Application.Current?.Resources is { } r && r.TryGetValue(key, out var v) && v is double d ? d : fallback;
 
+        /// <summary>是否为圆融外观（App.xaml 中合并了 TesseraShapeRound.xaml）</summary>
+        public static bool IsRound =>
+            Application.Current?.Resources is { } r && r.TryGetValue("TesseraShape", out var v) && v is string s && s == "round";
+
+        /// <summary>读取 CornerRadius 资源；找不到时返回 fallback</summary>
+        public static CornerRadius Radius(string key, double fallback) =>
+            Application.Current?.Resources is { } r && r.TryGetValue(key, out var v) && v is CornerRadius c ? c : new CornerRadius(fallback);
+
         /// <summary>系统“动画效果”开关（设置 → 辅助功能 → 视觉效果）。关闭时所有弹簧改为瞬时。</summary>
         public static bool AnimationsEnabled => new Windows.UI.ViewManagement.UISettings().AnimationsEnabled;
     }
