@@ -118,6 +118,12 @@
             <SolidColorBrush x:Key="TesseraPigmentOliveSubtleBrush" Color="#246A7A2B" />
             <Color x:Key="TesseraPigmentOliveTextColor">#FF4D5A1A</Color>
             <SolidColorBrush x:Key="TesseraPigmentOliveTextBrush" Color="#FF4D5A1A" />
+            <Color x:Key="TesseraMaterialGlassColor">#B8FBF9F5</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassBrush" Color="#B8FBF9F5" />
+            <Color x:Key="TesseraMaterialGlassThumbColor">#9EFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassThumbBrush" Color="#9EFFFFFF" />
+            <Color x:Key="TesseraMaterialGlassRimColor">#BFFFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassRimBrush" Color="#BFFFFFFF" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <Color x:Key="TesseraBgCanvasColor">#FF151310</Color>
@@ -232,6 +238,12 @@
             <SolidColorBrush x:Key="TesseraPigmentOliveSubtleBrush" Color="#426A7A2B" />
             <Color x:Key="TesseraPigmentOliveTextColor">#FFBFCB7A</Color>
             <SolidColorBrush x:Key="TesseraPigmentOliveTextBrush" Color="#FFBFCB7A" />
+            <Color x:Key="TesseraMaterialGlassColor">#B81E1C18</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassBrush" Color="#B81E1C18" />
+            <Color x:Key="TesseraMaterialGlassThumbColor">#801E1C18</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassThumbBrush" Color="#801E1C18" />
+            <Color x:Key="TesseraMaterialGlassRimColor">#33FFFFFF</Color>
+            <SolidColorBrush x:Key="TesseraMaterialGlassRimBrush" Color="#33FFFFFF" />
         </ResourceDictionary>
         <!-- Windows 的“对比度主题”由用户自选配色，组件必须使用系统色，不能用自己的色值。 -->
         <ResourceDictionary x:Key="HighContrast">
@@ -347,6 +359,12 @@
             <SolidColorBrush x:Key="TesseraPigmentOliveSubtleBrush" Color="{ThemeResource SystemColorWindowColor}" />
             <StaticResource x:Key="TesseraPigmentOliveTextColor" ResourceKey="SystemColorWindowTextColor" />
             <SolidColorBrush x:Key="TesseraPigmentOliveTextBrush" Color="{ThemeResource SystemColorWindowTextColor}" />
+            <StaticResource x:Key="TesseraMaterialGlassColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraMaterialGlassBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraMaterialGlassThumbColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraMaterialGlassThumbBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="TesseraMaterialGlassRimColor" ResourceKey="SystemColorWindowColor" />
+            <SolidColorBrush x:Key="TesseraMaterialGlassRimBrush" Color="{ThemeResource SystemColorWindowColor}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

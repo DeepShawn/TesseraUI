@@ -80,6 +80,12 @@ public enum TesseraColor {
     public static let pigmentOlive = Color.tessera(light: 0x6A7A2BFF, dark: 0x6A7A2BFF, lightHC: 0x6A7A2BFF, darkHC: 0x6A7A2BFF)
     public static let pigmentOliveSubtle = Color.tessera(light: 0x6A7A2B24, dark: 0x6A7A2B42, lightHC: 0x6A7A2B24, darkHC: 0x6A7A2B42)
     public static let pigmentOliveText = Color.tessera(light: 0x4D5A1AFF, dark: 0xBFCB7AFF, lightHC: 0x4D5A1AFF, darkHC: 0xBFCB7AFF)
+    /// 可选毛玻璃的底色（导航栏、标签栏、菜单、提示消息）
+    public static let materialGlass = Color.tessera(light: 0xFBF9F5B8, dark: 0x1E1C18B8, lightHC: 0xFBF9F5B8, darkHC: 0x1E1C18B8)
+    /// 可选毛玻璃滑块（开关、分段控制）
+    public static let materialGlassThumb = Color.tessera(light: 0xFFFFFF9E, dark: 0x1E1C1880, lightHC: 0xFFFFFF9E, darkHC: 0x1E1C1880)
+    /// 毛玻璃边缘的一圈高光
+    public static let materialGlassRim = Color.tessera(light: 0xFFFFFFBF, dark: 0xFFFFFF33, lightHC: 0xFFFFFFBF, darkHC: 0xFFFFFF33)
 }
 
 // MARK: - 字体

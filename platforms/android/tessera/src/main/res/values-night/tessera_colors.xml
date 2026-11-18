@@ -57,4 +57,7 @@
     <color name="tessera_pigment_olive">#FF6A7A2B</color>
     <color name="tessera_pigment_olive_subtle">#426A7A2B</color>
     <color name="tessera_pigment_olive_text">#FFBFCB7A</color>
+    <color name="tessera_material_glass">#B81E1C18</color>
+    <color name="tessera_material_glass_thumb">#801E1C18</color>
+    <color name="tessera_material_glass_rim">#33FFFFFF</color>
 </resources>

@@ -58,7 +58,10 @@ export const tokens = {
       "pigment.amethyst-text": "#5E3778FF",
       "pigment.olive": "#6A7A2BFF",
       "pigment.olive-subtle": "#6A7A2B24",
-      "pigment.olive-text": "#4D5A1AFF"
+      "pigment.olive-text": "#4D5A1AFF",
+      "material.glass": "#FBF9F5B8",
+      "material.glass-thumb": "#FFFFFF9E",
+      "material.glass-rim": "#FFFFFFBF"
     },
     "dark": {
       "bg.canvas": "#151310FF",
@@ -116,7 +119,10 @@ export const tokens = {
       "pigment.amethyst-text": "#C9A6E2FF",
       "pigment.olive": "#6A7A2BFF",
       "pigment.olive-subtle": "#6A7A2B42",
-      "pigment.olive-text": "#BFCB7AFF"
+      "pigment.olive-text": "#BFCB7AFF",
+      "material.glass": "#1E1C18B8",
+      "material.glass-thumb": "#1E1C1880",
+      "material.glass-rim": "#FFFFFF33"
     },
     "light-hc": {
       "bg.canvas": "#EFEBE4FF",
@@ -174,7 +180,10 @@ export const tokens = {
       "pigment.amethyst-text": "#5E3778FF",
       "pigment.olive": "#6A7A2BFF",
       "pigment.olive-subtle": "#6A7A2B24",
-      "pigment.olive-text": "#4D5A1AFF"
+      "pigment.olive-text": "#4D5A1AFF",
+      "material.glass": "#FBF9F5B8",
+      "material.glass-thumb": "#FFFFFF9E",
+      "material.glass-rim": "#FFFFFFBF"
     },
     "dark-hc": {
       "bg.canvas": "#151310FF",
@@ -232,7 +241,10 @@ export const tokens = {
       "pigment.amethyst-text": "#C9A6E2FF",
       "pigment.olive": "#6A7A2BFF",
       "pigment.olive-subtle": "#6A7A2B42",
-      "pigment.olive-text": "#BFCB7AFF"
+      "pigment.olive-text": "#BFCB7AFF",
+      "material.glass": "#1E1C18B8",
+      "material.glass-thumb": "#1E1C1880",
+      "material.glass-rim": "#FFFFFF33"
     }
   },
   "shadow": {
@@ -680,6 +692,14 @@ export const tokens = {
       "grout": 3,
       "edge": 2,
       "$description": "grout：成组的砖之间的缝宽；edge：实色砖底部的砖厚"
+    },
+    "material": {
+      "glass": {
+        "blur": 20,
+        "saturation": 1.8,
+        "default": false,
+        "$description": "毛玻璃是可选效果，默认关闭"
+      }
     }
   },
   "motion": {

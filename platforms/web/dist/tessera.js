@@ -142,6 +142,9 @@ function edgeIndicator(container, indicator, getRect, { stretchWithScale = false
     (goingRight ? right : left).to(goingRight ? r : l, { preset: 'snappy' });
     (goingRight ? left : right).to(goingRight ? l : r, { preset: 'smooth' });
   };
+  // 拖动时直接设置两条边（1:1 跟手，不加弹簧）
+  moveTo.drag = (l, r) => { left.set(l); right.set(r); };
+  moveTo.current = () => ({ l: left.value, r: right.value });
   new ResizeObserver(() => {
     const cur = container.querySelector('[aria-selected="true"], input:checked');
     if (cur) moveTo(cur.closest('label') ?? cur, false);
@@ -173,6 +176,116 @@ export function segmented(root) {
   };
   root.addEventListener('change', () => sync(true));
   sync(false);
+
+  // 按住选中砖左右拖动来选择：拖动 1:1 跟手，松手落到最近的一块；甩得够快就朝甩的方向走一块
+  const vt = new VelocityTracker();
+  let drag = null, suppressClick = false;
+  root.addEventListener('pointerdown', (e) => {
+    const label = e.target.closest('label');
+    if (!label || e.button !== 0 || !label.querySelector('input:checked') || label.querySelector('input:disabled')) return;
+    const { l, r } = moveTo.current();
+    drag = { x: e.clientX, l, w: r - l, moved: false, id: e.pointerId };
+    vt.points = [];
+  });
+  root.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved) {
+      if (Math.abs(dx) < 4) return;
+      drag.moved = true;
+      root.setPointerCapture(e.pointerId);
+      root.classList.add('is-dragging');
+    }
+    vt.add(e.clientX);
+    const max = root.clientWidth - drag.w;
+    let l = drag.l + dx;
+    if (l < 0) l = rubberBand(l, drag.w * 0.5);
+    if (l > max) l = max + rubberBand(l - max, drag.w * 0.5);
+    moveTo.drag(l, l + drag.w);
+  });
+  const end = () => {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    if (!d.moved) return;
+    root.classList.remove('is-dragging');
+    suppressClick = true;
+    const { l, r } = moveTo.current();
+    const center = (l + r) / 2;
+    let i = labels.reduce((best, lb, k) => {
+      const c = lb.offsetLeft + lb.offsetWidth / 2;
+      return Math.abs(c - center) < Math.abs(labels[best].offsetLeft + labels[best].offsetWidth / 2 - center) ? k : best;
+    }, 0);
+    const v = vt.get();
+    const from = labels.findIndex((lb) => lb.querySelector('input:checked'));
+    if (Math.abs(v) > M.gesture.flingVelocity && i === from) i = Math.max(0, Math.min(labels.length - 1, i + Math.sign(v)));
+    const input = labels[i].querySelector('input');
+    if (input.checked) sync(true);
+    else { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+  };
+  root.addEventListener('pointerup', end);
+  root.addEventListener('pointercancel', end);
+  // 拖完松手时浏览器还会补一个 click，挡掉它，免得又选回起点那块
+  root.addEventListener('click', (e) => { if (suppressClick) { e.preventDefault(); suppressClick = false; } }, true);
+}
+
+// ------------------------------------------------------------------
+// 开关：可以点，也可以按住滑块从左往右拖
+// ------------------------------------------------------------------
+export function switchControl(input) {
+  if (input._tsSwitch) return;
+  input._tsSwitch = true;
+  const vt = new VelocityTracker();
+  let drag = null, suppressClick = false;
+  const px = (name) => parseFloat(getComputedStyle(input).getPropertyValue(name)) || 0;
+  // 滑块可走的距离：轨道宽 − 两侧内边距 − 滑块宽 − 拉宽量
+  const travel = () => input.clientWidth - px('--_pad') * 2 - px('--_thumb') - 6;
+
+  input.addEventListener('pointerdown', (e) => {
+    if (input.disabled || e.button !== 0) return;
+    drag = { x: e.clientX, pos: input.checked ? 1 : 0, moved: false, id: e.pointerId };
+    vt.points = [];
+  });
+  input.addEventListener('pointermove', (e) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x;
+    if (!drag.moved) {
+      if (Math.abs(dx) < 3) return;
+      drag.moved = true;
+      input.setPointerCapture(e.pointerId);
+      input.classList.add('is-dragging');
+    }
+    vt.add(e.clientX);
+    let pos = drag.pos + dx / travel();
+    // 拖出两端有橡皮筋阻力
+    if (pos < 0) pos = rubberBand(pos, 0.15);
+    if (pos > 1) pos = 1 + rubberBand(pos - 1, 0.15);
+    input.style.setProperty('--_pos', pos);
+    input.dataset.preview = pos > 0.5 ? 'on' : 'off';
+  });
+  const end = () => {
+    if (!drag) return;
+    const d = drag;
+    drag = null;
+    if (!d.moved) return;
+    const pos = parseFloat(input.style.getPropertyValue('--_pos'));
+    const v = vt.get();
+    const next = Math.abs(v) > M.gesture.flingVelocity ? v > 0 : pos > 0.5;
+    // 同一帧里去掉拖动状态和内联位置：滑块从当前位置用 snappy 弹到终点
+    input.classList.remove('is-dragging');
+    input.style.removeProperty('--_pos');
+    delete input.dataset.preview;
+    suppressClick = true;
+    if (next !== input.checked) {
+      input.checked = next;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  };
+  input.addEventListener('pointerup', end);
+  input.addEventListener('pointercancel', end);
+  // 拖完松手后浏览器补发的 click 会再切换一次，这里挡掉
+  input.addEventListener('click', (e) => { if (suppressClick) { e.preventDefault(); suppressClick = false; } });
 }
 
 export function tabs(root, { onChange } = {}) {
@@ -449,8 +562,18 @@ export function init(root = document) {
   document.documentElement.classList.add('ts-root');
   hydrateIcons(root);
   root.querySelectorAll('.ts-segmented').forEach(segmented);
+  root.querySelectorAll('.ts-switch').forEach(switchControl);
   root.querySelectorAll('.ts-tabs').forEach((t) => tabs(t));
   guardEnterWhileComposing(root);
 }
 
-export default { init, Spring, icon, hydrateIcons, segmented, tabs, openDialog, closeDialog, menu, toast, bottomSheet, setTheme, setContrast, onCommittedInput, guardEnterWhileComposing };
+export function setMaterial(glass) {
+  const apply = () => {
+    if (glass) document.documentElement.dataset.material = 'glass';
+    else delete document.documentElement.dataset.material;
+  };
+  if (document.startViewTransition && !prefersReducedMotion()) document.startViewTransition(apply);
+  else apply();
+}
+
+export default { init, Spring, switchControl, setMaterial, icon, hydrateIcons, segmented, tabs, openDialog, closeDialog, menu, toast, bottomSheet, setTheme, setContrast, onCommittedInput, guardEnterWhileComposing };

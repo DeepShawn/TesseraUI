@@ -408,5 +408,38 @@
   "pigment.olive-text": {
     "light": "{olive.700}",
     "dark": "{olive.300}"
+  },
+  "material.glass": {
+    "light": {
+      "color": "{stone.25}",
+      "alpha": 0.72
+    },
+    "dark": {
+      "color": "{stone.900}",
+      "alpha": 0.72
+    },
+    "$description": "可选毛玻璃的底色（导航栏、标签栏、菜单、提示消息）"
+  },
+  "material.glass-thumb": {
+    "light": {
+      "color": "{white}",
+      "alpha": 0.62
+    },
+    "dark": {
+      "color": "{stone.900}",
+      "alpha": 0.5
+    },
+    "$description": "可选毛玻璃滑块（开关、分段控制）"
+  },
+  "material.glass-rim": {
+    "light": {
+      "color": "{white}",
+      "alpha": 0.75
+    },
+    "dark": {
+      "color": "{white}",
+      "alpha": 0.2
+    },
+    "$description": "毛玻璃边缘的一圈高光"
   }
 }

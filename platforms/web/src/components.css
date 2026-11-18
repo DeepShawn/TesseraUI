@@ -53,6 +53,18 @@
   outline-offset: var(--ts-focus-ring-offset);
 }
 
+/* ================= 砖面质感：釉光、砖厚、凹槽 =================
+   都用渐变或带模糊的阴影来画：渐变会跟着圆角一起被裁切，边缘平滑；
+   不用“不模糊的偏移内阴影”，那种画法在圆角处会切出两个尖角，看起来有锯齿。 */
+.ts-root, :root {
+  --ts-layer-sheen: linear-gradient(to bottom, var(--ts-sheen), transparent 2px);
+  --ts-layer-edge-solid: linear-gradient(to top, var(--ts-edge-solid), var(--ts-edge-solid) 1px, transparent 2.5px);
+  --ts-layer-edge-solid-pressed: linear-gradient(to top, var(--ts-edge-solid), transparent 1.5px);
+  --ts-layer-edge-soft: linear-gradient(to top, var(--ts-edge-soft), var(--ts-edge-soft) 1px, transparent 2.5px);
+  --ts-layer-edge-soft-pressed: linear-gradient(to top, var(--ts-edge-soft), transparent 1.5px);
+  --ts-recess: inset 0 1px 2px var(--ts-edge-soft);
+}
+
 /* ================= 文字 ================= */
 
 .ts-display, .ts-title-1, .ts-title-2, .ts-title-3 {
@@ -122,8 +134,8 @@
   height: var(--_h); padding: 0 var(--_px) 1px;
   border: 0; border-radius: var(--ts-radius-md);
   font: var(--ts-font-label); white-space: nowrap; cursor: pointer;
-  background: var(--ts-fill-default); color: var(--ts-text-primary);
-  box-shadow: inset 0 calc(var(--ts-tile-edge) * -1) 0 var(--ts-edge-soft), 0 0 0 var(--ts-border-width) var(--ts-border-field);
+  background-color: var(--ts-fill-default); background-image: var(--ts-layer-edge-soft); color: var(--ts-text-primary);
+  box-shadow: 0 0 0 var(--ts-border-width) var(--ts-border-field);
   position: relative;
 }
 .ts-button.ts-sm { --_h: var(--ts-size-sm); --_px: var(--ts-space-3); border-radius: 8px; }
@@ -133,14 +145,14 @@
 }
 .ts-button:is(.ts-primary, .ts-danger) {
   color: var(--ts-text-on-solid);
-  box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 calc(var(--ts-tile-edge) * -1) 0 var(--ts-edge-solid);
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
 }
-.ts-button.ts-primary { background: var(--ts-accent-solid); }
-.ts-button.ts-danger  { background: var(--ts-danger-solid); }
+.ts-button.ts-primary { background-color: var(--ts-accent-solid); }
+.ts-button.ts-danger  { background-color: var(--ts-danger-solid); }
 .ts-button.ts-text    { background: transparent; color: var(--ts-accent-text); --_px: var(--ts-space-3); box-shadow: none; }
-.ts-pressable.ts-button:active:not(:disabled) { box-shadow: inset 0 -1px 0 var(--ts-edge-soft), 0 0 0 var(--ts-border-width) var(--ts-border-field); }
-.ts-pressable.ts-button:is(.ts-primary, .ts-danger):active:not(:disabled) { box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -1px 0 var(--ts-edge-solid); }
-.ts-pressable.ts-button.ts-text:active:not(:disabled) { box-shadow: none; }
+.ts-pressable.ts-button:active:not(:disabled) { background-image: var(--ts-layer-edge-soft-pressed); }
+.ts-pressable.ts-button:is(.ts-primary, .ts-danger):active:not(:disabled) { background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid-pressed); }
+.ts-pressable.ts-button.ts-text:active:not(:disabled) { background-image: none; }
 @media (hover: hover) {
   .ts-button:is(.ts-primary, .ts-danger):hover:not(:disabled)::after { background: var(--ts-state-solid-hover); }
 }
@@ -171,7 +183,8 @@
   display: inline-grid; place-items: center; cursor: pointer; position: relative;
   background: transparent; color: var(--ts-text-primary);
 }
-.ts-icon-button.ts-filled { background: var(--ts-fill-default); box-shadow: inset 0 calc(var(--ts-tile-edge) * -1) 0 var(--ts-edge-soft); }
+.ts-icon-button.ts-filled { background-color: var(--ts-fill-default); background-image: var(--ts-layer-edge-soft); }
+.ts-pressable.ts-icon-button.ts-filled:active { background-image: var(--ts-layer-edge-soft-pressed); }
 .ts-icon-button.ts-sm { --_h: var(--ts-size-sm); border-radius: 8px; }
 .ts-icon-button.ts-lg { --_h: var(--ts-size-lg); border-radius: 12px; }
 .ts-icon-button .ts-icon { width: 20px; height: 20px; }
@@ -189,7 +202,7 @@
   height: var(--_h); padding: 0 var(--ts-space-3);
   border-radius: var(--ts-radius-md);
   background: var(--ts-fill-default);
-  box-shadow: inset 0 1.5px 0 var(--ts-edge-soft), 0 0 0 var(--ts-border-width) var(--ts-border-field), 0 0 0 0 var(--ts-focus-glow);
+  box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field), 0 0 0 0 var(--ts-focus-glow);
   transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), box-shadow var(--ts-duration-fast) var(--ts-ease-standard);
   color: var(--ts-text-secondary);
 }
@@ -244,8 +257,9 @@
   transition: clip-path var(--ts-duration-fast) var(--ts-ease-enter);
 }
 .ts-checkbox:checked, .ts-checkbox:indeterminate, .ts-radio:checked {
-  background: var(--ts-accent-control);
-  box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -1.5px 0 var(--ts-edge-solid);
+  background-color: var(--ts-accent-control);
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  box-shadow: none;
 }
 .ts-checkbox:checked::before { clip-path: inset(0 0 0 0); transition-delay: 40ms; }
 .ts-checkbox:indeterminate::before { mask: none; width: 10px; height: 2px; border-radius: 1px; clip-path: inset(0 0 0 0); }
@@ -257,30 +271,73 @@
 .ts-radio:checked::before { transform: scale(1) rotate(0); }
 .ts-checkbox:active:not(:disabled), .ts-radio:active:not(:disabled) { transform: translateY(var(--ts-press-sink)); }
 
-/* ================= 开关 Switch：凹槽轨道 + 方砖滑块 ================= */
+/* ================= 开关 Switch =================
+   - 轨道是一条凹槽（圆角 10），滑块是一块圆角方砖（圆角 8），里外两条弧线平行
+   - 可以点，也可以按住滑块从左往右拖：拖动 1:1 跟手，松手按位置和速度决定开或关（需要 tessera.js）
+   - 按住时滑块横向拉宽，开启时向左长
+   - 轨道里有开 / 关的小标记，不只靠颜色区分状态
+   - 可选毛玻璃：加 .ts-glass，或在 <html> 上写 data-material="glass" */
 
 .ts-switch {
-  --_w: 46px; --_h: 26px; --_pad: 3px; --_thumb: calc(var(--_h) - var(--_pad) * 2);
+  --_w: 52px; --_h: 30px; --_pad: 3px; --_thumb: 24px;
+  --_stretch: 0px;                   /* 按住时拉宽的量 */
+  --_pos: 0;                         /* 0 = 关，1 = 开；拖动时由 JS 写入中间值 */
+  --_travel: calc(var(--_w) - var(--_pad) * 2 - var(--_thumb) - var(--_stretch));
+  --_r: 10px; --_tr: 8px;            /* 轨道圆角、滑块圆角：10 − 内边距 3 ≈ 8，两条弧线平行 */
   appearance: none; -webkit-appearance: none; margin: 0; flex: none; cursor: pointer;
-  width: var(--_w); height: var(--_h); border-radius: 9px; position: relative;
-  background: var(--ts-fill-control-off);
-  box-shadow: inset 0 1.5px 0 var(--ts-edge-soft), 0 0 0 var(--ts-border-width) var(--ts-border-field);
+  width: var(--_w); height: var(--_h); border-radius: var(--_r); position: relative;
+  background-color: var(--ts-fill-control-off);
+  box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field);
   transition: background-color var(--ts-duration-normal) var(--ts-ease-standard);
+  touch-action: pan-y;               /* 横向拖动交给开关，竖向仍可滚动页面 */
+  user-select: none; -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.ts-switch:checked { --_pos: 1; background-color: var(--ts-accent-control); box-shadow: inset 0 1px 2px var(--ts-edge-solid); }
+/* 开 / 关标记：开启时左侧一道竖线，关闭时右侧一个小圆圈 */
+.ts-switch::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(circle at calc(100% - 15px) 50%, transparent 3px, var(--ts-text-tertiary) 3.2px, var(--ts-text-tertiary) 4.4px, transparent 4.6px);
+  transition: opacity var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-switch:checked::after {
+  background: linear-gradient(rgb(255 255 255 / .7), rgb(255 255 255 / .7)) 15px 50% / 1.5px 9px no-repeat;
 }
 .ts-switch::before {
-  content: ""; position: absolute; top: var(--_pad); left: var(--_pad);
-  width: var(--_thumb); height: var(--_thumb); border-radius: 6px;
-  background: #fff;
-  box-shadow: inset 0 -1.5px 0 rgb(31 27 22 / .16), 0 1px 3px rgb(31 27 22 / .24);
+  content: ""; position: absolute; z-index: 1; top: var(--_pad); left: var(--_pad);
+  width: calc(var(--_thumb) + var(--_stretch)); height: var(--_thumb); border-radius: var(--_tr);
+  background-color: #fff;
+  /* 滑块底部一点渐暗代替硬砖厚，边缘平滑 */
+  background-image: linear-gradient(to top, rgb(31 27 22 / .08), transparent 45%);
+  box-shadow: 0 0.5px 1px rgb(31 27 22 / .22), 0 2px 6px rgb(31 27 22 / .14);
+  transform: translateX(calc(var(--_travel) * var(--_pos)));
   transition: transform var(--ts-spring-snappy-duration) var(--ts-spring-snappy),
-              width var(--ts-spring-snappy-duration) var(--ts-spring-snappy);
+              width var(--ts-spring-snappy-duration) var(--ts-spring-snappy),
+              background-color var(--ts-duration-fast) var(--ts-ease-standard);
 }
-.ts-switch:checked { background: var(--ts-accent-control); box-shadow: inset 0 1.5px 0 var(--ts-edge-solid); }
-.ts-switch:checked::before { transform: translateX(calc(var(--_w) - var(--_thumb) - var(--_pad) * 2)); }
-.ts-switch:active:not(:disabled)::before { width: calc(var(--_thumb) * 1.2); }
-.ts-switch:checked:active:not(:disabled)::before { transform: translateX(calc(var(--_w) - var(--_thumb) * 1.2 - var(--_pad) * 2)); }
-.ts-switch.ts-sm { --_w: 38px; --_h: 22px; border-radius: 8px; }
-.ts-switch.ts-sm::before { border-radius: 5px; }
+.ts-switch:active:not(:disabled), .ts-switch.is-dragging { --_stretch: 6px; }
+/* 拖动时滑块 1:1 跟手：位置不加过渡，宽度照常弹 */
+.ts-switch.is-dragging::before { transition: width var(--ts-spring-snappy-duration) var(--ts-spring-snappy); }
+.ts-switch.is-dragging::after { opacity: 0; }
+/* 拖过中线时轨道颜色先变，告诉用户松手会落到哪边 */
+.ts-switch.is-dragging[data-preview="on"] { background-color: var(--ts-accent-control); }
+.ts-switch.is-dragging[data-preview="off"] { background-color: var(--ts-fill-control-off); }
+.ts-switch.ts-sm { --_w: 40px; --_h: 24px; --_thumb: 18px; --_r: 8px; --_tr: 6px; }
+.ts-switch.ts-sm::after { opacity: 0; }
+
+/* 可选毛玻璃：滑块变成一块磨砂玻璃，透出下面的轨道颜色；按住时放大成透镜 */
+.ts-switch.ts-glass::before, :root[data-material="glass"] .ts-switch::before {
+  background-color: var(--ts-material-glass-thumb);
+  background-image: linear-gradient(to bottom, rgb(255 255 255 / .55), transparent 55%);
+  -webkit-backdrop-filter: blur(6px) saturate(var(--ts-glass-saturation));
+  backdrop-filter: blur(6px) saturate(var(--ts-glass-saturation));
+  box-shadow: inset 0 0 0 1px var(--ts-material-glass-rim), 0 1px 2px rgb(31 27 22 / .18), 0 3px 10px rgb(31 27 22 / .14);
+}
+.ts-switch.ts-glass:is(:active:not(:disabled), .is-dragging)::before,
+:root[data-material="glass"] .ts-switch:is(:active:not(:disabled), .is-dragging)::before {
+  background-color: rgb(255 255 255 / .18);
+  transform: translateX(calc(var(--_travel) * var(--_pos))) scale(1.18);
+}
 
 /* ================= 分段控制 SegmentedControl：一排砖 + 滑动的选中砖 ================= */
 
@@ -302,7 +359,7 @@
 .ts-segmented-tiles { position: absolute; inset: 0; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: inherit; z-index: 0; pointer-events: none; }
 .ts-segmented-tiles > i {
   border-radius: var(--ts-radius-grout); background: var(--ts-fill-default);
-  box-shadow: inset 0 1.5px 0 var(--ts-edge-soft), 0 0 0 var(--ts-border-width) var(--ts-border-field);
+  box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field);
 }
 .ts-segmented-tiles > i:first-child { border-radius: var(--_outer) var(--ts-radius-grout) var(--ts-radius-grout) var(--_outer); }
 .ts-segmented-tiles > i:last-child  { border-radius: var(--ts-radius-grout) var(--_outer) var(--_outer) var(--ts-radius-grout); }
@@ -313,10 +370,22 @@
   position: absolute; top: 0; bottom: 0; left: 0; z-index: 1; pointer-events: none;
   border-radius: var(--ts-radius-grout);
   transition: border-radius var(--ts-duration-normal) var(--ts-ease-standard);
-  background: var(--ts-text-primary);
-  box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -2px 0 var(--ts-edge-solid), var(--ts-shadow-1);
+  background-color: var(--ts-text-primary);
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  box-shadow: var(--ts-shadow-1);
   will-change: transform;
 }
+.ts-segmented { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.ts-segmented.is-dragging .ts-segmented-indicator { box-shadow: var(--ts-shadow-2); }
+/* 可选毛玻璃：选中砖变成一块磨砂玻璃 */
+.ts-segmented.ts-glass .ts-segmented-indicator, :root[data-material="glass"] .ts-segmented-indicator {
+  background-color: var(--ts-material-glass-thumb);
+  background-image: var(--ts-layer-sheen);
+  -webkit-backdrop-filter: blur(8px) saturate(var(--ts-glass-saturation));
+  backdrop-filter: blur(8px) saturate(var(--ts-glass-saturation));
+  box-shadow: inset 0 0 0 1px var(--ts-material-glass-rim), var(--ts-shadow-1);
+}
+.ts-segmented.ts-glass input:checked + span, :root[data-material="glass"] .ts-segmented input:checked + span { color: var(--ts-text-primary); }
 
 /* ================= 标签页 Tabs ================= */
 
@@ -439,7 +508,7 @@ label.ts-list-item { cursor: pointer; }
 .ts-menu-item.ts-danger, .ts-menu-item.ts-danger .ts-icon { color: var(--ts-danger-text); }
 /* 分隔线是一道砖缝 */
 .ts-menu-sep { height: var(--ts-tile-grout); margin: var(--ts-space-1) calc(var(--ts-space-1) * -1); background: var(--ts-bg-canvas); }
-.ts-kbd { margin-inline-start: auto; font: 500 11px/1 var(--ts-font-mono); color: var(--ts-text-secondary); padding: 3px 5px 4px; border-radius: 4px; box-shadow: inset 0 -1.5px 0 var(--ts-edge-soft), 0 0 0 1px var(--ts-border-subtle); }
+.ts-kbd { margin-inline-start: auto; font: 500 11px/1 var(--ts-font-mono); color: var(--ts-text-secondary); padding: 3px 5px 4px; border-radius: 4px; background-image: var(--ts-layer-edge-soft); box-shadow: 0 0 0 1px var(--ts-border-subtle); }
 
 .ts-scrim { position: fixed; inset: 0; z-index: var(--ts-z-overlay); background: var(--ts-bg-scrim); }
 
@@ -475,7 +544,8 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
   pointer-events: auto; display: flex; align-items: center; gap: var(--ts-space-3);
   min-height: 48px; padding: 0 var(--ts-space-2) 2px var(--ts-space-4); border-radius: var(--ts-radius-lg);
   background: var(--ts-bg-inverse); color: var(--ts-text-inverse); font: var(--ts-font-body-sm);
-  box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -2px 0 var(--ts-edge-solid), var(--ts-shadow-2);
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  box-shadow: var(--ts-shadow-2);
   touch-action: none; white-space: nowrap;
 }
 .ts-toast:not(:has(.ts-button)) { padding-inline-end: var(--ts-space-5); }
@@ -514,14 +584,29 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 }
 .ts-settle { animation: ts-settle var(--ts-spring-smooth-duration) var(--ts-spring-smooth) both; animation-delay: calc(var(--i, 0) * 30ms); }
 
-/* ================= 连续曲率圆角（squircle）：浏览器支持 corner-shape 时启用 ================= */
-@supports (corner-shape: squircle) {
-  .ts-card, .ts-menu, dialog.ts-dialog, .ts-sheet, .ts-toast { corner-shape: squircle; }
-  .ts-card { border-radius: calc(var(--ts-radius-xl) * 1.5); }
-  .ts-menu, .ts-toast { border-radius: calc(var(--ts-radius-lg) * 1.5); }
-  dialog.ts-dialog { border-radius: calc(var(--ts-radius-2xl) * 1.5); }
-  .ts-sheet { border-radius: calc(var(--ts-radius-2xl) * 1.5) calc(var(--ts-radius-2xl) * 1.5) 0 0; }
+/* ================= 可选毛玻璃 =================
+   默认关闭。给单个组件加 .ts-glass，或在 <html> 上写 data-material="glass" 全局打开。
+   浏览器不支持 backdrop-filter 时自动退回不透明底色。 */
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-material="glass"] :is(.ts-navbar, .ts-tabbar, .ts-menu, .ts-toast),
+  :is(.ts-navbar, .ts-tabbar, .ts-menu).ts-glass {
+    background-color: var(--ts-material-glass);
+    -webkit-backdrop-filter: blur(var(--ts-glass-blur)) saturate(var(--ts-glass-saturation));
+    backdrop-filter: blur(var(--ts-glass-blur)) saturate(var(--ts-glass-saturation));
+  }
+  :root[data-material="glass"] .ts-toast, .ts-toast.ts-glass {
+    background-color: var(--ts-material-glass); color: var(--ts-text-primary);
+    background-image: var(--ts-layer-sheen);
+    box-shadow: inset 0 0 0 1px var(--ts-material-glass-rim), var(--ts-shadow-2);
+  }
+  :root[data-material="glass"] .ts-toast .ts-button.ts-text { color: var(--ts-accent-text); }
 }
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-material="glass"] :is(.ts-navbar, .ts-tabbar, .ts-menu, .ts-toast) { -webkit-backdrop-filter: none; backdrop-filter: none; background-color: var(--ts-bg-elevated); }
+}
+
+/* 连续曲率圆角：Web 端暂不启用 corner-shape。Chromium 当前的实现边缘抗锯齿不足，
+   放大看有锯齿；等渲染质量稳定后再打开。Apple 端用原生 .continuous。 */
 
 /* ================= 减弱动态效果 ================= */
 

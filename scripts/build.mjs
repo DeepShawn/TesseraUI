@@ -78,6 +78,8 @@ function buildWeb() {
     `  --ts-focus-ring-offset: ${F.focus.ringOffset}px;`,
     `  --ts-focus-glow-width: ${F.focus.glowWidth}px;`,
     `  --ts-opacity-disabled: ${F.opacity.disabled};`,
+    `  --ts-glass-blur: ${F.material.glass.blur}px;`,
+    `  --ts-glass-saturation: ${F.material.glass.saturation * 100}%;`,
     `  --ts-tile-grout: ${F.tile.grout}px;`,
     `  --ts-tile-edge: ${F.tile.edge}px;`,
     ...Object.entries(F.z).map(([k, v]) => `  --ts-z-${k}: ${v};`),
@@ -427,6 +429,7 @@ const WIN_HC = {
   'focus.': 'SystemColorHighlightColor',
   selection: 'SystemColorHighlightColor',
   'state.': null, // 叠加层在高对比度下不使用
+  'material.': 'SystemColorWindowColor',
   'edge.': null,
   sheen: null,
   'shadow.': null,

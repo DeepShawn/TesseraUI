@@ -71,6 +71,9 @@ data class TesseraColors(
     /** 矿物颜料：只用于头像、分类、插图，不表示状态 */ val pigmentOlive: Color,
     val pigmentOliveSubtle: Color,
     val pigmentOliveText: Color,
+    /** 可选毛玻璃的底色（导航栏、标签栏、菜单、提示消息） */ val materialGlass: Color,
+    /** 可选毛玻璃滑块（开关、分段控制） */ val materialGlassThumb: Color,
+    /** 毛玻璃边缘的一圈高光 */ val materialGlassRim: Color,
 )
 
 val TesseraLightColors = TesseraColors(
@@ -130,6 +133,9 @@ val TesseraLightColors = TesseraColors(
     pigmentOlive = Color(0xFF6A7A2B),
     pigmentOliveSubtle = Color(0x246A7A2B),
     pigmentOliveText = Color(0xFF4D5A1A),
+    materialGlass = Color(0xB8FBF9F5),
+    materialGlassThumb = Color(0x9EFFFFFF),
+    materialGlassRim = Color(0xBFFFFFFF),
 )
 
 val TesseraDarkColors = TesseraColors(
@@ -189,6 +195,9 @@ val TesseraDarkColors = TesseraColors(
     pigmentOlive = Color(0xFF6A7A2B),
     pigmentOliveSubtle = Color(0x426A7A2B),
     pigmentOliveText = Color(0xFFBFCB7A),
+    materialGlass = Color(0xB81E1C18),
+    materialGlassThumb = Color(0x801E1C18),
+    materialGlassRim = Color(0x33FFFFFF),
 )
 
 val TesseraLightHighContrastColors = TesseraColors(
@@ -248,6 +257,9 @@ val TesseraLightHighContrastColors = TesseraColors(
     pigmentOlive = Color(0xFF6A7A2B),
     pigmentOliveSubtle = Color(0x246A7A2B),
     pigmentOliveText = Color(0xFF4D5A1A),
+    materialGlass = Color(0xB8FBF9F5),
+    materialGlassThumb = Color(0x9EFFFFFF),
+    materialGlassRim = Color(0xBFFFFFFF),
 )
 
 val TesseraDarkHighContrastColors = TesseraColors(
@@ -307,6 +319,9 @@ val TesseraDarkHighContrastColors = TesseraColors(
     pigmentOlive = Color(0xFF6A7A2B),
     pigmentOliveSubtle = Color(0x426A7A2B),
     pigmentOliveText = Color(0xFFBFCB7A),
+    materialGlass = Color(0xB81E1C18),
+    materialGlassThumb = Color(0x801E1C18),
+    materialGlassRim = Color(0x33FFFFFF),
 )
 
 object TesseraType {

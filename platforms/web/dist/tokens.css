@@ -54,6 +54,8 @@
   --ts-focus-ring-offset: 2px;
   --ts-focus-glow-width: 3px;
   --ts-opacity-disabled: 0.4;
+  --ts-glass-blur: 20px;
+  --ts-glass-saturation: 180%;
   --ts-tile-grout: 3px;
   --ts-tile-edge: 2px;
   --ts-z-sticky: 100;
@@ -141,6 +143,9 @@
   --ts-pigment-olive: #6A7A2B;
   --ts-pigment-olive-subtle: rgb(106 122 43 / 0.14);
   --ts-pigment-olive-text: #4D5A1A;
+  --ts-material-glass: rgb(251 249 245 / 0.72);
+  --ts-material-glass-thumb: rgb(255 255 255 / 0.62);
+  --ts-material-glass-rim: rgb(255 255 255 / 0.75);
   --ts-shadow-1: 0 1px 2px rgb(31 27 22 / 0.05), 0 4px 14px rgb(31 27 22 / 0.05);
   --ts-shadow-2: 0 2px 6px rgb(31 27 22 / 0.07), 0 14px 36px rgb(31 27 22 / 0.1);
   --ts-shadow-3: 0 4px 12px rgb(31 27 22 / 0.09), 0 28px 72px rgb(31 27 22 / 0.16);
@@ -206,6 +211,9 @@
     --ts-pigment-olive: #6A7A2B;
     --ts-pigment-olive-subtle: rgb(106 122 43 / 0.26);
     --ts-pigment-olive-text: #BFCB7A;
+    --ts-material-glass: rgb(30 28 24 / 0.72);
+    --ts-material-glass-thumb: rgb(30 28 24 / 0.5);
+    --ts-material-glass-rim: rgb(255 255 255 / 0.2);
     --ts-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 14px rgb(0 0 0 / 0.4);
     --ts-shadow-2: 0 2px 6px rgb(0 0 0 / 0.4), 0 14px 36px rgb(0 0 0 / 0.4);
     --ts-shadow-3: 0 4px 12px rgb(0 0 0 / 0.4), 0 28px 72px rgb(0 0 0 / 0.4);
@@ -269,6 +277,9 @@
   --ts-pigment-olive: #6A7A2B;
   --ts-pigment-olive-subtle: rgb(106 122 43 / 0.26);
   --ts-pigment-olive-text: #BFCB7A;
+  --ts-material-glass: rgb(30 28 24 / 0.72);
+  --ts-material-glass-thumb: rgb(30 28 24 / 0.5);
+  --ts-material-glass-rim: rgb(255 255 255 / 0.2);
   --ts-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 14px rgb(0 0 0 / 0.4);
   --ts-shadow-2: 0 2px 6px rgb(0 0 0 / 0.4), 0 14px 36px rgb(0 0 0 / 0.4);
   --ts-shadow-3: 0 4px 12px rgb(0 0 0 / 0.4), 0 28px 72px rgb(0 0 0 / 0.4);

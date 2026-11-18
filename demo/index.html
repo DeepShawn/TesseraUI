@@ -31,21 +31,21 @@
   .hero h1 em { font-style: normal; color: var(--ts-accent-text); }
   .hero p.lead { max-width: 520px; color: var(--ts-text-secondary); margin: 20px 0 0; font: var(--ts-font-body); }
   .mosaic { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; aspect-ratio: 1; }
-  .mosaic i { border-radius: 4px; background: var(--ts-fill-default);
-    box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -2px 0 var(--ts-edge-soft);
+  .mosaic i { border-radius: 4px; background-color: var(--ts-fill-default);
+    background-image: var(--ts-layer-sheen), var(--ts-layer-edge-soft);
     animation: ts-settle var(--ts-spring-smooth-duration) var(--ts-spring-smooth) both; animation-delay: calc(var(--d) * 28ms);
     transition: transform var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy); }
   .mosaic i:hover { transform: translateY(-3px); }
-  .mosaic i.c-glaze { background: var(--ts-accent-solid); }
-  .mosaic i.c-glaze2 { background: var(--ts-accent-control); opacity: .75; }
-  .mosaic i.c-cin { background: var(--ts-pigment-cinnabar); }
-  .mosaic i.c-och { background: var(--ts-pigment-ochre); }
-  .mosaic i.c-lap { background: var(--ts-pigment-lapis); }
-  .mosaic i.c-ame { background: var(--ts-pigment-amethyst); }
-  .mosaic i.c-oli { background: var(--ts-pigment-olive); }
-  .mosaic i.c-ink { background: var(--ts-text-primary); }
-  .mosaic i.c-sur { background: var(--ts-bg-surface); }
-  .mosaic i[class^="c-"]:not(.c-sur) { box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -2px 0 var(--ts-edge-solid); }
+  .mosaic i.c-glaze { background-color: var(--ts-accent-solid); }
+  .mosaic i.c-glaze2 { background-color: var(--ts-accent-control); opacity: .75; }
+  .mosaic i.c-cin { background-color: var(--ts-pigment-cinnabar); }
+  .mosaic i.c-och { background-color: var(--ts-pigment-ochre); }
+  .mosaic i.c-lap { background-color: var(--ts-pigment-lapis); }
+  .mosaic i.c-ame { background-color: var(--ts-pigment-amethyst); }
+  .mosaic i.c-oli { background-color: var(--ts-pigment-olive); }
+  .mosaic i.c-ink { background-color: var(--ts-text-primary); }
+  .mosaic i.c-sur { background-color: var(--ts-bg-surface); }
+  .mosaic i[class^="c-"]:not(.c-sur) { background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
   .mosaic i.r-tl { border-top-left-radius: 22px; } .mosaic i.r-tr { border-top-right-radius: 22px; }
   .mosaic i.r-bl { border-bottom-left-radius: 22px; } .mosaic i.r-br { border-bottom-right-radius: 22px; }
 
@@ -76,8 +76,20 @@
   .serif-demo { font: 600 52px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); letter-spacing: -.02em; }
   .serif-demo small { display: block; margin-top: 10px; font: var(--ts-font-caption); color: var(--ts-text-tertiary); letter-spacing: 0; text-align: center; }
   .pigments { display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; width: 100%; }
-  .pigments i { aspect-ratio: .7; border-radius: 4px; box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -2px 0 var(--ts-edge-solid); }
+  .pigments i { aspect-ratio: .7; border-radius: 4px; background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
   .pigments i:first-child { border-radius: 12px 4px 4px 12px; } .pigments i:last-child { border-radius: 4px 12px 12px 4px; }
+
+  /* 毛玻璃展示：彩色马赛克底 */
+  .glass-stage { display: grid; gap: 14px; padding: 18px; border-radius: 14px; position: relative; overflow: hidden;
+    background:
+      radial-gradient(circle at 15% 30%, var(--ts-pigment-cinnabar) 0 22%, transparent 23%),
+      radial-gradient(circle at 70% 80%, var(--ts-pigment-lapis) 0 26%, transparent 27%),
+      radial-gradient(circle at 85% 15%, var(--ts-pigment-ochre) 0 18%, transparent 19%),
+      linear-gradient(135deg, var(--ts-accent-solid), var(--ts-pigment-amethyst)); }
+  .glass-stage .ts-switch:not(:checked) { background-color: rgb(255 255 255 / .22); }
+  .glass-stage .ts-segmented-tiles > i { background: rgb(255 255 255 / .16); box-shadow: none; }
+  .glass-stage .ts-segmented span { color: rgb(255 255 255 / .85); }
+  .glass-stage .ts-segmented input:checked + span { color: var(--ts-text-primary); }
 
   /* 颜色 */
   .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 3px; }
@@ -103,15 +115,15 @@
   /* 动效 */
   .springs { display: grid; gap: 14px; }
   .lane { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 16px; }
-  .track { position: relative; height: 40px; border-radius: 10px; background: var(--ts-fill-default); box-shadow: inset 0 1.5px 0 var(--ts-edge-soft); }
-  .ball { position: absolute; top: 4px; left: 4px; width: 32px; height: 32px; border-radius: 8px; background: var(--ts-accent-solid); box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -2px 0 var(--ts-edge-solid); }
+  .track { position: relative; height: 40px; border-radius: 10px; background: var(--ts-fill-default); box-shadow: var(--ts-recess); }
+  .ball { position: absolute; top: 4px; left: 4px; width: 32px; height: 32px; border-radius: 8px; background-color: var(--ts-accent-solid); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
   .lane small { display: block; color: var(--ts-text-tertiary); font: 400 11px/16px var(--ts-font-mono); }
   .drag-zone { position: relative; height: 172px; border-radius: 14px; overflow: hidden; touch-action: none;
-    background: var(--ts-fill-default); box-shadow: inset 0 1.5px 0 var(--ts-edge-soft);
+    background: var(--ts-fill-default); box-shadow: var(--ts-recess);
     background-image: linear-gradient(var(--ts-border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--ts-border-subtle) 1px, transparent 1px);
     background-size: 24px 24px; background-position: center; }
-  .drag-puck { position: absolute; left: calc(50% - 32px); top: calc(50% - 32px); width: 64px; height: 64px; border-radius: 16px; background: var(--ts-pigment-cinnabar); color: #fff; display: grid; place-items: center; cursor: grab; user-select: none;
-    box-shadow: inset 0 1px 0 var(--ts-sheen), inset 0 -3px 0 var(--ts-edge-solid), var(--ts-shadow-2); }
+  .drag-puck { position: absolute; left: calc(50% - 32px); top: calc(50% - 32px); width: 64px; height: 64px; border-radius: 16px; background-color: var(--ts-pigment-cinnabar); color: #fff; display: grid; place-items: center; cursor: grab; user-select: none;
+    background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); box-shadow: var(--ts-shadow-2); }
 
   /* 图标 */
   .icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 3px; }
@@ -137,7 +149,7 @@
   .phone-wrap { display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; }
   @media (max-width: 900px) { .phone-wrap { grid-template-columns: 1fr; } }
   .callout { display: grid; grid-template-columns: 32px 1fr; gap: 14px; }
-  .callout b { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: var(--ts-text-primary); color: var(--ts-bg-surface); font: 600 14px/1 var(--ts-font-serif); box-shadow: inset 0 -2px 0 var(--ts-edge-solid); }
+  .callout b { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font: 600 14px/1 var(--ts-font-serif); background-image: var(--ts-layer-edge-solid); }
   .callout p { margin: 4px 0 0; font: var(--ts-font-body-sm); color: var(--ts-text-secondary); }
 
   /* 四端 */
@@ -162,6 +174,7 @@
       <label><input type="radio" name="theme" value="dark"><span>夜窑</span></label>
     </div>
     <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch ts-sm" id="contrast">增强对比度</label>
+    <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch ts-sm" id="glass">毛玻璃</label>
     <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch ts-sm" id="motion">减弱动态</label>
   </div>
 </header>
@@ -203,7 +216,7 @@
         <p>标题用把衬线磨圆的 Fraunces 配思源宋体，正文用 Instrument Sans 配系统黑体。像刻在石上，又不扎手。</p>
       </div>
       <div class="ts-card principle">
-        <div class="demo"><div class="pigments"><i style="background:var(--ts-accent-solid)"></i><i style="background:var(--ts-pigment-cinnabar)"></i><i style="background:var(--ts-pigment-ochre)"></i><i style="background:var(--ts-pigment-olive)"></i><i style="background:var(--ts-pigment-lapis)"></i><i style="background:var(--ts-pigment-amethyst)"></i></div></div>
+        <div class="demo"><div class="pigments"><i style="background-color:var(--ts-accent-solid)"></i><i style="background-color:var(--ts-pigment-cinnabar)"></i><i style="background-color:var(--ts-pigment-ochre)"></i><i style="background-color:var(--ts-pigment-olive)"></i><i style="background-color:var(--ts-pigment-lapis)"></i><i style="background-color:var(--ts-pigment-amethyst)"></i></div></div>
         <span class="ts-overline">04 · 矿物色</span>
         <h3 class="ts-title-3">石灰作底，釉色点睛</h3>
         <p>暖调石色铺底，孔雀釉是唯一的操作色；朱砂、赭石、橄榄、青金、紫晶只用于头像、分类和插图。</p>
@@ -278,6 +291,19 @@
           <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch" checked>Wi-Fi</label>
           <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch">蓝牙</label>
           <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch" disabled>飞行模式</label>
+        </div>
+        <p class="ts-caption ts-secondary" style="margin:-6px 0 0">开关可以点，也可以按住滑块左右拖；分段控制可以按住选中砖拖到别的选项上。</p>
+        <div class="glass-stage">
+          <span class="ts-overline" style="color:#fff">可选毛玻璃 · .ts-glass</span>
+          <div class="row" style="gap:20px">
+            <label class="ts-check" style="color:#fff"><input type="checkbox" role="switch" class="ts-switch ts-glass" checked>定位</label>
+            <label class="ts-check" style="color:#fff"><input type="checkbox" role="switch" class="ts-switch ts-glass">勿扰</label>
+          </div>
+          <div class="ts-segmented ts-glass ts-sm" role="radiogroup" aria-label="视图" style="width:100%">
+            <label><input type="radio" name="view" checked><span>列表</span></label>
+            <label><input type="radio" name="view"><span>网格</span></label>
+            <label><input type="radio" name="view"><span>看板</span></label>
+          </div>
         </div>
         <div class="ts-segmented" role="radiogroup" aria-label="时间范围" style="width:100%">
           <label><input type="radio" name="range" checked><span>日</span></label>
@@ -585,6 +611,7 @@ document.getElementById('indet').indeterminate = true;
 // 主题、对比度、减弱动态
 document.getElementById('theme').addEventListener('change', (e) => { T.setTheme(e.target.value); setTimeout(refreshSwatches, 30); });
 document.getElementById('contrast').addEventListener('change', (e) => { T.setContrast(e.target.checked); setTimeout(refreshSwatches, 30); });
+document.getElementById('glass').addEventListener('change', (e) => T.setMaterial(e.target.checked));
 document.getElementById('motion').addEventListener('change', (e) => { if (e.target.checked) document.documentElement.dataset.motion = 'reduce'; else delete document.documentElement.dataset.motion; });
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refreshSwatches);
 refreshSwatches();

@@ -260,5 +260,13 @@
     "grout": 3,
     "edge": 2,
     "$description": "grout：成组的砖之间的缝宽；edge：实色砖底部的砖厚"
+  },
+  "material": {
+    "glass": {
+      "blur": 20,
+      "saturation": 1.8,
+      "default": false,
+      "$description": "毛玻璃是可选效果，默认关闭"
+    }
   }
 }
