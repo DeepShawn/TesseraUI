@@ -96,7 +96,9 @@ const PROPS = ['borderTopLeftRadius', 'borderBottomRightRadius', 'backgroundColo
     const was = base[key];
     if (was === undefined) { diffs.push(`${key}：基准里没有（新增的检查项？运行 --update）`); continue; }
     if (style === null || was === null) { if (style !== was) diffs.push(`${key}：元素${style === null ? '找不到了' : '新出现'}`); continue; }
-    for (const k of PROPS) if (style[k] !== was[k]) diffs.push(`${key} · ${k}：${was[k]} → ${style[k]}`);
+    // 高度随系统字体的行高略有不同（不同机器上的中文字体），允许 ±2px
+    const same = (k) => style[k] === was[k] || (k === 'height' && Math.abs(parseFloat(style[k]) - parseFloat(was[k])) <= 2);
+    for (const k of PROPS) if (!same(k)) diffs.push(`${key} · ${k}：${was[k]} → ${style[k]}`);
   }
   for (const d of diffs.slice(0, 60)) console.log('  ✖ ' + d);
   console.log(diffs.length ? `\n${diffs.length} 处样式与基准不同。若是有意修改，运行 npm run test:visual -- --update` : `✔ ${Object.keys(current).length} 项样式与基准一致（截图 ${6 * 2} 张）`);
