@@ -18,8 +18,9 @@
         <Setter Property="FocusVisualSecondaryThickness" Value="0" />
         <Setter Property="FocusVisualMargin" Value="{StaticResource TesseraFocusRingMargin}" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <!-- 流韵外观：按下处荡开水波（其他外观不生效） -->
+        <!-- 流韵外观：按下处荡开水波、圆角变成胶囊（其他外观不生效） -->
         <Setter Property="tessera:TesseraFlow.Ripple" Value="True" />
+        <Setter Property="tessera:TesseraFlow.PressMorph" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -118,8 +119,9 @@
         <Setter Property="FocusVisualSecondaryThickness" Value="0" />
         <Setter Property="FocusVisualMargin" Value="{StaticResource TesseraFocusRingMargin}" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <!-- 流韵外观：按下处荡开水波（其他外观不生效） -->
+        <!-- 流韵外观：按下处荡开水波、圆角变成胶囊（其他外观不生效） -->
         <Setter Property="tessera:TesseraFlow.Ripple" Value="True" />
+        <Setter Property="tessera:TesseraFlow.PressMorph" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

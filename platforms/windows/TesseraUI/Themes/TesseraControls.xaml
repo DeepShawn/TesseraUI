@@ -207,6 +207,8 @@
         <Setter Property="BorderBrush" Value="{ThemeResource TesseraBorderSubtleBrush}" />
         <Setter Property="BorderThickness" Value="{ThemeResource TesseraSurfaceBorderThickness}" />
         <Setter Property="MinWidth" Value="220" />
+        <!-- 流韵外观：菜单像从水下浮上来 -->
+        <Setter Property="tessera:TesseraFlow.Surface" Value="True" />
     </Style>
     <Style x:Key="TesseraMenuFlyoutItemStyle" TargetType="MenuFlyoutItem" BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraMenuItemRadius}" />

@@ -15,6 +15,10 @@
   - 代码块、下拉刷新等可滚动区域可以用键盘聚焦后滚动。
   - Android 文本框、搜索框没有读屏名称（标签显示在框外，读屏只会说“编辑框”）：现在以标签（没有标签时用占位文字）作为读屏名称。
 
+### 新增
+
+- Windows 流韵补齐三项：开关滑块水滴形变（`TesseraFlow.Splash`）、按下时圆角变成胶囊并 bouncy 弹回（`TesseraFlow.PressMorph`，成组控件不变形）、菜单像从水下浮上来（`TesseraFlow.Surface`）。浮现不做模糊：WinUI 的元素模糊需要 Win2D，为了不增加依赖，改为由淡到实、轻微放大上浮。
+
 ### 新增（测试）
 
 - `npm run test:a11y`：axe-core 无障碍扫描，首页与组件总览 × 三种外观 × 浅色 / 深色 / 增强对比度 × 桌面 / 手机（36 个组合），严重与重要问题必须为 0，每个组合截图。
@@ -22,6 +26,7 @@
 - Android 截图测试增加增强对比度，共 54 张（三种外观 × 浅色 / 深色 / 增强对比度 × 6 个分区）。
 - Android 无障碍检查（`gradle :sample:testDebugUnitTest`，Robolectric）：三种外观 × 6 个分区共 174 个可交互元素，检查读屏名称和不小于 44dp 的触摸区域。
 - Android 示例 App（`platforms/android/sample`）：可切换外观、主题、对比度，展示首批 22 个组件；持续集成每次编译并上传 `tessera-sample-apk`，可直接安装到手机上评审。
+- Apple 截图测试（`swift test`，ImageRenderer）：三种外观 × 浅色 / 深色 / 增强对比度配色共 9 张，CI 上传 `apple-snapshots`；macOS 示例 App（`swift run TesseraSample`）。
 - 中文输入法：用 CDP 模拟拼音组合输入，验证组合中不触发自动补全筛选与字数统计、选定汉字后才触发。
 
 ## [0.3.2] - 2026-11-18
