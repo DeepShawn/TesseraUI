@@ -187,6 +187,7 @@
     <div class="ts-segmented ts-sm" role="radiogroup" aria-label="外观" id="shape">
       <label><input type="radio" name="shape" value="tile" checked><span>拼贴</span></label>
       <label><input type="radio" name="shape" value="round"><span>圆融</span></label>
+      <label><input type="radio" name="shape" value="flow"><span>流韵</span></label>
     </div>
     <div class="ts-segmented ts-sm" role="radiogroup" aria-label="主题" id="theme">
       <label><input type="radio" name="theme" value="system" checked><span>跟随系统</span></label>
@@ -639,8 +640,16 @@ document.getElementById('contrast').addEventListener('change', (e) => { T.setCon
 document.getElementById('glass').addEventListener('change', (e) => T.setMaterial(e.target.checked));
 // 外观：拼贴 / 圆融；地址栏 ?shape=round 直接打开圆融
 const shapeEl = document.getElementById('shape');
-shapeEl.addEventListener('change', (e) => T.setShape(e.target.value));
-if (new URLSearchParams(location.search).get('shape') === 'round') shapeEl.querySelector('[value="round"]').click();
+// 流韵只在性能较好的设备上启用；不满足时自动改用圆融。地址栏加 &force 可强制打开
+const force = new URLSearchParams(location.search).has('force');
+shapeEl.addEventListener('change', (e) => {
+  const applied = T.setShape(e.target.value, { force });
+  if (applied !== e.target.value) {
+    shapeEl.querySelector(`[value="${applied}"]`).checked = true;
+    T.toast('当前设备不适合流韵的持续动效，已改用圆融外观');
+  }
+});
+{ const want = new URLSearchParams(location.search).get('shape'); if (want === 'round' || want === 'flow') shapeEl.querySelector(`[value="${want}"]`).click(); }
 document.getElementById('motion').addEventListener('change', (e) => { if (e.target.checked) document.documentElement.dataset.motion = 'reduce'; else delete document.documentElement.dataset.motion; });
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refreshSwatches);
 refreshSwatches();

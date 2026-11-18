@@ -4,9 +4,10 @@ const { chromium, devices } = require('playwright');
 const assert = require('node:assert/strict');
 
 const BASE = process.env.TESSERA_BASE || 'http://localhost:5173';
-// TESSERA_SHAPE=round：在圆融外观下跑同一套测试
-const SHAPE = process.env.TESSERA_SHAPE === 'round' ? 'round' : 'tile';
-const PAGE = `${BASE}/demo/components.html${SHAPE === 'round' ? '?shape=round' : ''}`;
+// TESSERA_SHAPE=round / flow：在圆融、流韵外观下跑同一套测试（流韵加 force，跳过设备性能检测）
+const SHAPE = ['round', 'flow'].includes(process.env.TESSERA_SHAPE) ? process.env.TESSERA_SHAPE : 'tile';
+const PAGE = `${BASE}/demo/components.html${SHAPE === 'tile' ? '' : `?shape=${SHAPE}&force`}`;
+const SHAPE_NAME = { tile: '拼贴', round: '圆融', flow: '流韵' }[SHAPE];
 let passed = 0, failed = 0;
 async function check(name, fn) {
   try { await fn(); passed++; console.log(`  ✔ ${name}`); }
@@ -21,13 +22,13 @@ async function check(name, fn) {
   p.on('pageerror', (e) => errors.push(e.message));
   p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
   await p.goto(PAGE);
-  console.log(`外观：${SHAPE === 'round' ? '圆融' : '拼贴'}`);
+  console.log(`外观：${SHAPE_NAME}`);
   await p.waitForTimeout(1500);
   const esc = () => p.keyboard.press('Escape');
 
   await check('外观与地址栏参数一致，且可以切换', async () => {
     assert.equal(await p.evaluate(() => document.documentElement.dataset.shape || 'tile'), SHAPE);
-    const other = SHAPE === 'round' ? 'tile' : 'round';
+    const other = SHAPE === 'tile' ? 'round' : 'tile';
     await p.locator(`#shape input[value="${other}"]`).evaluate((i) => i.closest('label').click());
     await p.waitForTimeout(400);
     assert.equal(await p.evaluate(() => document.documentElement.dataset.shape || 'tile'), other);
@@ -35,14 +36,34 @@ async function check(name, fn) {
     await p.waitForTimeout(400);
     assert.equal(await p.evaluate(() => document.documentElement.dataset.shape || 'tile'), SHAPE);
   });
-  if (SHAPE === 'round') {
-    await check('圆融：按钮组合成一整块，中间没有缝', async () => {
+  if (SHAPE !== 'tile') {
+    await check(`${SHAPE_NAME}：按钮组合成一整块，中间没有缝`, async () => {
       const gaps = await p.evaluate(() => [...document.querySelectorAll(':is(.ts-tiles, .ts-split-button, .ts-number):not(.ts-drawer-foot, .ts-dialog-actions)')].map((g) => getComputedStyle(g).columnGap));
       assert.ok(gaps.length > 0 && gaps.every((g) => g === '0px' || g === 'normal'), gaps.join(','));
     });
-    await check('圆融：列表行之间没有缝和分割线', async () => {
+    await check(`${SHAPE_NAME}：列表行之间没有缝和分割线`, async () => {
       const r = await p.evaluate(() => { const l = document.querySelector('.ts-list'); const i = l.querySelector('.ts-list-item'); return [getComputedStyle(l).rowGap, getComputedStyle(i).boxShadow]; });
       assert.equal(r[0], '0px'); assert.equal(r[1], 'none');
+    });
+  }
+  if (SHAPE === 'flow') {
+    await check('流韵：按下时荡开水波，松手后自动清除', async () => {
+      const b = p.locator('#forms .ts-button.ts-primary').first();
+      await b.scrollIntoViewIfNeeded();
+      const box = await b.boundingBox();
+      await p.mouse.move(box.x + 10, box.y + box.height / 2); await p.mouse.down();
+      assert.equal(await b.locator('.ts-flow-ink').count(), 1);
+      await p.mouse.up(); await p.waitForTimeout(1000);
+      assert.equal(await b.locator('.ts-flow-ink').count(), 0);
+    });
+    await check('流韵：勾选时溅起涟漪', async () => {
+      const sw = p.locator('.ts-checkbox:not(:disabled):visible').first();
+      await sw.scrollIntoViewIfNeeded();
+      await sw.click();
+      assert.ok((await p.locator('.ts-flow-splash').count()) >= 1);
+      await p.waitForTimeout(900);
+      assert.equal(await p.locator('.ts-flow-splash').count(), 0);
+      await sw.click();
     });
   }
 

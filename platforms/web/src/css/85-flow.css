@@ -1,0 +1,141 @@
+/* ================= 流韵外观（data-shape="flow"）=================
+   以圆融外观为基础（成组控件合成一整块、没有砖缝和分割线），再做三件事：
+   1. 方圆之间：控件静止时是“介于方砖与胶囊之间”的圆角（40 高的按钮圆角 17），按下时变成胶囊，松手弹回——形状会呼吸
+   2. 流体动效：按下处荡开两圈水波；开关拨动时溅起涟漪、滑块像水滴一样晃动；选中块移动时有液面张力；
+      浮层像从水下浮上来（由模糊到清晰）；鼠标移过控件时，一小片釉光跟着指针流动
+   3. 触感：开关、复选框、分段控制、标签栏、主要按钮在支持的设备上有轻触反馈（modules/flow.js 的 haptic）
+   流韵只在性能较好的设备上启用：Tessera.setShape('flow') 会检测设备，不满足时自动改用圆融。
+   “减弱动态效果”打开时，所有流体动效关闭，外观等同于圆融。 */
+
+/* 开关的“灌满”动画需要可插值的长度变量 */
+@property --_fill { syntax: "<length>"; inherits: false; initial-value: 0px; }
+
+@layer tessera {
+
+:root[data-shape="flow"] {
+  /* 方圆之间的圆角 */
+  --ts-round-pill: 17px;
+  --ts-round-card: 26px;
+  --ts-round-panel: 34px;
+  --ts-round-row: 18px;
+  --ts-round-menu: 22px;
+  --ts-round-press-scale: 0.96;
+  /* 釉光：跟随指针的高光；rim：面板顶边一道极细的受光边（不是分割线，是“厚度”） */
+  --ts-flow-glint: rgb(255 255 255 / .2);
+  --ts-flow-glint-soft: color-mix(in srgb, var(--ts-bg-elevated) 75%, transparent);
+  --ts-flow-rim: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
+  --ts-flow-wave: color-mix(in srgb, currentColor 13%, transparent);
+}
+:root[data-shape="flow"][data-theme="dark"] { --ts-flow-rim: inset 0 1px 0 rgb(255 255 255 / .06); --ts-flow-glint: rgb(255 255 255 / .14); }
+@media (prefers-color-scheme: dark) {
+  :root[data-shape="flow"]:not([data-theme="light"]) { --ts-flow-rim: inset 0 1px 0 rgb(255 255 255 / .06); --ts-flow-glint: rgb(255 255 255 / .14); }
+}
+
+/* ---------- 形状会呼吸：按下变成胶囊，松手 bouncy 弹回 ---------- */
+:root[data-shape="flow"] :is(.ts-button, .ts-icon-button) {
+  transition:
+    transform var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy),
+    border-radius var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy),
+    background-color var(--ts-duration-fast) var(--ts-ease-standard),
+    color var(--ts-duration-fast) var(--ts-ease-standard),
+    box-shadow var(--ts-duration-normal) var(--ts-ease-standard);
+}
+:root[data-shape="flow"] :is(.ts-button, .ts-icon-button):active:not(:disabled) {
+  border-radius: calc(var(--_h) / 2);
+  transition-duration: 120ms;
+  transition-timing-function: var(--ts-ease-standard);
+}
+/* 成组控件按下不变形，保持一整块 */
+:root[data-shape="flow"] :is(.ts-tiles, .ts-split-button, .ts-number, .ts-button-group) > :active { border-radius: inherit; }
+:root[data-shape="flow"] .ts-avatar { border-radius: 38%; }
+:root[data-shape="flow"] .ts-skeleton.ts-tile { border-radius: 38%; }
+
+/* ---------- 跟随指针的釉光 ---------- */
+:root[data-shape="flow"] :is(.ts-button.ts-primary, .ts-button.ts-danger, .ts-fab) {
+  background-image: radial-gradient(110px circle at var(--mx, -999px) var(--my, -999px), var(--ts-flow-glint), transparent 70%), var(--ts-layer-sheen);
+}
+:root[data-shape="flow"] :is(.ts-button:not(.ts-primary, .ts-danger, .ts-text), .ts-icon-button.ts-filled) {
+  background-image: radial-gradient(90px circle at var(--mx, -999px) var(--my, -999px), var(--ts-flow-glint-soft), transparent 70%);
+}
+:root[data-shape="flow"] .ts-card {
+  background-image: radial-gradient(360px circle at var(--mx, -999px) var(--my, -999px), var(--ts-flow-glint-soft), transparent 70%);
+}
+
+/* ---------- 厚度：面板顶边一道受光边、两层柔和的投影 ---------- */
+:root[data-shape="flow"] :is(.ts-card, .ts-list, .ts-accordion, .ts-stats, .ts-menu, .ts-listbox, .ts-popover, .ts-picker-panel, dialog.ts-dialog, dialog.ts-command, .ts-sheet, .ts-drawer) {
+  box-shadow: var(--ts-flow-rim), var(--ts-shadow-1), 0 0 0 var(--ts-border-width) var(--ts-border-surface);
+}
+:root[data-shape="flow"] :is(.ts-menu, .ts-listbox, .ts-popover, .ts-picker-panel) { box-shadow: var(--ts-flow-rim), var(--ts-shadow-2), 0 0 0 var(--ts-border-width) var(--ts-border-subtle); }
+:root[data-shape="flow"] :is(dialog.ts-dialog, dialog.ts-command, .ts-sheet, .ts-drawer) { box-shadow: var(--ts-flow-rim), var(--ts-shadow-3), 0 0 0 var(--ts-border-width) var(--ts-border-surface); }
+:root[data-shape="flow"] .ts-segmented-indicator { box-shadow: var(--ts-flow-rim), 0 1px 2px rgb(31 27 22 / .1), 0 4px 14px rgb(31 27 22 / .1); }
+
+/* ---------- 水波 ---------- */
+:root[data-shape="flow"] :is(.ts-list-item, .ts-tab, .ts-tabbar-item, .ts-page, .ts-menu-item, .ts-option, .ts-sidebar-item, .ts-action, .ts-command-item, .ts-tree-row, .ts-accordion summary, .ts-day) { position: relative; }
+.ts-flow-ink { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 0; }
+.ts-flow-ink > i {
+  position: absolute; border-radius: 50%;
+  /* 一圈亮边、中间清透：水波而不是墨点 */
+  background: radial-gradient(circle, transparent 42%, var(--ts-flow-wave) 60%, transparent 71%);
+  transform: scale(0); opacity: 1;
+  animation: ts-flow-wave 760ms cubic-bezier(.2, .7, .2, 1) forwards;
+}
+.ts-flow-ink > i + i { background: radial-gradient(circle, transparent 50%, var(--ts-flow-wave) 64%, transparent 72%); }
+@keyframes ts-flow-wave { 60% { opacity: .9; } to { transform: scale(1); opacity: 0; } }
+
+/* ---------- 开关：溅起涟漪，滑块像水滴一样晃 ---------- */
+:root[data-shape="flow"] .ts-check { position: relative; }
+.ts-flow-splash { position: absolute; pointer-events: none; z-index: 0; }
+.ts-flow-splash > i {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--ts-text-tertiary) 70%, transparent);
+  transform: scale(.3); opacity: 0;
+  animation: ts-flow-splash 640ms cubic-bezier(.15, .8, .25, 1) forwards;
+}
+.ts-flow-splash > i + i { animation-delay: 110ms; border-width: 1px; }
+.ts-flow-splash.is-on > i { border-color: color-mix(in srgb, var(--ts-accent-control) 75%, transparent); }
+@keyframes ts-flow-splash { 0% { opacity: .9; } to { transform: scale(1); opacity: 0; } }
+/* 水滴：先被拉扁，再回弹，最后轻轻晃两下 */
+:root[data-shape="flow"] .ts-switch.is-splash::before { animation: ts-flow-drop 620ms linear; }
+@keyframes ts-flow-drop {
+  0% { scale: 1 1; }
+  18% { scale: 1.22 .82; }
+  40% { scale: .9 1.1; }
+  62% { scale: 1.05 .96; }
+  82% { scale: .98 1.02; }
+  100% { scale: 1 1; }
+}
+/* 轨道被“灌满”：开启时颜色从滑块一侧流过去 */
+:root[data-shape="flow"] .ts-switch {
+  background-image: radial-gradient(circle at calc(100% - 15px) 50%, var(--ts-accent-control) 0 var(--_fill, 0px), transparent calc(var(--_fill, 0px) + 1px));
+  transition: background-color var(--ts-duration-normal) var(--ts-ease-standard), --_fill 420ms cubic-bezier(.2, .8, .2, 1);
+}
+:root[data-shape="flow"] .ts-switch:checked { --_fill: 64px; background-color: var(--ts-fill-control-off); }
+:root[data-shape="flow"] .ts-switch.is-dragging { background-image: none; }
+/* 复选框、单选：落下时像水珠一样弹一下 */
+:root[data-shape="flow"] :is(.ts-checkbox, .ts-radio).is-splash { animation: ts-flow-bead 480ms linear; }
+@keyframes ts-flow-bead { 0% { scale: 1; } 25% { scale: .82; } 55% { scale: 1.12; } 80% { scale: .97; } 100% { scale: 1; } }
+
+/* ---------- 液面张力：选中块移动时被拉扁，停下时回弹 ---------- */
+:root[data-shape="flow"] .ts-segmented.is-flowing .ts-segmented-indicator { animation: ts-flow-tension 520ms linear; }
+@keyframes ts-flow-tension { 0% { scale: 1 1; } 30% { scale: 1 .84; } 62% { scale: 1 1.06; } 82% { scale: 1 .98; } 100% { scale: 1 1; } }
+:root[data-shape="flow"] .ts-segmented-indicator {
+  background-image: radial-gradient(120px circle at var(--mx, -999px) var(--my, -999px), var(--ts-flow-glint-soft), transparent 70%), var(--ts-layer-sheen);
+}
+:root[data-shape="flow"] .ts-tabbar-item[aria-selected="true"] .ts-icon { animation: ts-flow-bead 520ms linear; }
+:root[data-shape="flow"] .ts-tabs-indicator { height: 4px; border-radius: 2px; }
+
+/* ---------- 浮层：像从水下浮上来，由模糊到清晰 ---------- */
+:root[data-shape="flow"] :is(dialog.ts-dialog[open], dialog.ts-command[open], .ts-toast, .ts-menu:not([hidden]), .ts-listbox:not([hidden]), .ts-popover:not([hidden])) {
+  animation: ts-flow-surface 420ms cubic-bezier(.2, .8, .2, 1);
+}
+@keyframes ts-flow-surface { from { filter: blur(6px); } to { filter: blur(0); } }
+
+/* ---------- 减弱动态效果：流体动效全部关闭，外观等同于圆融 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .ts-flow-ink, .ts-flow-splash { display: none; }
+  :root[data-shape="flow"] * { animation-name: none !important; }
+}
+:root[data-shape="flow"][data-motion="reduce"] .ts-flow-ink, :root[data-shape="flow"][data-motion="reduce"] .ts-flow-splash { display: none; }
+:root[data-shape="flow"][data-motion="reduce"] * { animation-name: none !important; }
+
+}

@@ -584,16 +584,36 @@ export function initCore(root = document) {
   once(root, 'ime', () => guardEnterWhileComposing(root));
 }
 
-/** 外观：'tile'（拼贴，默认）或 'round'（圆融：胶囊与大圆角，成组控件合成一整块，没有分割线） */
-export function setShape(shape) {
+/**
+ * 设备是否适合“流韵”外观：流韵有持续的流体动效（水波、高光跟随、弹性形变），只在性能较好的设备上启用。
+ * 条件：没有打开“减弱动态效果”、没有开省流量，CPU 不少于 6 核、内存不少于 4GB（浏览器不提供时按满足处理）。
+ */
+export function flowCapable() {
+  if (prefersReducedMotion()) return false;
+  const nav = navigator;
+  if (nav.connection && nav.connection.saveData) return false;
+  if ((nav.hardwareConcurrency ?? 8) < 6) return false;
+  if ((nav.deviceMemory ?? 8) < 4) return false;
+  return true;
+}
+
+/**
+ * 外观：'tile'（拼贴，默认）、'round'（圆融）或 'flow'（流韵）。
+ * 设备不适合流韵时自动改用圆融（可传 { force: true } 强制）。返回实际使用的外观。
+ */
+export function setShape(shape, { force = false } = {}) {
+  let applied = shape === 'round' || shape === 'flow' ? shape : 'tile';
+  if (applied === 'flow' && !force && !flowCapable()) applied = 'round';
   const apply = () => {
-    if (shape === 'round') document.documentElement.dataset.shape = 'round';
-    else delete document.documentElement.dataset.shape;
+    if (applied === 'tile') delete document.documentElement.dataset.shape;
+    else document.documentElement.dataset.shape = applied;
     // 分段控制、标签页的指示器按新的尺寸重新定位
     window.dispatchEvent(new Event('resize'));
+    document.dispatchEvent(new CustomEvent('tessera:shape', { detail: applied }));
   };
   if (document.startViewTransition && !prefersReducedMotion()) document.startViewTransition(apply);
   else apply();
+  return applied;
 }
 export function setMaterial(glass) {
   const apply = () => {

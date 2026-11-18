@@ -67,6 +67,7 @@
       <div class="ts-segmented ts-sm" role="radiogroup" aria-label="外观" id="shape">
         <label><input type="radio" name="shape" value="tile" checked><span>拼贴</span></label>
         <label><input type="radio" name="shape" value="round"><span>圆融</span></label>
+      <label><input type="radio" name="shape" value="flow"><span>流韵</span></label>
       </div>
       <div class="ts-segmented ts-sm" role="radiogroup" aria-label="主题" id="theme">
         <label><input type="radio" name="theme" value="system" checked><span>跟随系统</span></label>
@@ -501,8 +502,16 @@ tbl.addEventListener('click', async (e) => {
 document.getElementById('theme').addEventListener('change', (e) => T.setTheme(e.target.value));
 // 外观：拼贴 / 圆融；地址栏 ?shape=round 直接打开圆融
 const shapeEl = document.getElementById('shape');
-shapeEl.addEventListener('change', (e) => T.setShape(e.target.value));
-if (new URLSearchParams(location.search).get('shape') === 'round') { shapeEl.querySelector('[value="round"]').click(); }
+// 流韵只在性能较好的设备上启用；不满足时自动改用圆融。地址栏加 &force 可强制打开
+const force = new URLSearchParams(location.search).has('force');
+shapeEl.addEventListener('change', (e) => {
+  const applied = T.setShape(e.target.value, { force });
+  if (applied !== e.target.value) {
+    shapeEl.querySelector(`[value="${applied}"]`).checked = true;
+    T.toast('当前设备不适合流韵的持续动效，已改用圆融外观');
+  }
+});
+{ const want = new URLSearchParams(location.search).get('shape'); if (want === 'round' || want === 'flow') shapeEl.querySelector(`[value="${want}"]`).click(); }
 
 // 按钮组：单选
 document.querySelectorAll('.ts-button-group').forEach((g) => g.addEventListener('click', (e) => {
@@ -548,6 +557,7 @@ window.__cmd = T.commandPalette({ commands: [
   { group: '跳转', label: '选择器', icon: 'calendar', run: () => location.hash = '#pickers' },
   { group: '跳转', label: '数据展示', icon: 'grid', keywords: '表格 树', run: () => location.hash = '#data' },
   { group: '跳转', label: '移动端手势', icon: 'sparkle', run: () => location.hash = '#gestures' },
+  { group: '外观', label: '切换到流韵外观', icon: 'grid', keywords: 'flow 流体 水波', run: () => document.querySelector('#shape [value="flow"]').click() },
   { group: '外观', label: '切换到圆融外观', icon: 'grid', keywords: 'round shape 圆角', run: () => document.querySelector('#shape [value="round"]').click() },
   { group: '外观', label: '切换到拼贴外观', icon: 'grid', keywords: 'tile shape 方砖', run: () => document.querySelector('#shape [value="tile"]').click() },
   { group: '外观', label: '切换到夜窑（深色）', icon: 'moon', keywords: 'dark 深色', run: () => T.setTheme('dark') },

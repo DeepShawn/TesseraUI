@@ -10,6 +10,7 @@ import * as data from './modules/data.js';
 import * as feedback from './modules/feedback.js';
 import * as layout from './modules/layout.js';
 import * as gestures from './modules/gestures.js';
+import * as flow from './modules/flow.js';
 
 export * from './core.js';
 export * from './modules/forms.js';
@@ -19,6 +20,7 @@ export * from './modules/data.js';
 export * from './modules/feedback.js';
 export * from './modules/layout.js';
 export * from './modules/gestures.js';
+export * from './modules/flow.js';
 
 /** 初始化 root 范围内的全部组件；对同一元素重复调用是安全的 */
 export function init(root = document) {
@@ -30,6 +32,7 @@ export function init(root = document) {
   feedback.initFeedback(root);
   layout.initLayout(root);
   gestures.initGestures(root);
+  flow.initFlow();
 }
 
-export default { ...core, ...forms, ...pickers, ...navigation, ...data, ...feedback, ...layout, ...gestures, init };
+export default { ...core, ...forms, ...pickers, ...navigation, ...data, ...feedback, ...layout, ...gestures, ...flow, init };
