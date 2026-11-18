@@ -1,5 +1,7 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.flowRipple
+import com.tesseraui.foundation.roundRadius
 import com.tesseraui.TesseraRound
 import com.tesseraui.foundation.avatarShape
 import com.tesseraui.foundation.isRound
@@ -209,7 +211,7 @@ fun TesseraCard(
 fun TesseraList(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     if (isRound) {
         val c = Tessera.colors
-        val shape = RoundedCornerShape(TesseraRound.card)
+        val shape = RoundedCornerShape(roundRadius(TesseraRound.card))
         Column(
             modifier.shadow(3.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor).clip(shape).background(c.bgSurface).padding(6.dp),
             content = content,
@@ -236,9 +238,10 @@ fun TesseraListItem(
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 60.dp)
-            .clip(if (isRound) RoundedCornerShape(TesseraRound.row) else tileShape(position, TesseraRadius.lg, vertical = true))
+            .clip(if (isRound) RoundedCornerShape(roundRadius(TesseraRound.row)) else tileShape(position, TesseraRadius.lg, vertical = true))
             .background(if (isRound) Color.Transparent else c.bgSurface)
             .background(if (pressed) c.statePressed else Color.Transparent)
+            .flowRipple(interaction, c.textPrimary.copy(alpha = 0.13f))
             .then(if (onClick != null) Modifier.clickable(interaction, null, role = Role.Button, onClick = onClick) else Modifier)
             .padding(horizontal = if (isRound) TesseraSpace.s3 else TesseraSpace.s4, vertical = TesseraSpace.s2),
         verticalAlignment = Alignment.CenterVertically,

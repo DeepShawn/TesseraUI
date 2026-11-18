@@ -23,6 +23,7 @@ import com.tesseraui.LocalReduceMotion
 import com.tesseraui.Tessera
 import com.tesseraui.TesseraMotion
 import com.tesseraui.TesseraRadius
+import com.tesseraui.TesseraFlow
 import com.tesseraui.TesseraRound
 import com.tesseraui.TesseraTile
 
@@ -104,15 +105,18 @@ fun Modifier.sunken(): Modifier {
 fun Modifier.pressSink(interactionSource: InteractionSource, enabled: Boolean = true): Modifier = composed {
     val pressed by interactionSource.collectIsPressedAsState()
     val reduce = LocalReduceMotion.current
-    val round = LocalTesseraShape.current == TesseraShape.Round
+    val shape = LocalTesseraShape.current
+    val round = shape != TesseraShape.Tile
+    val pressScale = if (shape == TesseraShape.Flow) TesseraFlow.PRESS_SCALE else TesseraRound.PRESS_SCALE
     val t by animateFloatAsState(
         targetValue = if (pressed && enabled && !reduce) 1f else 0f,
-        animationSpec = if (pressed) tween(TesseraMotion.PRESS_DURATION) else TesseraMotion.snappy(),
+        // 流韵：松手用 bouncy，回弹更明显
+        animationSpec = if (pressed) tween(TesseraMotion.PRESS_DURATION) else if (shape == TesseraShape.Flow) TesseraMotion.bouncy() else TesseraMotion.snappy(),
         label = "pressSink",
     )
     graphicsLayer {
         if (round) {
-            val s = 1f - (1f - TesseraRound.PRESS_SCALE) * t
+            val s = 1f - (1f - pressScale) * t
             scaleX = s; scaleY = s
         } else {
             translationY = TesseraMotion.PRESS_SINK_DP * t * density

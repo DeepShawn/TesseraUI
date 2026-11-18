@@ -1,5 +1,6 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.flowRipple
 import com.tesseraui.TesseraRound
 import com.tesseraui.foundation.shapeRadius
 import com.tesseraui.foundation.shapeOf
@@ -273,6 +274,7 @@ fun TesseraMenuItem(
             .height(40.dp)
             .clip(shapeOf(TesseraRadius.lg - TesseraSpace.s1, TesseraRound.menu - 6.dp))
             .background(if (pressed) c.statePressed else Color.Transparent)
+            .flowRipple(interaction, c.textPrimary.copy(alpha = 0.13f))
             .clickable(interaction, null, enabled = enabled, role = Role.Button, onClick = onClick)
             .semantics { if (selected) stateDescription = "已选择" }
             .padding(horizontal = TesseraSpace.s3),

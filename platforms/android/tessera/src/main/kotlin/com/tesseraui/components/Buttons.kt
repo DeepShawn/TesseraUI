@@ -1,5 +1,13 @@
 package com.tesseraui.components
 
+import com.tesseraui.TesseraMotion
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.animateDpAsState
+import com.tesseraui.foundation.TesseraHaptic
+import com.tesseraui.foundation.rememberFlowHaptic
+import com.tesseraui.foundation.flowRipple
+import com.tesseraui.foundation.shapeRadius
+import com.tesseraui.foundation.isFlow
 import com.tesseraui.foundation.isRound
 import com.tesseraui.foundation.shapeOf
 import androidx.compose.animation.core.RepeatMode
@@ -96,7 +104,13 @@ fun TesseraButton(
         hovered && enabled -> if (solid) c.stateSolidHover else c.stateHover
         else -> Color.Transparent
     }
-    val s = shape ?: shapeOf(size.radius)
+    // 流韵：静止时方圆之间，按下变成胶囊，松手 bouncy 弹回；按下处荡开水波；实色按钮有轻触反馈
+    val flow = isFlow
+    val baseRadius = shapeRadius(size.radius)
+    val radius by animateDpAsState(if (flow && pressed && enabled) size.height / 2 else baseRadius, if (pressed) tween(120) else TesseraMotion.bouncy(), label = "radius")
+    val s = shape ?: RoundedCornerShape(radius)
+    val haptic = rememberFlowHaptic()
+    LaunchedEffect(pressed) { if (pressed && solid && enabled) haptic(TesseraHaptic.Light) }
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = TesseraSize.touchMin, minHeight = TesseraSize.touchMin)
@@ -120,6 +134,7 @@ fun TesseraButton(
                     },
                 )
                 .background(overlay)
+                .flowRipple(interaction, fg.copy(alpha = if (solid) 0.22f else 0.13f))
                 .padding(horizontal = if (variant == TesseraButtonVariant.Text) TesseraSpace.s3 else size.padding),
             horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s2, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
@@ -153,7 +168,10 @@ fun TesseraIconButton(
     val c = Tessera.colors
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val s = shape ?: shapeOf(size.radius)
+    val flow = isFlow
+    val baseRadius = shapeRadius(size.radius)
+    val radius by animateDpAsState(if (flow && pressed && enabled) size.height / 2 else baseRadius, if (pressed) tween(120) else TesseraMotion.bouncy(), label = "radius")
+    val s = shape ?: RoundedCornerShape(radius)
     Box(
         modifier = modifier
             .size(maxOf(size.height, TesseraSize.touchMin))
@@ -169,7 +187,8 @@ fun TesseraIconButton(
                 .clip(s)
                 .background(if (filled) c.fillDefault else Color.Transparent)
                 .then(if (filled) Modifier.raisedSoft(pressed) else Modifier)
-                .background(if (pressed) c.statePressed else Color.Transparent),
+                .background(if (pressed) c.statePressed else Color.Transparent)
+                .flowRipple(interaction, c.textPrimary.copy(alpha = 0.13f)),
             contentAlignment = Alignment.Center,
         ) {
             CompositionLocalProvider(LocalContentColor provides c.textPrimary) { TesseraIcon(icon, null) }

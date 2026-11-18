@@ -10,7 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * 截图测试：在 JVM 上渲染组件总览（拼贴 / 圆融 × 浅色 / 深色），不需要模拟器。
+ * 截图测试：在 JVM 上渲染组件总览（拼贴 / 圆融 / 流韵 × 浅色 / 深色），不需要模拟器。
  * 录制基准图：gradle :tessera:recordPaparazziDebug
  * 对比基准图：gradle :tessera:verifyPaparazziDebug
  */
@@ -23,12 +23,13 @@ class GallerySnapshotTest {
         maxPercentDifference = 0.1,
     )
 
-    /** 每个分区截 4 张：拼贴 / 圆融 × 浅色 / 深色 */
+    /** 每个分区截 6 张：拼贴 / 圆融 / 流韵 × 浅色 / 深色 */
     private fun shoot(section: GallerySection) {
         for (shape in TesseraShape.entries) for (dark in listOf(false, true)) {
-            val prefix = if (shape == TesseraShape.Round) "round-" else ""
+            val prefix = when (shape) { TesseraShape.Round -> "round-"; TesseraShape.Flow -> "flow-"; else -> "" }
             paparazzi.snapshot(name = "$prefix${section.name.lowercase()}-${if (dark) "dark" else "light"}") {
-                TesseraTheme(darkTheme = dark, highContrast = false, reduceMotion = true, shape = shape) { TesseraGallery(section) }
+                // 流韵在“移除动画”下会自动改用圆融，所以流韵截图不打开它（静态截图不会触发动效）
+                TesseraTheme(darkTheme = dark, highContrast = false, reduceMotion = shape != TesseraShape.Flow, shape = shape, requireCapableDevice = false) { TesseraGallery(section) }
             }
         }
     }

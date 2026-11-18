@@ -1,5 +1,13 @@
 package com.tesseraui.components
 
+import androidx.compose.ui.graphics.graphicsLayer
+import com.tesseraui.foundation.roundRadius
+import com.tesseraui.foundation.TesseraHaptic
+import com.tesseraui.foundation.rememberFlowHaptic
+import com.tesseraui.foundation.rememberTension
+import com.tesseraui.foundation.rememberDropWobble
+import com.tesseraui.foundation.rememberBeadPop
+import com.tesseraui.foundation.flowSplash
 import com.tesseraui.TesseraRound
 import com.tesseraui.foundation.softSheen
 import com.tesseraui.foundation.isRound
@@ -109,6 +117,7 @@ fun TesseraCheckbox(
     enabled: Boolean = true,
 ) {
     val c = Tessera.colors
+    val haptic = rememberFlowHaptic()
     val on = checked || indeterminate
     val fill by animateColorAsState(if (on) c.accentControl else c.fillDefault, tween(TesseraMotion.DURATION_FAST), label = "fill")
     val draw by animateFloatAsState(if (checked) 1f else 0f, tween(TesseraMotion.DURATION_FAST, delayMillis = if (checked) 40 else 0), label = "draw")
@@ -117,15 +126,19 @@ fun TesseraCheckbox(
     Box(
         modifier
             .defaultMinSize(minHeight = TesseraSize.touchMin)
-            .triStateToggleable(state, interaction, null, enabled = enabled && onCheckedChange != null, role = Role.Checkbox) { onCheckedChange?.invoke(!checked) }
+            .triStateToggleable(state, interaction, null, enabled = enabled && onCheckedChange != null, role = Role.Checkbox) { haptic(TesseraHaptic.Light); onCheckedChange?.invoke(!checked) }
             .alpha(if (enabled) 1f else TesseraOpacity.DISABLED),
         contentAlignment = Alignment.CenterStart,
     ) {
         Labeled(label) {
             val round = isRound
             val shape = RoundedCornerShape(if (round) 8.dp else 7.dp)
+            val pop = rememberBeadPop(on)
             Box(
-                Modifier.pressSink(interaction, enabled).size(20.dp).clip(shape).background(fill)
+                Modifier.pressSink(interaction, enabled)
+                    .flowSplash(on, { Offset(it.width / 2, it.height / 2) }, 26.dp, if (on) c.accentControl.copy(alpha = 0.75f) else c.textTertiary.copy(alpha = 0.7f))
+                    .graphicsLayer { val p = pop(); scaleX = p; scaleY = p }
+                    .size(20.dp).clip(shape).background(fill)
                     .then(if (on) (if (round) Modifier.softSheen() else Modifier.glaze(c.edgeSolid, c.sheen, 1.5.dp)) else Modifier.border(1.5.dp, c.borderStrong, shape)),
             ) {
                 val mark = c.textOnSolid
@@ -156,20 +169,25 @@ fun TesseraCheckbox(
 @Composable
 fun TesseraRadio(selected: Boolean, onClick: (() -> Unit)?, modifier: Modifier = Modifier, label: String? = null, enabled: Boolean = true) {
     val c = Tessera.colors
+    val haptic = rememberFlowHaptic()
     val p by animateFloatAsState(if (selected) 1f else 0f, motion(TesseraMotion.snappy()), label = "dot")
     val interaction = remember { MutableInteractionSource() }
     Box(
         modifier
             .defaultMinSize(minHeight = TesseraSize.touchMin)
-            .selectable(selected, interaction, null, enabled = enabled && onClick != null, role = Role.RadioButton) { onClick?.invoke() }
+            .selectable(selected, interaction, null, enabled = enabled && onClick != null, role = Role.RadioButton) { haptic(TesseraHaptic.Light); onClick?.invoke() }
             .alpha(if (enabled) 1f else TesseraOpacity.DISABLED),
         contentAlignment = Alignment.CenterStart,
     ) {
         Labeled(label) {
             val fill = if (selected) c.accentControl else c.fillDefault
             val round = isRound
+            val pop = rememberBeadPop(selected)
             Box(
-                Modifier.pressSink(interaction, enabled).size(20.dp).clip(CircleShape).background(fill)
+                Modifier.pressSink(interaction, enabled)
+                    .flowSplash(selected, { Offset(it.width / 2, it.height / 2) }, 26.dp, if (selected) c.accentControl.copy(alpha = 0.75f) else c.textTertiary.copy(alpha = 0.7f))
+                    .graphicsLayer { val s = pop(); scaleX = s; scaleY = s }
+                    .size(20.dp).clip(CircleShape).background(fill)
                     .then(if (selected) (if (round) Modifier.softSheen() else Modifier.glaze(c.edgeSolid, c.sheen, 1.5.dp)) else Modifier.border(1.5.dp, c.borderStrong, CircleShape)),
             ) {
                 val dot = c.textOnSolid
@@ -203,6 +221,7 @@ fun TesseraSwitch(
     glass: Boolean = false,
 ) {
     val c = Tessera.colors
+    val haptic = rememberFlowHaptic()
     val density = LocalDensity.current
     val trackW = 52.dp; val trackH = 30.dp; val pad = 3.dp; val thumb = 24.dp
     val stretchMax = 6.dp
@@ -228,7 +247,7 @@ fun TesseraSwitch(
     Box(
         modifier
             .defaultMinSize(minHeight = TesseraSize.touchMin)
-            .toggleable(checked, interaction, null, enabled = enabled && onCheckedChange != null, role = Role.Switch) { onCheckedChange?.invoke(it) }
+            .toggleable(checked, interaction, null, enabled = enabled && onCheckedChange != null, role = Role.Switch) { haptic(if (it) TesseraHaptic.Medium else TesseraHaptic.Light); onCheckedChange?.invoke(it) }
             .alpha(if (enabled) 1f else TesseraOpacity.DISABLED),
         contentAlignment = Alignment.CenterStart,
     ) {
@@ -236,8 +255,13 @@ fun TesseraSwitch(
             val round = isRound
             // 圆融：胶囊轨道 + 圆形滑块，没有描边
             val shape = RoundedCornerShape(if (round) TesseraRound.pill else 13.dp)
+            // 流韵：拨动时从滑块落脚处溅起两圈涟漪，滑块像水滴一样晃
+            val wobble = rememberDropWobble(checked)
+            val latestOn by rememberUpdatedState(checked)
             Box(
                 Modifier
+                    .flowSplash(checked, { sz -> Offset(if (latestOn) sz.width - sz.height / 2 else sz.height / 2, sz.height / 2) }, 36.dp,
+                        if (checked) c.accentControl.copy(alpha = 0.75f) else c.textTertiary.copy(alpha = 0.7f))
                     .size(trackW, trackH)
                     .clip(shape)
                     .background(track)
@@ -251,7 +275,7 @@ fun TesseraSwitch(
                             val next = if (abs(v) > fling) v > 0 else pos.value > 0.5f
                             dragging = false
                             pos.animateTo(if (next) 1f else 0f, snappy)
-                            if (next != latestChecked) onCheckedChange?.invoke(next)
+                            if (next != latestChecked) { haptic(if (next) TesseraHaptic.Medium else TesseraHaptic.Light); onCheckedChange?.invoke(next) }
                         },
                     ),
             ) {
@@ -268,6 +292,7 @@ fun TesseraSwitch(
                     Modifier
                         .offset { IntOffset(x, with(density) { pad.roundToPx() }) }
                         .size(thumb + stretch, thumb)
+                        .graphicsLayer { val (sx, sy) = wobble(); scaleX = sx; scaleY = sy }
                         .shadow(3.dp, thumbShape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
                         .clip(thumbShape)
                         .then(
@@ -300,7 +325,9 @@ fun TesseraSegmentedControl(
     val height = if (small) TesseraSize.sm else TesseraSize.md
     val outer = if (small) 11.dp else TesseraRadius.md
     // 圆融：一整条浅底胶囊，选中块是一颗浮起的白色胶囊；拼贴：一排砖 + 墨色选中砖
-    val pill = RoundedCornerShape(TesseraRound.pill)
+    val pill = RoundedCornerShape(roundRadius(TesseraRound.pill))
+    val haptic = rememberFlowHaptic()
+    val tension = rememberTension(selectedIndex)
     val track = if (round) Modifier.height(height + 6.dp).clip(pill).background(c.fillDefault).padding(3.dp) else Modifier.height(height)
     BoxWithConstraints(modifier.fillMaxWidth().then(track).selectableGroup()) {
         val n = options.size
@@ -336,6 +363,7 @@ fun TesseraSegmentedControl(
                 .offset { IntOffset(left.value.roundToInt(), 0) }
                 .width(with(density) { (right.value - left.value).coerceAtLeast(0f).toDp() })
                 .fillMaxHeight()
+                .graphicsLayer { scaleY = tension() }
                 .shadow(2.dp, indicatorShape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
                 .clip(indicatorShape)
                 .then(if (round) Modifier.background(c.bgElevated).softSheen() else Modifier.background(c.textPrimary).glaze(c.edgeSolid, c.sheen)),
@@ -352,7 +380,7 @@ fun TesseraSegmentedControl(
                     val l = leftOf(i)
                     launch { left.animateTo(l, snappy, initialVelocity = v) }
                     launch { right.animateTo(l + itemPx, snappy, initialVelocity = v) }
-                    if (i != latest) onSelect(i)
+                    if (i != latest) { haptic(TesseraHaptic.Light); onSelect(i) }
                 }),
             horizontalArrangement = Arrangement.spacedBy(gap),
         ) {
@@ -360,7 +388,7 @@ fun TesseraSegmentedControl(
                 val selected = i == selectedIndex
                 val fg by animateColorAsState(if (selected) (if (round) c.textPrimary else c.bgSurface) else c.textSecondary, tween(TesseraMotion.DURATION_NORMAL), label = "fg")
                 Box(
-                    Modifier.weight(1f).fillMaxHeight().selectable(selected, role = Role.Tab) { onSelect(i) },
+                    Modifier.weight(1f).fillMaxHeight().selectable(selected, role = Role.Tab) { if (!selected) haptic(TesseraHaptic.Light); onSelect(i) },
                     contentAlignment = Alignment.Center,
                 ) { TesseraText(o, style = Tessera.type.label, color = fg, maxLines = 1) }
             }

@@ -1,5 +1,6 @@
 package com.tesseraui
 
+import com.tesseraui.foundation.isFlowCapable
 import com.tesseraui.foundation.LocalTesseraShape
 import com.tesseraui.foundation.TesseraShape
 
@@ -73,7 +74,9 @@ val LocalContentColor = compositionLocalOf { Color.Unspecified }
 /**
  * TesseraUI 主题。默认跟随系统深色模式；Android 14+ 跟随系统“对比度”设置（≥ 中等即使用增强对比度色板）；
  * 跟随系统“移除动画”设置。
- * shape 选择外观：TesseraShape.Tile（拼贴，默认）或 TesseraShape.Round（圆融）。
+ * shape 选择外观：TesseraShape.Tile（拼贴，默认）、TesseraShape.Round（圆融）或 TesseraShape.Flow（流韵）。
+ * 流韵只在性能较好的设备上启用：系统“移除动画”打开或设备不满足要求时，自动改用圆融；
+ * requireCapableDevice = false 时跳过设备检测（“移除动画”仍然生效）。
  */
 @Composable
 fun TesseraTheme(
@@ -82,6 +85,7 @@ fun TesseraTheme(
     fonts: TesseraFonts = TesseraFonts(),
     reduceMotion: Boolean = isSystemReduceMotion(),
     shape: TesseraShape = TesseraShape.Tile,
+    requireCapableDevice: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val colors = when {
@@ -91,13 +95,15 @@ fun TesseraTheme(
         else -> TesseraLightColors
     }
     val typography = remember(fonts) { TesseraTypography.from(fonts) }
+    val capable = !requireCapableDevice || isFlowCapable()
+    val resolvedShape = if (shape == TesseraShape.Flow && (reduceMotion || !capable)) TesseraShape.Round else shape
     CompositionLocalProvider(
         LocalTesseraColors provides colors,
         LocalTesseraTypography provides typography,
         LocalTesseraFonts provides fonts,
         LocalTesseraDark provides darkTheme,
         LocalReduceMotion provides reduceMotion,
-        LocalTesseraShape provides shape,
+        LocalTesseraShape provides resolvedShape,
         LocalContentColor provides colors.textPrimary,
         content = content,
     )

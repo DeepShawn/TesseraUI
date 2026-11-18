@@ -1,5 +1,10 @@
 package com.tesseraui.components
 
+import androidx.compose.ui.graphics.graphicsLayer
+import com.tesseraui.foundation.rememberBeadPop
+import com.tesseraui.foundation.TesseraHaptic
+import com.tesseraui.foundation.rememberFlowHaptic
+import com.tesseraui.foundation.roundRadius
 import androidx.compose.ui.draw.shadow
 import com.tesseraui.TesseraRound
 import com.tesseraui.foundation.groupGap
@@ -162,7 +167,8 @@ fun TesseraTabBar(items: List<TesseraTabBarItem>, selectedIndex: Int, onSelect: 
     val c = Tessera.colors
     val line = c.borderSubtle
     val round = isRound
-    val pill = RoundedCornerShape(TesseraRound.pill)
+    val pill = RoundedCornerShape(roundRadius(TesseraRound.pill))
+    val haptic = rememberFlowHaptic()
     // 拼贴：一排砖，顶部一条细线；圆融：浮起的一颗胶囊，没有线
     val bar = if (round) {
         modifier
@@ -198,12 +204,14 @@ fun TesseraTabBar(items: List<TesseraTabBarItem>, selectedIndex: Int, onSelect: 
                     .height(if (round) 50.dp else 52.dp)
                     .clip(if (round) pill else RoundedCornerShape(TesseraRadius.md))
                     .background(bg)
-                    .selectable(selected, role = Role.Tab) { onSelect(i) },
+                    .selectable(selected, role = Role.Tab) { if (!selected) haptic(TesseraHaptic.Light); onSelect(i) },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
                 CompositionLocalProvider(LocalContentColor provides fg) {
-                    Box {
+                    // 流韵：选中时图标像水珠一样弹一下
+                    val pop = rememberBeadPop(selected)
+                    Box(Modifier.graphicsLayer { val p = if (selected) pop() else 1f; scaleX = p; scaleY = p }) {
                         TesseraIcon(if (selected) item.selectedIcon else item.icon, null, size = 22.dp)
                         if (item.badge != null) Box(Modifier.align(Alignment.TopEnd).offset(10.dp, (-4).dp)) { TesseraBadge(item.badge) }
                     }
