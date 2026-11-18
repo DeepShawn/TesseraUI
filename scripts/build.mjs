@@ -660,6 +660,22 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- ThemeDictionaries 必须放在最前面 -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].light)}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].dark)}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="{ThemeResource SystemColorWindowColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
     <!-- 成组控件内侧不留圆角、不留缝，合成一整块 -->
     <CornerRadius x:Key="TesseraRadiusGrout">0</CornerRadius>
     <x:Double x:Key="TesseraTileGrout">${RD.groupGap}</x:Double>
@@ -699,21 +715,6 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     <!-- 没有描边和分割线 -->
     <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
     <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
-
-    <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Light">
-            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].light)}" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Dark">
-            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].dark)}" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
-            <SolidColorBrush x:Key="TesseraListContainerBrush" Color="{ThemeResource SystemColorWindowColor}" />
-        </ResourceDictionary>
-    </ResourceDictionary.ThemeDictionaries>
 
     <!-- 系统控件 -->
     <CornerRadius x:Key="ControlCornerRadius">${F.size.md / 2}</CornerRadius>
