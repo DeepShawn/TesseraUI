@@ -2,6 +2,36 @@
 
 本项目的所有重要变更均记录于此文件。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [0.2.0] - 未发布
+
+Web 端补齐设计规范所列的全部组件，共 84 个。
+
+### 新增
+
+- 62 个 Web 组件：
+  - 操作：ButtonGroup、SplitButton、FAB、Link
+  - 输入：TextArea（自动高度）、PasswordField（显示切换、大写锁定提示）、NumberInput（长按连续调整、全角数字转换）、OTPInput（支持粘贴与短信自动填充）、Autocomplete、TagInput、Slider（单值与范围）、Rating、FileUpload（拖放与进度）
+  - 选择器：DatePicker、TimePicker、DateRangePicker、WheelPicker、ColorPicker、Calendar；手机上日期与时间改为底部抽屉中的滚轮
+  - 表单：Form、FormField、FieldGroup，校验提示为中文
+  - 导航：Sidebar、Breadcrumb、Pagination、Steps、ContextMenu、CommandPalette、Anchor
+  - 数据展示：Table（排序、筛选、固定首列）、Tree、Accordion、AvatarGroup、Tooltip、Popover、DescriptionList、Timeline、Stat、Carousel、ImageViewer（缩放、平移、下滑关闭）、EmptyState、CodeBlock、Kbd
+  - 反馈：Banner、ConfirmDialog、Drawer、ActionSheet、Progress（线形与环形）、Spinner、Result
+  - 布局：Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea
+  - 移动端手势：SwipeAction、PullToRefresh、InfiniteScroll、IndexBar
+- 组件总览页 `demo/components.html`。
+- 端到端交互测试 `tests/e2e/components.e2e.cjs`（42 项），持续集成中运行。
+- 核心工具：浮层定位 `place()`、外部点击检测、按元素去重的初始化，以及弹簧的停止精度设置。
+
+### 变更
+
+- Web 端代码结构：运行时拆分为核心 `core.js` 与 7 个组件模块，样式按类别拆为 8 个源文件，构建时合并；入口 `tessera.js` 的接口保持兼容。
+- `Tessera.init()` 现在初始化全部组件，并可对同一范围安全地重复调用。
+
+### 修复
+
+- 组件自身设置了 `display` 时，`hidden` 属性不生效的问题。
+- 长代码行撑开外层布局，导致手机页面被缩放的问题。
+
 ## [0.1.0] - 2026-11-18
 
 首个公开版本，以 MIT 许可协议发布。
@@ -49,4 +79,5 @@
 - Web 端暂未启用连续曲率圆角（`corner-shape`），原因是 Chromium 当前实现的边缘抗锯齿不足。
 - 图标暂无 16px 精简版本。
 
+[0.2.0]: https://github.com/DeepShawn/TesseraUI/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DeepShawn/TesseraUI/releases/tag/v0.1.0

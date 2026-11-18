@@ -1,0 +1,46 @@
+/* 移动端手势：SwipeAction、PullToRefresh、InfiniteScroll、IndexBar */
+
+@layer tessera {
+
+/* ---------- 左滑操作 SwipeAction ---------- */
+.ts-swipe { position: relative; overflow: hidden; border-radius: inherit; touch-action: pan-y; }
+.ts-swipe-content { position: relative; z-index: 1; background: var(--ts-bg-surface); will-change: transform; }
+.ts-swipe-actions { position: absolute; inset: 0 0 0 auto; display: flex; gap: var(--ts-tile-grout); padding-inline-start: var(--ts-tile-grout); background: var(--ts-bg-canvas); }
+.ts-swipe-actions > button {
+  min-width: 76px; border: 0; padding: 0 12px; display: grid; place-items: center; align-content: center; gap: 4px;
+  color: #fff; font: 600 12px/1 var(--ts-font-sans); cursor: pointer; background-color: var(--ts-text-secondary);
+  background-image: var(--ts-layer-sheen);
+}
+.ts-swipe-actions > button .ts-icon { width: 20px; height: 20px; }
+.ts-swipe-actions > button[data-tone="accent"] { background-color: var(--ts-accent-solid); }
+.ts-swipe-actions > button[data-tone="warning"] { background-color: var(--ts-warning-solid); }
+.ts-swipe-actions > button[data-tone="danger"] { background-color: var(--ts-danger-solid); }
+.ts-list .ts-swipe { border-radius: var(--ts-radius-grout); }
+.ts-list > li:first-child > .ts-swipe { border-top-left-radius: var(--ts-radius-lg); border-top-right-radius: var(--ts-radius-lg); }
+.ts-list > li:last-child > .ts-swipe { border-bottom-left-radius: var(--ts-radius-lg); border-bottom-right-radius: var(--ts-radius-lg); }
+.ts-swipe .ts-list-item { border-radius: 0 !important; box-shadow: none; }
+
+/* ---------- 下拉刷新 PullToRefresh ---------- */
+.ts-ptr { position: relative; overflow: auto; overscroll-behavior-y: contain; }
+.ts-ptr-indicator { position: absolute; left: 50%; top: 0; z-index: 2; width: 40px; height: 40px; margin-left: -20px; display: grid; place-items: center;
+  border-radius: 14px; background: var(--ts-bg-elevated); color: var(--ts-accent-text); box-shadow: var(--ts-shadow-2); pointer-events: none; opacity: 0; will-change: transform; }
+.ts-ptr-indicator .ts-icon { width: 20px; height: 20px; transition: transform var(--ts-spring-snappy-duration) var(--ts-spring-snappy); }
+.ts-ptr-indicator[data-armed] .ts-icon { transform: rotate(180deg); }
+.ts-ptr-content { will-change: transform; }
+
+/* ---------- 上拉加载 InfiniteScroll ---------- */
+.ts-infinite-status { display: flex; justify-content: center; align-items: center; gap: var(--ts-space-2); padding: var(--ts-space-5); font: var(--ts-font-caption); color: var(--ts-text-tertiary); }
+
+/* ---------- 字母索引栏 IndexBar ---------- */
+.ts-indexbar { position: absolute; right: 2px; top: 50%; transform: translateY(-50%); z-index: 3; display: grid; padding: 6px 2px; border-radius: 10px; touch-action: none; user-select: none; -webkit-user-select: none; }
+.ts-indexbar[data-active] { background: var(--ts-fill-default); }
+.ts-indexbar button { width: 20px; height: 17px; padding: 0; border: 0; background: none; font: 600 10.5px/1 var(--ts-font-sans); color: var(--ts-accent-text); cursor: pointer; border-radius: 5px; }
+.ts-indexbar button[aria-current="true"] { background-color: var(--ts-accent-solid); color: #fff; }
+.ts-index-bubble {
+  position: absolute; right: 48px; z-index: 4; width: 56px; height: 56px; margin-top: -28px; display: grid; place-items: center; border-radius: 20px;
+  background-color: var(--ts-text-primary); color: var(--ts-bg-surface); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  font: 600 26px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); box-shadow: var(--ts-shadow-2); pointer-events: none;
+}
+.ts-index-group { position: sticky; top: 0; z-index: 1; padding: 6px 16px; background: var(--ts-bg-canvas); font: var(--ts-font-overline); letter-spacing: var(--ts-tracking-overline); color: var(--ts-text-secondary); }
+
+}

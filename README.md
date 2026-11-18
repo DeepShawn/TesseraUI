@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-0F6B63.svg"></a>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.1.0-1F1B16.svg">
+  <img alt="Version" src="https://img.shields.io/badge/version-0.2.0-1F1B16.svg">
   <img alt="WCAG 2.1 AA" src="https://img.shields.io/badge/WCAG%202.1-AA-3D6B1C.svg">
   <img alt="Platforms" src="https://img.shields.io/badge/platforms-Apple%20%7C%20Android%20%7C%20Windows%20%7C%20Web-B7862B.svg">
 </p>
@@ -40,7 +40,7 @@ TesseraUI 是一套跨平台 UI 设计标准库，包含设计规范、设计令
 
 | 平台 | 技术栈 | 最低版本 | 当前提供 | 状态 |
 |---|---|---|---|---|
-| Web | CSS + ES Modules | 主流浏览器最新两个版本 | 设计令牌、22 个组件、运行时脚本、图标 | 可用 |
+| Web | CSS + ES Modules | 主流浏览器最新两个版本 | 设计令牌、84 个组件、运行时脚本、图标 | 可用 |
 | Apple | SwiftUI | iOS 17、macOS 14、visionOS 1 | 设计令牌、按钮样式 | 预览，尚未经编译验证 |
 | Android | Jetpack Compose | API 24 | 设计令牌、主题、按钮，及 View 系统 XML 资源 | 预览，尚未经编译验证 |
 | Windows | WinUI 3（Windows App SDK 1.6） | Windows 10 1809 | 设计令牌、按钮样式、动效常量 | 预览，尚未经编译验证 |
@@ -64,9 +64,11 @@ TesseraUI 是一套跨平台 UI 设计标准库，包含设计规范、设计令
 <script type="module">
   import Tessera from './platforms/web/dist/tessera.js';
 
-  Tessera.init();                                // 初始化图标、开关、分段控制、标签页与输入法保护
+  Tessera.init();                                // 初始化页面上的全部组件与输入法保护
   Tessera.toast('已保存', { type: 'success' });  // 显示提示消息
   Tessera.setTheme('dark');                      // 'light' | 'dark' | 'system'
+
+  const ok = await Tessera.confirm({ title: '删除文件？', danger: true });  // 替代 window.confirm()
 </script>
 ```
 
@@ -126,17 +128,21 @@ TesseraTheme {
 
 ## 组件
 
-v0.1.0 提供以下 22 个 Web 组件：
+Web 端提供设计规范所列的全部 84 个组件：
 
 | 类别 | 组件 |
 |---|---|
-| 操作 | Button、IconButton |
-| 输入 | TextField、SearchField、Select、Checkbox、Radio、Switch、SegmentedControl |
-| 导航 | NavBar、TabBar、Tabs、Menu |
-| 数据展示 | Card、List、Avatar、Badge、Tag |
-| 反馈 | Toast、Dialog、BottomSheet、Skeleton |
+| 操作 | Button、IconButton、ButtonGroup、SplitButton、FAB、Link |
+| 输入 | TextField、TextArea、PasswordField、SearchField、NumberInput、OTPInput、Select、Autocomplete、TagInput、Checkbox、Radio、Switch、Slider、SegmentedControl、Rating、FileUpload |
+| 选择器 | DatePicker、TimePicker、DateRangePicker、WheelPicker、ColorPicker、Calendar |
+| 表单 | Form、FormField、FieldGroup |
+| 导航 | NavBar、TabBar、Tabs、Sidebar、Breadcrumb、Pagination、Steps、Menu、ContextMenu、CommandPalette、Anchor |
+| 数据展示 | Card、List、Table、Tree、Accordion、Avatar、AvatarGroup、Badge、Tag、Tooltip、Popover、DescriptionList、Timeline、Stat、Carousel、ImageViewer、EmptyState、CodeBlock、Kbd |
+| 反馈 | Toast、Banner、Dialog、ConfirmDialog、BottomSheet、Drawer、ActionSheet、Progress、Spinner、Skeleton、Result |
+| 布局 | Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea |
+| 移动端手势 | SwipeAction、PullToRefresh、InfiniteScroll、IndexBar |
 
-其余约 58 个组件及原生平台组件的实施计划见[设计规范第 8 节](docs/spec.md#8-实施计划)。
+全部组件的示例见 `demo/components.html`，接口说明见 [Web 端文档](platforms/web/README.md)。原生平台组件的实施计划见[设计规范第 8 节](docs/spec.md#8-实施计划)。
 
 ## 目录结构
 
@@ -145,13 +151,13 @@ TesseraUI/
 ├── tokens/                 设计令牌源文件（唯一需要手动编辑的数值来源）
 ├── icons/                  图标源文件与导出的 SVG
 ├── platforms/
-│   ├── web/                CSS、运行时脚本、令牌与图标模块
+│   ├── web/                样式（src/css）、运行时核心与组件模块（src/modules）、构建产物（dist）
 │   ├── apple/              Swift Package
 │   ├── android/            Android Library 模块
 │   └── windows/            WinUI 3 资源字典与 C# 常量
 ├── scripts/                构建、对比度检查与图标检查脚本
-├── tests/                  单元测试
-├── demo/                   组件预览页
+├── tests/                  单元测试与端到端测试（tests/e2e）
+├── demo/                   预览页（index.html）与组件总览（components.html）
 └── docs/                   设计规范与对比度报告
 ```
 
@@ -167,6 +173,7 @@ TesseraUI/
 | `npm run check:contrast` | 执行对比度检查，并生成 `docs/contrast-report.md` |
 | `npm run check:icons` | 检查图标的画布、线宽、颜色与命名 |
 | `npm test` | 依次执行构建、全部检查与单元测试 |
+| `npm run test:e2e` | 端到端交互测试（需要 Playwright 与 Chromium，并先启动 `npm run demo`） |
 | `npm run demo` | 构建并在 `http://localhost:5173/demo/` 启动预览页 |
 
 修改设计令牌的流程：

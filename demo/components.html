@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TesseraUI 组件总览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..600,0..100,0..1&family=Instrument+Sans:wght@400;600&family=Noto+Serif+SC:wght@600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../platforms/web/dist/tessera.css">
+<style>
+  body { margin: 0; }
+  .shell { display: flex; min-height: 100vh; }
+  .shell > .ts-sidebar { position: sticky; top: 0; height: 100vh; }
+  main { flex: 1; min-width: 0; padding: 32px 40px 120px; }
+  @media (max-width: 900px) { .shell > .ts-sidebar { display: none; } main { padding: 20px 16px 80px; } }
+  .topbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+  .topbar h1 { margin: 0; flex: 1; }
+  .cat { margin-top: 72px; scroll-margin-top: 24px; }
+  .cat > h2 { margin: 0 0 6px; }
+  .cat > p { margin: 0 0 24px; color: var(--ts-text-secondary); font: var(--ts-font-body-sm); }
+  .demo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 16px; align-items: start; }
+  .demo { display: grid; gap: 16px; align-content: start; scroll-margin-top: 24px; min-width: 0; grid-template-columns: minmax(0, 1fr); }
+  .demo-name { display: flex; align-items: baseline; justify-content: space-between; gap: 4px 8px; flex-wrap: wrap; }
+  .demo-name h3 { margin: 0; }
+  .demo-name code { font: 400 11px/1 var(--ts-font-mono); color: var(--ts-text-tertiary); }
+  .row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .wide { grid-column: 1 / -1; }
+  .phone-frame { height: 360px; border-radius: 28px; overflow: hidden; background: var(--ts-bg-canvas); box-shadow: inset 0 0 0 1px var(--ts-border-subtle); position: relative; }
+  .slide { height: 180px; display: grid; place-items: center; color: #fff; font: 600 28px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); }
+  .grid-demo > div { background: var(--ts-accent-subtle); color: var(--ts-accent-text); border-radius: 6px; padding: 10px; font: 600 12px/1 var(--ts-font-mono); text-align: center; }
+  .split-demo { height: 180px; border-radius: 18px; overflow: hidden; background: var(--ts-bg-surface); box-shadow: 0 0 0 1px var(--ts-border-subtle); }
+  .split-demo > div:not(.ts-split-handle) { padding: 16px; font: var(--ts-font-body-sm); color: var(--ts-text-secondary); }
+  .art { width: 100%; height: 100%; border-radius: inherit; }
+  .thumbs { display: flex; gap: 8px; flex-wrap: wrap; }
+  .thumbs img { width: 96px; height: 72px; object-fit: cover; border-radius: 12px; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 250ms; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="ts-sidebar" data-persist="components" aria-label="组件目录">
+    <div class="ts-sidebar-head">
+      <button class="ts-icon-button ts-pressable ts-state" data-sidebar-toggle><i data-icon="sidebar"></i></button>
+      <span class="ts-title-3 ts-sidebar-label">组件</span>
+    </div>
+    <span class="ts-overline ts-sidebar-section">v0.2 新增</span>
+    <a class="ts-sidebar-item" href="#forms"><i data-icon="edit"></i><span class="ts-sidebar-label">操作与输入</span><span class="ts-badge" style="background:var(--ts-accent-solid)">16</span></a>
+    <a class="ts-sidebar-item" href="#pickers"><i data-icon="calendar"></i><span class="ts-sidebar-label">选择器</span><span class="ts-badge" style="background:var(--ts-accent-solid)">6</span></a>
+    <a class="ts-sidebar-item" href="#navigation"><i data-icon="compass"></i><span class="ts-sidebar-label">导航</span><span class="ts-badge" style="background:var(--ts-accent-solid)">7</span></a>
+    <a class="ts-sidebar-item" href="#data"><i data-icon="grid"></i><span class="ts-sidebar-label">数据展示</span><span class="ts-badge" style="background:var(--ts-accent-solid)">14</span></a>
+    <a class="ts-sidebar-item" href="#feedback"><i data-icon="bell"></i><span class="ts-sidebar-label">反馈</span><span class="ts-badge" style="background:var(--ts-accent-solid)">7</span></a>
+    <a class="ts-sidebar-item" href="#layout"><i data-icon="layers"></i><span class="ts-sidebar-label">布局</span><span class="ts-badge" style="background:var(--ts-accent-solid)">8</span></a>
+    <a class="ts-sidebar-item" href="#gestures"><i data-icon="sparkle"></i><span class="ts-sidebar-label">移动端手势</span><span class="ts-badge" style="background:var(--ts-accent-solid)">4</span></a>
+    <span class="ts-overline ts-sidebar-section">其他</span>
+    <a class="ts-sidebar-item" href="index.html"><i data-icon="home"></i><span class="ts-sidebar-label">返回首页</span></a>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <h1 class="ts-title-1">组件总览 <span class="ts-tag ts-accent" style="font-family:var(--ts-font-mono);font-weight:500;vertical-align:middle">v0.2</span></h1>
+      <div class="ts-segmented ts-sm" role="radiogroup" aria-label="主题" id="theme">
+        <label><input type="radio" name="theme" value="system" checked><span>跟随系统</span></label>
+        <label><input type="radio" name="theme" value="light"><span>石灰</span></label>
+        <label><input type="radio" name="theme" value="dark"><span>夜窑</span></label>
+      </div>
+      <button class="ts-button ts-sm ts-pressable ts-state" id="open-cmd"><i data-icon="search"></i>命令面板 <span class="ts-kbd" style="margin:0">⌘K</span></button>
+    </div>
+
+    <!-- ===================== 操作与输入 ===================== -->
+    <section class="cat" id="forms">
+      <h2 class="ts-title-2">操作与输入</h2>
+      <p>Link、FAB、ButtonGroup、SplitButton、TextArea、PasswordField、NumberInput、OTPInput、Autocomplete、TagInput、Slider、Rating、FileUpload、Form、FormField、FieldGroup</p>
+      <div class="demo-grid">
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">链接 · 按钮组 · 分割按钮</h3><code>Link · ButtonGroup · SplitButton</code></div>
+          <p class="ts-body-sm" style="margin:0">阅读 <a class="ts-link" href="#forms">设计规范</a>，或访问 <a class="ts-link" href="https://github.com/DeepShawn/TesseraUI">GitHub 仓库<i data-icon="external-link"></i></a>。</p>
+          <div class="ts-button-group" role="group" aria-label="对齐方式">
+            <button class="ts-button ts-pressable ts-state" aria-pressed="true">左对齐</button>
+            <button class="ts-button ts-pressable ts-state" aria-pressed="false">居中</button>
+            <button class="ts-button ts-pressable ts-state" aria-pressed="false">右对齐</button>
+          </div>
+          <div class="ts-split-button">
+            <button class="ts-button ts-primary ts-pressable ts-state">保存</button>
+            <button class="ts-button ts-primary ts-pressable ts-state" aria-label="更多保存选项" data-menu="save-menu"><i data-icon="chevron-down"></i></button>
+          </div>
+          <div class="row"><button class="ts-fab ts-static ts-pressable" aria-label="新建"><i data-icon="plus"></i></button><button class="ts-fab ts-static ts-pressable"><i data-icon="edit"></i>写邮件</button></div>
+        </div>
+
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">多行文本 · 密码 · 数字</h3><code>TextArea · PasswordField · NumberInput</code></div>
+          <div class="ts-field"><label class="ts-field-label" for="ta">留言</label><div class="ts-input ts-textarea" data-autosize><textarea id="ta" rows="2" placeholder="随输入自动长高"></textarea></div></div>
+          <div class="ts-field"><label class="ts-field-label" for="pw">密码</label><div class="ts-input ts-password"><i data-icon="lock"></i><input id="pw" type="password" value="tessera2026"></div><div class="ts-field-help"><span>按住 Caps Lock 输入试试</span><span class="ts-caps">大写锁定已打开</span></div></div>
+          <div class="ts-field"><span class="ts-field-label" id="qty-l">数量</span><div class="ts-number"><input aria-labelledby="qty-l" min="1" max="99" step="1" value="2"></div><div class="ts-field-help">长按 + / − 连续调整；可直接输入全角数字</div></div>
+        </div>
+
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">验证码</h3><code>OTPInput</code></div>
+          <div class="ts-otp" data-length="6" aria-label="短信验证码" id="otp"></div>
+          <p class="ts-caption ts-secondary" style="margin:0" id="otp-msg">输入 6 位数字；输入“000000”演示错误状态。支持粘贴和短信自动填充。</p>
+        </div>
+
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">自动补全 · 标签输入</h3><code>Autocomplete · TagInput</code></div>
+          <div class="ts-field ts-autocomplete" data-options='[{"label":"北京","hint":"京"},{"label":"上海","hint":"沪"},{"label":"广州","hint":"粤"},{"label":"深圳","hint":"粤"},{"label":"杭州","hint":"浙"},{"label":"成都","hint":"川"},{"label":"重庆","hint":"渝"},{"label":"南京","hint":"苏"},{"label":"武汉","hint":"鄂"},{"label":"西安","hint":"陕"}]'>
+            <label class="ts-field-label" for="city">城市</label>
+            <div class="ts-input"><i data-icon="location"></i><input id="city" placeholder="输入城市名，如“州”"></div>
+          </div>
+          <div class="ts-field"><label class="ts-field-label" for="tags">标签</label>
+            <div class="ts-input ts-taginput" data-value="设计,前端"><input id="tags" placeholder="回车、逗号或顿号添加"></div>
+            <div class="ts-field-help">退格先选中最后一个标签，再按一次删除</div></div>
+        </div>
+
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">滑块 · 评分</h3><code>Slider · Rating</code></div>
+          <div><div class="ts-progress-label"><span>音量</span><span id="vol-v">60%</span></div><div class="ts-slider" data-value="60" data-unit="%" aria-label="音量" id="vol"></div></div>
+          <div><div class="ts-progress-label"><span>价格区间</span><span id="price-v">¥200 – ¥800</span></div><div class="ts-slider" data-min="0" data-max="1000" data-step="50" data-value="200,800" data-label="最低价,最高价" data-ticks id="price"></div></div>
+          <div class="row"><div class="ts-rating" data-value="4" aria-label="服务评分"></div><div class="ts-rating" data-value="3" data-readonly></div></div>
+        </div>
+
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">文件上传</h3><code>FileUpload</code></div>
+          <div class="ts-upload" data-multiple id="upload"><i data-icon="upload"></i><span class="ts-label">拖入文件，或点击选择</span><span class="ts-caption ts-secondary">支持多选，单个不超过 20 MB</span></div>
+        </div>
+
+        <div class="ts-card demo wide">
+          <div class="demo-name"><h3 class="ts-title-3">表单 · 表单项 · 表单分组</h3><code>Form · FormField · FieldGroup</code></div>
+          <form class="ts-form" id="signup">
+            <fieldset class="ts-fieldset">
+              <legend>账号信息</legend>
+              <div class="ts-form-row">
+                <div class="ts-field"><label class="ts-field-label ts-required" for="f1">昵称</label><div class="ts-input"><input id="f1" required minlength="2" maxlength="12"></div><div class="ts-field-help">2–12 个字符</div></div>
+                <div class="ts-field"><label class="ts-field-label ts-required" for="f2">邮箱</label><div class="ts-input"><input id="f2" type="email" required></div><div class="ts-field-help">用于接收通知</div></div>
+              </div>
+              <div class="ts-form-row">
+                <div class="ts-field"><label class="ts-field-label" for="f3">手机号</label><div class="ts-input"><input id="f3" inputmode="tel" pattern="1\d{10}" data-pattern-message="请输入 11 位手机号"></div><div class="ts-field-help">选填</div></div>
+                <div class="ts-field"><span class="ts-field-label">生日</span><div class="ts-input ts-datepicker"><i data-icon="calendar"></i><input name="birthday" placeholder="选择日期" aria-label="生日"></div><div class="ts-field-help">选填</div></div>
+              </div>
+            </fieldset>
+            <label class="ts-check"><input type="checkbox" class="ts-checkbox" required>我已阅读并同意服务条款</label>
+            <div class="ts-form-actions"><button type="reset" class="ts-button ts-pressable ts-state">重置</button><button class="ts-button ts-primary ts-pressable ts-state">注册</button></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 选择器 ===================== -->
+    <section class="cat" id="pickers">
+      <h2 class="ts-title-2">选择器</h2>
+      <p>DatePicker、TimePicker、DateRangePicker、WheelPicker、ColorPicker、Calendar。手机上日期和时间改为底部抽屉里的滚轮。</p>
+      <div class="demo-grid">
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">日期 · 时间 · 日期范围 · 颜色</h3><code>DatePicker · TimePicker · DateRangePicker</code></div>
+          <div class="ts-field"><span class="ts-field-label">出发日期</span><div class="ts-input ts-datepicker" data-value="2026-11-20"><i data-icon="calendar"></i><input placeholder="选择日期" aria-label="出发日期"></div></div>
+          <div class="ts-field"><span class="ts-field-label">提醒时间</span><div class="ts-input ts-timepicker" data-value="09:30" data-step="5"><i data-icon="clock"></i><input placeholder="选择时间" aria-label="提醒时间"></div></div>
+          <div class="ts-field"><span class="ts-field-label">入住 – 离店</span><div class="ts-input ts-daterange"><i data-icon="calendar"></i><input placeholder="选择日期范围" aria-label="入住和离店日期"></div></div>
+          <div class="ts-field"><span class="ts-field-label">主题色</span><div class="ts-input ts-colorfield" data-value="#0F6B63"><input aria-label="主题色"></div></div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">日历</h3><code>Calendar</code></div>
+          <div class="ts-calendar-inline" data-value="2026-11-18"></div>
+          <p class="ts-caption ts-secondary" style="margin:0">方向键移动，PageUp / PageDown 翻月，回车选中。周一开始。</p>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">滚轮选择器</h3><code>WheelPicker</code></div>
+          <div id="wheel"></div>
+          <p class="ts-caption ts-secondary" style="margin:0" id="wheel-v"></p>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">颜色选择器</h3><code>ColorPicker</code></div>
+          <div class="ts-colorpicker-inline" data-value="#C4472D"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 导航 ===================== -->
+    <section class="cat" id="navigation">
+      <h2 class="ts-title-2">导航</h2>
+      <p>Sidebar（本页左侧，可折叠）、Breadcrumb、Pagination、Steps、ContextMenu、CommandPalette、Anchor</p>
+      <div class="demo-grid">
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">面包屑 · 分页</h3><code>Breadcrumb · Pagination</code></div>
+          <nav class="ts-breadcrumb" aria-label="面包屑"><ol><li><a href="#">首页</a></li><li><a href="#">设计系统</a></li><li><a href="#">组件</a></li><li><span aria-current="page">分页</span></li></ol></nav>
+          <div class="ts-pagination" data-total="20" data-page="6"></div>
+          <div class="ts-pagination" data-total="5" data-page="1"></div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">步骤条</h3><code>Steps</code></div>
+          <ol class="ts-steps" aria-label="下单进度">
+            <li class="ts-step" data-status="done"><span class="ts-step-title">选择商品</span><span class="ts-step-desc">已完成</span></li>
+            <li class="ts-step" data-status="current" aria-current="step"><span class="ts-step-title">填写地址</span><span class="ts-step-desc">进行中</span></li>
+            <li class="ts-step"><span class="ts-step-title">支付</span><span class="ts-step-desc">待处理</span></li>
+          </ol>
+          <ol class="ts-steps ts-vertical" aria-label="审批流程">
+            <li class="ts-step" data-status="done"><span class="ts-step-title">提交申请</span><span class="ts-step-desc">11 月 16 日 10:20</span></li>
+            <li class="ts-step" data-status="error"><span class="ts-step-title">部门审批</span><span class="ts-step-desc">被退回：缺少附件</span></li>
+            <li class="ts-step"><span class="ts-step-title">财务审批</span><span class="ts-step-desc">等待中</span></li>
+          </ol>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">右键菜单 · 命令面板</h3><code>ContextMenu · CommandPalette</code></div>
+          <div class="ts-upload" style="cursor:context-menu" tabindex="0" data-context-menu="ctx" aria-label="右键菜单演示区"><i data-icon="more"></i><span class="ts-label">在这里右键（触屏长按）</span><span class="ts-caption ts-secondary">键盘：Shift + F10</span></div>
+          <button class="ts-button ts-pressable ts-state" onclick="window.__cmd.open()"><i data-icon="search"></i>打开命令面板（⌘K / Ctrl+K）</button>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">目录锚点</h3><code>Anchor</code></div>
+          <nav class="ts-anchor" aria-label="本页目录" data-offset="40">
+            <a href="#forms">操作与输入</a><a href="#pickers">选择器</a><a href="#navigation">导航</a><a href="#data">数据展示</a><a href="#feedback">反馈</a><a href="#layout">布局</a><a href="#gestures">移动端手势</a>
+          </nav>
+          <p class="ts-caption ts-secondary" style="margin:0">滚动页面时，指示条跟着当前区块用弹簧移动。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 数据展示 ===================== -->
+    <section class="cat" id="data">
+      <h2 class="ts-title-2">数据展示</h2>
+      <p>Table、Tree、Accordion、Tooltip、Popover、DescriptionList、Timeline、Stat、Carousel、ImageViewer、EmptyState、CodeBlock、AvatarGroup、Kbd（快捷键提示，见右键菜单与命令面板）</p>
+      <div class="demo-grid">
+        <div class="demo wide">
+          <div class="ts-table-toolbar"><h3 class="ts-title-3" style="margin:0;flex:1">表格 <code style="font:400 11px var(--ts-font-mono);color:var(--ts-text-tertiary)">Table</code></h3><div class="ts-input ts-sm" style="width:220px"><i data-icon="search"></i><input id="tbl-filter" placeholder="筛选" aria-label="筛选表格"></div></div>
+          <div class="ts-table-wrap">
+            <table class="ts-table" data-filter="tbl-filter" data-sticky-first>
+              <thead><tr><th data-sortable>项目</th><th data-sortable>负责人</th><th data-sortable>状态</th><th data-sortable class="ts-num">进度</th><th data-sortable class="ts-num">预算（元）</th><th data-sortable>截止日期</th></tr></thead>
+              <tbody>
+                <tr><td>设计令牌</td><td>周</td><td><span class="ts-tag ts-success">已完成</span></td><td class="ts-num">100%</td><td class="ts-num">12,000</td><td>2026-11-18</td></tr>
+                <tr><td>图标库</td><td>林</td><td><span class="ts-tag ts-success">已完成</span></td><td class="ts-num">100%</td><td class="ts-num">8,500</td><td>2026-11-18</td></tr>
+                <tr><td>Web 组件</td><td>陈</td><td><span class="ts-tag ts-accent">进行中</span></td><td class="ts-num">86%</td><td class="ts-num">36,000</td><td>2026-11-25</td></tr>
+                <tr><td>Apple 组件</td><td>赵</td><td><span class="ts-tag">未开始</span></td><td class="ts-num">0%</td><td class="ts-num">30,000</td><td>2026-12-20</td></tr>
+                <tr><td>文档站</td><td>吴</td><td><span class="ts-tag ts-warning">有风险</span></td><td class="ts-num">20%</td><td class="ts-num">15,000</td><td>2026-12-05</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">树</h3><code>Tree</code></div>
+          <ul class="ts-tree" aria-label="文件">
+            <li aria-expanded="true"><div class="ts-tree-row"><i data-icon="folder"></i>platforms</div>
+              <ul>
+                <li aria-expanded="true"><div class="ts-tree-row"><i data-icon="folder"></i>web</div>
+                  <ul><li data-selectable><div class="ts-tree-row"><i data-icon="file-text"></i>tessera.css</div></li><li data-selectable aria-selected="true"><div class="ts-tree-row"><i data-icon="code"></i>tessera.js</div></li></ul></li>
+                <li><div class="ts-tree-row"><i data-icon="folder"></i>apple</div><ul><li data-selectable><div class="ts-tree-row"><i data-icon="file"></i>Package.swift</div></li></ul></li>
+                <li><div class="ts-tree-row"><i data-icon="folder"></i>android</div><ul><li data-selectable><div class="ts-tree-row"><i data-icon="file"></i>build.gradle.kts</div></li></ul></li>
+              </ul></li>
+            <li data-selectable><div class="ts-tree-row"><i data-icon="file-text"></i>README.md</div></li>
+          </ul>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">折叠面板</h3><code>Accordion</code></div>
+          <div class="ts-accordion" data-single>
+            <details open><summary>TesseraUI 支持哪些平台？</summary><div class="ts-accordion-body">Apple、Android、Windows 与 Web。一份设计令牌导出到四个平台。</div></details>
+            <details><summary>可以商用吗？</summary><div class="ts-accordion-body">可以。TesseraUI 以 MIT 许可协议发布。</div></details>
+            <details><summary>如何切换深色模式？</summary><div class="ts-accordion-body">默认跟随系统，也可以在根元素上设置 data-theme="dark"。</div></details>
+          </div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">工具提示 · 气泡卡片 · 头像组</h3><code>Tooltip · Popover · AvatarGroup</code></div>
+          <div class="row">
+            <button class="ts-icon-button ts-filled ts-pressable ts-state" data-tooltip="复制链接" aria-label="复制链接"><i data-icon="link"></i></button>
+            <button class="ts-icon-button ts-filled ts-pressable ts-state" data-tooltip="下载" aria-label="下载"><i data-icon="download"></i></button>
+            <button class="ts-icon-button ts-filled ts-pressable ts-state" title="原生 title 也会被替换成 TesseraUI 的提示" aria-label="帮助"><i data-icon="help"></i></button>
+            <button class="ts-button ts-pressable ts-state" data-popover="pop1">成员信息</button>
+          </div>
+          <div class="ts-popover" id="pop1"><p class="ts-popover-title">设计组</p><p class="ts-body-sm ts-secondary" style="margin:0 0 12px">5 位成员，负责 TesseraUI 的设计令牌与图标。</p><div class="row" style="justify-content:space-between"><span class="ts-avatar-group"><span class="ts-avatar ts-sm ts-pigment-lapis">陈</span><span class="ts-avatar ts-sm ts-pigment-olive">吴</span><span class="ts-avatar ts-sm ts-pigment-amethyst">赵</span></span><button class="ts-button ts-sm ts-primary ts-pressable ts-state">查看</button></div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">描述列表</h3><code>DescriptionList</code></div>
+          <dl class="ts-dl">
+            <div><dt>订单号</dt><dd>TS-20261118-0042</dd></div>
+            <div><dt>下单时间</dt><dd>2026-11-18 14:32</dd></div>
+            <div><dt>收货地址</dt><dd>上海市徐汇区漕溪北路 88 号</dd></div>
+            <div><dt>实付金额</dt><dd>¥ 268.00</dd></div>
+          </dl>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">时间线</h3><code>Timeline</code></div>
+          <ol class="ts-timeline">
+            <li data-tone="success"><span class="ts-timeline-time">11 月 18 日 09:00</span><span class="ts-timeline-title">v0.1.0 发布</span><span class="ts-timeline-body">首个公开版本，MIT 协议。</span></li>
+            <li data-tone="accent"><span class="ts-timeline-time">进行中</span><span class="ts-timeline-title">v0.2：补齐 Web 组件</span><span class="ts-timeline-body">新增 62 个组件。</span></li>
+            <li><span class="ts-timeline-time">计划</span><span class="ts-timeline-title">v0.3：原生三端</span></li>
+          </ol>
+        </div>
+        <div class="demo wide">
+          <div class="demo-name"><h3 class="ts-title-3">统计数字</h3><code>Stat</code></div>
+          <div class="ts-stats">
+            <div class="ts-stat"><span class="ts-stat-label">组件</span><span class="ts-stat-value">84<small>个</small></span><span class="ts-delta" data-trend="up"><i data-icon="arrow-up"></i>62 个新增</span></div>
+            <div class="ts-stat"><span class="ts-stat-label">图标</span><span class="ts-stat-value">157</span><span class="ts-delta" data-trend="up"><i data-icon="arrow-up"></i>v0.1 起</span></div>
+            <div class="ts-stat"><span class="ts-stat-label">对比度检查</span><span class="ts-stat-value">284<small>项</small></span><span class="ts-caption ts-secondary">全部通过 AA</span></div>
+            <div class="ts-stat"><span class="ts-stat-label">待修复问题</span><span class="ts-stat-value">2</span><span class="ts-delta" data-trend="down"><i data-icon="arrow-down"></i>较上周 −3</span></div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">轮播</h3><code>Carousel</code></div>
+          <div class="ts-carousel" data-peek>
+            <div class="ts-carousel-track">
+              <div class="slide" style="background:var(--ts-accent-solid)">拼贴</div>
+              <div class="slide" style="background:var(--ts-pigment-cinnabar)">釉面砖</div>
+              <div class="slide" style="background:var(--ts-pigment-lapis)">软衬线</div>
+              <div class="slide" style="background:var(--ts-pigment-ochre)">矿物色</div>
+            </div>
+          </div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">图片预览</h3><code>ImageViewer</code></div>
+          <div class="thumbs" id="thumbs"></div>
+          <p class="ts-caption ts-secondary" style="margin:0">点击查看。滚轮 / 双指 / 双击缩放，放大后拖动平移，未放大时上下滑动关闭，左右方向键切换。</p>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">空状态</h3><code>EmptyState</code></div>
+          <div class="ts-empty"><div class="ts-empty-art" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><h4 class="ts-empty-title">还没有项目</h4><p class="ts-empty-text">新建一个项目，开始拼你的第一面墙。</p><button class="ts-button ts-primary ts-pressable ts-state"><i data-icon="plus"></i>新建项目</button></div>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">代码块</h3><code>CodeBlock</code></div>
+          <div class="ts-code" data-lang="JavaScript" data-lines><pre><code>import Tessera from './tessera.js';
+
+Tessera.init();
+const ok = await Tessera.confirm({ title: '删除文件？', danger: true });</code></pre></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 反馈 ===================== -->
+    <section class="cat" id="feedback">
+      <h2 class="ts-title-2">反馈</h2>
+      <p>Banner、ConfirmDialog、Drawer、ActionSheet、Progress（线形 / 环形）、Spinner、Result</p>
+      <div class="demo-grid">
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">横幅</h3><code>Banner</code></div>
+          <div class="ts-banner" data-dismissible><i data-icon="info"></i><div class="ts-banner-body"><span class="ts-banner-title">v0.2 预览</span>新增 62 个组件，欢迎试用并反馈问题。</div></div>
+          <div class="ts-banner" data-tone="warning" data-dismissible><i data-icon="warning"></i><div class="ts-banner-body"><span class="ts-banner-title">存储空间即将用完</span>已使用 92%，请清理或升级。<div class="ts-banner-actions"><button class="ts-button ts-sm ts-pressable ts-state">清理</button><button class="ts-button ts-sm ts-text ts-pressable ts-state">升级</button></div></div></div>
+          <div class="ts-banner" data-tone="danger"><i data-icon="error"></i><div class="ts-banner-body">同步失败：网络连接已断开。</div></div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">确认框 · 抽屉 · 操作面板</h3><code>ConfirmDialog · Drawer · ActionSheet</code></div>
+          <div class="row">
+            <button class="ts-button ts-danger ts-pressable ts-state" id="btn-confirm">删除项目</button>
+            <button class="ts-button ts-pressable ts-state" data-drawer="drawer">打开抽屉</button>
+            <button class="ts-button ts-pressable ts-state" id="btn-sheet">操作面板</button>
+          </div>
+          <p class="ts-caption ts-secondary" style="margin:0" id="fb-result">确认框替代 window.confirm()；抽屉可以横向拖动关闭。</p>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">进度 · 加载</h3><code>Progress · Spinner</code></div>
+          <div><div class="ts-progress-label"><span>上传中</span><span id="prog-v">35%</span></div><div class="ts-progress" data-value="35" id="prog" aria-label="上传进度"></div></div>
+          <div><div class="ts-progress-label"><span>正在准备</span></div><div class="ts-progress" data-indeterminate aria-label="正在准备"></div></div>
+          <div class="row" style="gap:20px"><div class="ts-ring" data-value="72" aria-label="完成度"></div><div class="ts-ring ts-lg" data-value="35" id="ring" aria-label="存储空间"></div><span class="ts-spinner"></span><span class="ts-spinner ts-lg" style="color:var(--ts-accent-text)"></span><button class="ts-button ts-sm ts-pressable ts-state" id="prog-btn">推进进度</button></div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">结果页</h3><code>Result</code></div>
+          <div class="ts-segmented ts-sm" role="radiogroup" aria-label="结果类型" id="result-type" style="width:100%">
+            <label><input type="radio" name="rt" value="success" checked><span>成功</span></label>
+            <label><input type="radio" name="rt" value="error"><span>失败</span></label>
+            <label><input type="radio" name="rt" value="404"><span>404</span></label>
+          </div>
+          <div id="result"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 布局 ===================== -->
+    <section class="cat" id="layout">
+      <h2 class="ts-title-2">布局</h2>
+      <p>Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea</p>
+      <div class="demo-grid">
+        <div class="ts-card demo wide">
+          <div class="demo-name"><h3 class="ts-title-3">栅格 · 堆叠 · 分割线</h3><code>Grid · Stack · Divider</code></div>
+          <div class="ts-grid grid-demo"><div style="--span:3">span 3</div><div style="--span:3">span 3</div><div style="--span:6;--span-md:8">span 6</div><div style="--span:4">span 4</div><div style="--span:8">span 8</div></div>
+          <hr class="ts-divider">
+          <div class="ts-grid ts-tiled grid-demo"><div style="--span:4;border-radius:16px 6px 6px 16px">拼贴网格</div><div style="--span:4">砖缝 3px</div><div style="--span:4;border-radius:6px 16px 16px 6px">ts-tiled</div></div>
+          <div class="ts-divider" data-label><span>或者</span></div>
+          <div class="ts-stack ts-row ts-tight"><span class="ts-tag">Stack</span><span class="ts-tag">横向</span><span class="ts-spacer"></span><span class="ts-tag ts-accent">右侧</span></div>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">可拖拽分栏</h3><code>SplitPane</code></div>
+          <div class="ts-split split-demo" data-position="40" data-persist="demo"><div>左栏。拖动中间的把手，或聚焦后用方向键调整；双击还原。</div><div>右栏</div></div>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">滚动区域 · 宽高比</h3><code>ScrollArea · AspectRatio</code></div>
+          <div class="ts-scroll-area ts-card" style="height:150px;padding:16px" aria-label="可滚动内容"><p class="ts-body-sm ts-secondary" style="margin:0">上下边缘的渐隐提示还能继续滚动。</p><p class="ts-body-sm">TesseraUI 取意马赛克镶嵌：每个控件都是一块打磨圆润的釉面砖，成组时留出砖缝，按下去会微微下沉。石灰白的底、孔雀釉的主色、五种矿物颜料，配一套软衬线标题。一份设计令牌导出到 Apple、Android、Windows 与 Web 四个平台，浅色、深色与增强对比度只靠切换令牌。所有动效都用弹簧，可以随时打断，松手时继承手指的速度。</p></div>
+          <div class="ts-ratio" style="--ratio: 21 / 9"><svg class="art" viewBox="0 0 210 90" aria-label="21:9 示意"><rect width="210" height="90" fill="var(--ts-accent-subtle)"/><text x="105" y="52" text-anchor="middle" font-size="16" fill="var(--ts-accent-text)" font-family="monospace">21 : 9</text></svg></div>
+        </div>
+        <div class="ts-card demo">
+          <div class="demo-name"><h3 class="ts-title-3">容器 · 安全区</h3><code>Container · SafeArea</code></div>
+          <p class="ts-body-sm ts-secondary" style="margin:0"><code>.ts-container</code>：内容最宽 1200 居中，平板页边距 32、手机 16。<br><code>.ts-safe-area</code> / <code>.ts-safe-top</code> / <code>.ts-safe-bottom</code>：为刘海和底部手势条留出空间。本页的提示消息、底部抽屉、悬浮按钮都已使用。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== 移动端手势 ===================== -->
+    <section class="cat" id="gestures">
+      <h2 class="ts-title-2">移动端手势</h2>
+      <p>SwipeAction、PullToRefresh、InfiniteScroll、IndexBar。建议用手机打开本页体验；桌面上左滑和索引栏也可以用鼠标拖。</p>
+      <div class="demo-grid">
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">左滑操作</h3><code>SwipeAction</code></div>
+          <ul class="ts-list">
+            <li><div class="ts-swipe"><div class="ts-swipe-content"><div class="ts-list-item"><span class="ts-avatar ts-pigment-lapis">设</span><span class="ts-grow"><span class="ts-label">设计评审纪要</span><span class="ts-caption">向左滑动</span></span></div></div><div class="ts-swipe-actions"><button data-tone="accent"><i data-icon="bookmark"></i>收藏</button><button data-tone="danger" data-full><i data-icon="trash"></i>删除</button></div></div></li>
+            <li><div class="ts-swipe"><div class="ts-swipe-content"><div class="ts-list-item"><span class="ts-avatar ts-pigment-ochre">图</span><span class="ts-grow"><span class="ts-label">图标验收</span><span class="ts-caption">拉过 60% 直接删除</span></span></div></div><div class="ts-swipe-actions"><button data-tone="warning"><i data-icon="flag"></i>标记</button><button data-tone="danger" data-full><i data-icon="trash"></i>删除</button></div></div></li>
+          </ul>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">下拉刷新 · 上拉加载</h3><code>PullToRefresh · InfiniteScroll</code></div>
+          <div class="phone-frame">
+            <div class="ts-ptr" style="height:100%" id="ptr"><div class="ts-ptr-content" style="padding:12px"><ul class="ts-list" id="feed"></ul></div></div>
+          </div>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">字母索引栏</h3><code>IndexBar</code></div>
+          <div class="phone-frame"><div class="ts-scroll-area" style="height:100%" data-indexbar id="contacts"></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 浮层 -->
+<div class="ts-menu" id="save-menu"><button class="ts-menu-item"><i data-icon="copy"></i>另存为</button><button class="ts-menu-item"><i data-icon="download"></i>导出 PDF</button></div>
+<div class="ts-menu" id="ctx"><button class="ts-menu-item"><i data-icon="edit"></i>重命名<span class="ts-kbd">F2</span></button><button class="ts-menu-item"><i data-icon="copy"></i>复制<span class="ts-kbd">⌘C</span></button><button class="ts-menu-item"><i data-icon="share"></i>分享</button><div class="ts-menu-sep" role="separator"></div><button class="ts-menu-item ts-danger"><i data-icon="trash"></i>删除</button></div>
+<aside class="ts-drawer" id="drawer" aria-labelledby="drawer-title">
+  <div class="ts-drawer-head"><h2 id="drawer-title">筛选</h2><button class="ts-icon-button ts-pressable ts-state" data-close aria-label="关闭"><i data-icon="close"></i></button></div>
+  <div class="ts-drawer-body ts-stack">
+    <div class="ts-field"><span class="ts-field-label">价格</span><div class="ts-slider" data-min="0" data-max="500" data-step="10" data-value="50,300" data-label="最低价,最高价"></div></div>
+    <div class="ts-field"><span class="ts-field-label">评分</span><div class="ts-rating" data-value="4"></div></div>
+    <label class="ts-check"><input type="checkbox" role="switch" class="ts-switch" checked>只看有货</label>
+  </div>
+  <div class="ts-drawer-foot ts-tiles"><button class="ts-button ts-pressable ts-state" data-close>重置</button><button class="ts-button ts-primary ts-pressable ts-state" data-close>应用</button></div>
+</aside>
+
+<script type="module">
+import T from '../platforms/web/dist/tessera.js';
+
+// 动态内容要在 init 之前生成
+// 图片预览用的示意图（SVG 生成，不依赖外部图片）
+const pigments = ['#0F6B63', '#C4472D', '#2F4E9E', '#B7862B'];
+document.getElementById('thumbs').innerHTML = pigments.map((c, i) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="${c}"/>${Array.from({ length: 12 }, (_, k) => `<rect x="${(k % 4) * 100 + 8}" y="${Math.floor(k / 4) * 100 + 8}" width="84" height="84" rx="14" fill="#fff" opacity="${0.08 + ((k * 7 + i) % 5) * 0.05}"/>`).join('')}<text x="200" y="165" text-anchor="middle" font-family="Georgia" font-size="40" fill="#fff">Tessera ${i + 1}</text></svg>`;
+  return `<img data-viewer="demo" alt="示意图 ${i + 1}" src="data:image/svg+xml;utf8,${encodeURIComponent(svg)}">`;
+}).join('');
+
+// 下拉刷新列表
+const feed = document.getElementById('feed');
+let n = 0;
+const addItems = (k) => { for (let i = 0; i < k; i++) { n++; feed.insertAdjacentHTML('beforeend', `<li><div class="ts-list-item"><span class="ts-avatar ts-sm ts-pigment-${['lapis', 'olive', 'ochre', 'amethyst', 'cinnabar'][n % 5]}">${n}</span><span class="ts-grow"><span class="ts-label">第 ${n} 条动态</span><span class="ts-caption">往下拉刷新，滚到底自动加载</span></span></div></li>`); } };
+addItems(8);
+
+// 通讯录
+const names = { A: ['安然', '艾米'], B: ['白露', '包子'], C: ['陈晨', '程一'], D: ['丁香', '段落'], F: ['方圆'], G: ['高山', '顾北'], H: ['何夕', '韩梅'], L: ['林间', '刘洋', '陆离'], W: ['王一', '吴越'], Z: ['张三', '赵四', '周五'] };
+document.getElementById('contacts').innerHTML = Object.entries(names).map(([k, list]) => `<div class="ts-index-group" data-index="${k}">${k}</div>` + list.map((x) => `<div class="ts-list-item" style="border-radius:0;box-shadow:none;background:none;min-height:48px"><span class="ts-avatar ts-sm">${x[0]}</span><span class="ts-body-sm">${x}</span></div>`).join('')).join('');
+
+T.init();
+
+// 主题
+document.getElementById('theme').addEventListener('change', (e) => T.setTheme(e.target.value));
+
+// 按钮组：单选
+document.querySelectorAll('.ts-button-group').forEach((g) => g.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  g.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+}));
+
+// 验证码
+document.getElementById('otp').addEventListener('complete', (e) => {
+  const msg = document.getElementById('otp-msg');
+  if (e.detail.value === '000000') { e.target.setAttribute('data-invalid', ''); msg.textContent = '验证码错误，请重新输入'; msg.style.color = 'var(--ts-danger-text)'; }
+  else { msg.textContent = `已输入 ${e.detail.value}，验证通过`; msg.style.color = 'var(--ts-success-text)'; }
+});
+
+// 滑块数值
+document.getElementById('vol').addEventListener('input', (e) => (document.getElementById('vol-v').textContent = `${e.detail.value}%`));
+document.getElementById('price').addEventListener('input', (e) => (document.getElementById('price-v').textContent = `¥${e.detail.value[0]} – ¥${e.detail.value[1]}`));
+
+// 上传：模拟进度
+document.getElementById('upload').addEventListener('files', (e) => {
+  e.detail.items.forEach((it, k) => {
+    let p = 0;
+    const t = setInterval(() => { p += 8 + Math.random() * 18; if (p >= 100) { clearInterval(t); it.done(); } else it.progress(p); }, 220 + k * 60);
+  });
+});
+
+// 表单
+document.getElementById('signup').addEventListener('submit', (e) => { e.preventDefault(); T.toast('注册成功', { type: 'success' }); });
+
+// 滚轮
+T.wheel(document.getElementById('wheel'), {
+  columns: [
+    { label: '省份', value: '浙江', items: ['北京', '上海', '广东', '浙江', '江苏', '四川', '湖北', '陕西'].map((x) => ({ label: x, value: x })) },
+    { label: '数量', value: 3, items: Array.from({ length: 10 }, (_, i) => ({ label: `${i + 1} 件`, value: i + 1 })) },
+  ],
+  onChange: (v) => (document.getElementById('wheel-v').textContent = `已选：${v[0]} · ${v[1]} 件`),
+});
+document.getElementById('wheel-v').textContent = '上下滚动或用方向键选择';
+
+// 命令面板
+window.__cmd = T.commandPalette({ commands: [
+  { group: '跳转', label: '操作与输入', icon: 'edit', run: () => location.hash = '#forms' },
+  { group: '跳转', label: '选择器', icon: 'calendar', run: () => location.hash = '#pickers' },
+  { group: '跳转', label: '数据展示', icon: 'grid', keywords: '表格 树', run: () => location.hash = '#data' },
+  { group: '跳转', label: '移动端手势', icon: 'sparkle', run: () => location.hash = '#gestures' },
+  { group: '外观', label: '切换到夜窑（深色）', icon: 'moon', keywords: 'dark 深色', run: () => T.setTheme('dark') },
+  { group: '外观', label: '切换到石灰（浅色）', icon: 'sun', keywords: 'light 浅色', run: () => T.setTheme('light') },
+  { group: '操作', label: '新建项目', icon: 'plus', shortcut: '⌘N', run: () => T.toast('已新建项目', { type: 'success' }) },
+  { group: '操作', label: '分享当前页面', icon: 'share', run: () => T.toast('链接已复制') },
+] });
+document.getElementById('open-cmd').onclick = () => window.__cmd.open();
+
+// 确认框、操作面板
+document.getElementById('btn-confirm').onclick = async () => {
+  const ok = await T.confirm({ title: '删除“设计令牌”项目？', message: '删除后无法恢复，项目里的 12 个文件会一并删除。', confirmText: '删除', danger: true });
+  document.getElementById('fb-result').textContent = ok ? '你选择了：删除' : '你选择了：取消';
+};
+document.getElementById('btn-sheet').onclick = async () => {
+  const i = await T.actionSheet({ title: '对这张图片', actions: [{ label: '保存到相册', icon: 'download' }, { label: '分享', icon: 'share' }, { label: '删除', icon: 'trash', danger: true }] });
+  document.getElementById('fb-result').textContent = i < 0 ? '已取消' : `你选择了第 ${i + 1} 项`;
+};
+
+// 进度
+let pv = 35;
+document.getElementById('prog-btn').onclick = () => {
+  pv = pv >= 100 ? 0 : Math.min(100, pv + 20);
+  T.setProgress(document.getElementById('prog'), pv);
+  T.setProgress(document.getElementById('ring'), pv);
+  document.getElementById('prog-v').textContent = `${pv}%`;
+};
+
+// 结果页
+const results = {
+  success: ['check', '提交成功', '我们会在 1 个工作日内审核，结果会通过邮件通知你。', ['查看详情', '返回首页']],
+  error: ['close', '提交失败', '网络连接中断，你填写的内容已保存，可以稍后重试。', ['重试', '联系客服']],
+  404: [null, '页面不存在', '你访问的页面可能已被移动或删除。', ['返回首页']],
+};
+const renderResult = (k) => {
+  const [ic, title, text, acts] = results[k];
+  const el = document.getElementById('result');
+  el.innerHTML = `<div class="ts-result" data-status="${k}"><div class="ts-result-icon">${ic ? '' : '404'}</div><h4 class="ts-result-title">${title}</h4><p class="ts-result-text">${text}</p><div class="ts-result-actions">${acts.map((a, i) => `<button class="ts-button ${i ? '' : 'ts-primary'} ts-pressable ts-state">${a}</button>`).join('')}</div></div>`;
+  if (ic) el.querySelector('.ts-result-icon').append(T.icon(ic));
+};
+renderResult('success');
+document.getElementById('result-type').addEventListener('change', (e) => renderResult(e.target.value));
+
+// 下拉刷新、上拉加载
+document.getElementById('ptr').addEventListener('refresh', (e) => setTimeout(() => { feed.innerHTML = ''; n = 0; addItems(8); T.toast('已刷新'); e.detail.done(); }, 1200));
+T.infiniteScroll(feed, { onLoad: () => new Promise((r) => setTimeout(() => { addItems(6); r(n < 30); }, 800)) });
+</script>
+</body>
+</html>

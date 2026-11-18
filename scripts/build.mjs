@@ -1,6 +1,6 @@
 // TesseraUI token 构建：tokens/*.json → 四端平台文件。
 // 用法：node scripts/build.mjs
-import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import {
   ROOT, THEMES, loadTokens, resolveSemanticColors, springParams, springToCssLinear,
@@ -138,9 +138,19 @@ function buildWeb() {
     flat.shadow[theme] = Object.fromEntries(SHADOW_LEVELS.map((lv) => [lv, shadowLayers(lv, theme)]));
   }
   // 组件样式和运行时：tessera.css = tokens + 组件
-  const componentsCss = readFileSync(join(ROOT, 'platforms/web/src/components.css'), 'utf8');
+  rmSync(join(ROOT, 'platforms/web/dist/modules'), { recursive: true, force: true });
+  // 组件样式按文件名顺序合并：00-base、10-forms……
+  const cssDir = join(ROOT, 'platforms/web/src/css');
+  const componentsCss = readdirSync(cssDir).filter((f) => f.endsWith('.css')).sort()
+    .map((f) => `/* ===== ${f} ===== */\n` + readFileSync(join(cssDir, f), 'utf8')).join('\n');
   emit('platforms/web/dist/tessera.css', lines.join('\n') + '\n\n' + componentsCss);
-  emit('platforms/web/dist/tessera.js', `${HEADER()}\n` + readFileSync(join(ROOT, 'platforms/web/src/tessera.js'), 'utf8'));
+  // 运行时脚本：入口、核心与各组件模块原样复制（保持相对 import 路径）
+  const srcDir = join(ROOT, 'platforms/web/src');
+  const jsFiles = [
+    ...readdirSync(srcDir).filter((f) => f.endsWith('.js')),
+    ...readdirSync(join(srcDir, 'modules')).filter((f) => f.endsWith('.js')).map((f) => `modules/${f}`),
+  ];
+  for (const f of jsFiles) emit(`platforms/web/dist/${f}`, `${HEADER()}\n` + readFileSync(join(srcDir, f), 'utf8'));
 
   emit('platforms/web/dist/tokens.json', JSON.stringify(flat, null, 2));
   emit(

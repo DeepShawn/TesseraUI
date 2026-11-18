@@ -1,0 +1,63 @@
+/* 布局：Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea */
+
+@layer tessera {
+
+/* ---------- 容器 Container：桌面内容最宽 1200 居中；平板页边距 32，手机 16 ---------- */
+.ts-container { width: 100%; max-width: calc(1200px + 2 * var(--_margin)); margin-inline: auto; padding-inline: var(--_margin); --_margin: 32px; }
+@media (max-width: 639px) { .ts-container { --_margin: 16px; } }
+.ts-container.ts-narrow { max-width: calc(720px + 2 * var(--_margin)); }
+
+/* ---------- 栅格 Grid：手机 4 列、平板 8 列、桌面 12 列 ---------- */
+.ts-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 24px; }
+.ts-grid > * { grid-column: span var(--span, 12); }
+@media (max-width: 1024px) { .ts-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } .ts-grid > * { grid-column: span min(var(--span-md, var(--span, 8)), 8); } }
+@media (max-width: 639px) { .ts-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; } .ts-grid > * { grid-column: span min(var(--span-sm, 4), 4); } }
+/* 拼贴网格：格与格之间是砖缝 */
+.ts-grid.ts-tiled { gap: var(--ts-tile-grout); }
+
+/* ---------- 堆叠 Stack ---------- */
+.ts-stack { display: flex; flex-direction: column; gap: var(--gap, var(--ts-space-4)); }
+.ts-stack.ts-row { flex-direction: row; align-items: center; flex-wrap: wrap; }
+.ts-stack.ts-tight { --gap: var(--ts-space-2); }
+.ts-stack.ts-loose { --gap: var(--ts-space-8); }
+.ts-spacer { flex: 1; }
+
+/* ---------- 分割线 Divider：默认是一道砖缝；只有必要时才用细线 ---------- */
+.ts-divider { border: 0; margin: var(--ts-space-4) 0; height: var(--ts-tile-grout); border-radius: 2px; background: var(--ts-bg-canvas); }
+.ts-divider.ts-line { height: 1px; background: var(--ts-border-subtle); }
+.ts-divider.ts-vertical { width: 1px; height: auto; align-self: stretch; margin: 0 var(--ts-space-2); background: var(--ts-border-subtle); }
+.ts-divider[data-label] { display: flex; align-items: center; gap: var(--ts-space-3); height: auto; background: none; font: var(--ts-font-caption); color: var(--ts-text-tertiary); }
+.ts-divider[data-label]::before, .ts-divider[data-label]::after { content: ""; flex: 1; height: 1px; background: var(--ts-border-subtle); }
+.ts-divider[data-label]::after { order: 2; }
+.ts-divider[data-label] > span { order: 1; }
+
+/* ---------- 滚动区域 ScrollArea：细滚动条 + 上下边缘渐隐提示还能滚 ---------- */
+.ts-scroll-area { overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--ts-border-strong) transparent; }
+.ts-scroll-area[data-fade-top] { mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
+.ts-scroll-area[data-fade-bottom] { mask-image: linear-gradient(#000 calc(100% - 24px), transparent); -webkit-mask-image: linear-gradient(#000 calc(100% - 24px), transparent); }
+.ts-scroll-area[data-fade-top][data-fade-bottom] { mask-image: linear-gradient(transparent, #000 24px, #000 calc(100% - 24px), transparent); -webkit-mask-image: linear-gradient(transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+
+/* ---------- 可拖拽分栏 SplitPane ---------- */
+.ts-split { display: flex; min-height: 0; --_pos: 50%; }
+.ts-split > :first-child { flex: 0 0 var(--_pos); min-width: 0; overflow: auto; }
+.ts-split > :last-child { flex: 1; min-width: 0; overflow: auto; }
+.ts-split-handle { flex: none; width: 12px; display: grid; place-items: center; cursor: col-resize; touch-action: none; outline: none; }
+.ts-split-handle::before { content: ""; width: 4px; height: 36px; border-radius: 2px; background: var(--ts-border-strong); opacity: .5; transition: opacity var(--ts-duration-fast), height var(--ts-spring-snappy-duration) var(--ts-spring-snappy); }
+.ts-split-handle:hover::before, .ts-split-handle[data-dragging]::before { opacity: 1; height: 56px; }
+.ts-split-handle:focus-visible::before { opacity: 1; background: var(--ts-focus-ring); }
+.ts-split.ts-vertical { flex-direction: column; }
+.ts-split.ts-vertical .ts-split-handle { width: auto; height: 12px; cursor: row-resize; }
+.ts-split.ts-vertical .ts-split-handle::before { width: 36px; height: 4px; }
+.ts-split.ts-vertical .ts-split-handle:hover::before { width: 56px; height: 4px; }
+
+/* ---------- 宽高比 AspectRatio ---------- */
+.ts-ratio { position: relative; aspect-ratio: var(--ratio, 16 / 9); overflow: hidden; border-radius: var(--ts-radius-md); background: var(--ts-fill-default); }
+/* 子元素绝对定位铺满，避免内容的固有尺寸撑破比例 */
+.ts-ratio > * { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border: 0; }
+
+/* ---------- 安全区 SafeArea ---------- */
+.ts-safe-area { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+.ts-safe-top { padding-top: env(safe-area-inset-top); }
+.ts-safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+
+}

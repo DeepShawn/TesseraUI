@@ -2,7 +2,7 @@
 
 > **Tessera**：马赛克镶嵌用的一块块小石片、小瓷砖。每一块都被打磨得圆润，单看朴素，拼在一起才是完整的画面——一份 token 拼出 Apple、Android、Windows、Web 四端一致的界面。
 
-- 版本：v0.1.0
+- 版本：v0.2.0
 - 日期：2026-11-18
 - 目标平台：Apple（iOS / iPadOS / macOS / visionOS）、Android、Windows、Web
 - 本文是规范的唯一来源；token 的具体数值以 `tokens/*.json` 为准，本文表格与之保持一致。
@@ -184,7 +184,7 @@ Token 分三层：
 | `radius.full` | 9999 | 只用于单选 |
 
 - **单个控件是圆角方砖，不是胶囊。** 控件圆角约为高度的 35%：明显圆润，但仍看得出是方砖、不是胶囊。头像是 36% 圆角的方砖；开关轨道 52×30、圆角 13，滑块 24×24、圆角 10（轨道圆角 − 内边距 3 = 10，里外两条弧线平行）。
-- **拼贴组外角大、内角小**：组的四个外角用 `lg`（或控件自身的 `md`），砖与砖相邻的内角一律 `grout` 4。
+- **拼贴组外角大、内角小**：组的四个外角用 `lg`（或控件自身的 `md`），砖与砖相邻的内角一律 `grout` 6。
 - 圆角采用连续曲率（squircle）：直边转进弯角的地方没有折点。Apple 原生支持（`.continuous`）；Web 暂不启用 `corner-shape`（Chromium 当前实现的边缘抗锯齿不足，放大看有锯齿），先用普通圆角；Android、Windows v0.1 先用普通圆角，v0.2 提供 squircle Shape。
 - **砖面质感的画法（防锯齿）**：釉光、砖厚用渐变绘制，跟着圆角一起被裁切；凹槽用带 2px 模糊的内阴影。**不要用不模糊的偏移内阴影**（如 `inset 0 -2px 0`）——它在圆角处会切出两个尖角，看起来有锯齿。各平台同理：Apple 用 `clipShape` 裁切的色带，Android 用 `drawBehind` + `clip`，Windows 用被同圆角 Border 裁切的 Rectangle。
 - 嵌套规则：里层圆角 = 外层圆角 − 内边距。
@@ -478,17 +478,34 @@ Token 分三层：
 | 一、基础 ✅ v0.1 | 原始色板、全部语义 token、字体、间距、圆角、阴影、层级、断点、动效 token；写成 JSON 源文件，再导出到四端 | 切换浅色/深色只改 token；对比度自动检查全部通过 |
 | 二、首批 | 首批约 150 个图标 + 标 ★ 的 22 个组件 | 每个组件都达到下面的“组件完成标准” |
 | 三、原生重绘 | 第 6 节列出的全部原生控件 | 主流浏览器和系统上外观一致；中文输入法测试通过 |
-| 四、补全 | 其余约 60 个组件 | 达到“组件完成标准” |
+| 四、补全（Web ✅ v0.2） | 其余约 60 个组件 | 达到“组件完成标准” |
 | 五、文档 | 文档站（每个组件的用法、参数、示例、注意事项）+ 设计工具里的组件库 | 新人只看文档就能搭出一个完整页面 |
 
 ### v0.1 实际完成情况
 
-- **阶段一全部完成**：token 源文件、四端导出、对比度自动检查（240 项）
+- **阶段一全部完成**：token 源文件、四端导出、对比度自动检查（284 项）
 - **设计语言**：在方案稿基础上确立了“拼贴、釉面砖、软衬线、矿物色”四个识别要素（第 0 节），颜色、字体、圆角、阴影、动效随之重新定义
 - **图标**：首批 157 个全部完成（见 4.2）
 - **提前做了一部分阶段二、三（只在 Web 端）**：按钮、图标按钮、文本框、搜索框、下拉选择、复选框、单选、开关、分段控制、标签页、卡片、列表、头像、徽标、标签、骨架屏、菜单、对话框、底部抽屉、提示消息、顶部导航栏、底部标签栏，正好是方案里标 ★ 的 22 个首批组件；滚动条、选中文字、自动填充底色等原生控件重绘
 - **原生三端只有参考实现**：token、主题和一个按钮组件，用来验证 token 在各平台用得顺手；尚未在 Xcode、Android Studio、Visual Studio 中编译验证
 - 这 22 个 Web 组件还没有逐项达到下面的“组件完成标准”（例如截图对比测试还没做），所以阶段二不算完成
+
+### v0.2 实际完成情况
+
+- **阶段四（Web 端）完成**：5.2 清单里其余 62 个组件全部实现，Web 端共 84 个组件
+  - 操作：ButtonGroup、SplitButton、FAB、Link
+  - 输入：TextArea、PasswordField、NumberInput、OTPInput、Autocomplete、TagInput、Slider（单值 / 范围）、Rating、FileUpload
+  - 选择器：DatePicker、TimePicker、DateRangePicker、WheelPicker、ColorPicker、Calendar
+  - 表单：Form、FormField、FieldGroup（中文校验提示）
+  - 导航：Sidebar、Breadcrumb、Pagination、Steps、ContextMenu、CommandPalette、Anchor
+  - 数据展示：Table、Tree、Accordion、AvatarGroup、Tooltip、Popover、DescriptionList、Timeline、Stat、Carousel、ImageViewer、EmptyState、CodeBlock、Kbd
+  - 反馈：Banner、ConfirmDialog、Drawer、ActionSheet、Progress（线形 / 环形）、Spinner、Result
+  - 布局：Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea
+  - 移动端手势：SwipeAction、PullToRefresh、InfiniteScroll、IndexBar
+- **原生控件重绘（6.1）补齐**：`<select>`、日期 / 时间输入在手机上改为底部抽屉；`title` 悬停提示替换为工具提示；`alert()` / `confirm()` 由 ConfirmDialog 替代
+- **代码结构**：Web 端拆为核心（`core.js`）与 7 个组件模块（`modules/*.js`），样式按类别拆为 8 个文件，构建时合并
+- **端到端测试**：42 项交互测试（键盘、鼠标、触屏、输入法、手机布局），全部通过
+- **仍未完成**：原生三端组件（计划 v0.3）；截图对比测试；文档站（阶段五）
 
 ### 组件完成标准
 

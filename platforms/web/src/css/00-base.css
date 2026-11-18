@@ -11,6 +11,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* 组件自己设置了 display 时，hidden 属性也必须生效 */
+.ts-root [hidden] { display: none !important; }
+
 .ts-root, :root.ts-root {
   font: var(--ts-font-body);
   color: var(--ts-text-primary);

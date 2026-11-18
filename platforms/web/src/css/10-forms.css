@@ -1,0 +1,163 @@
+/* 操作与输入：Link、FAB、ButtonGroup、SplitButton、TextArea、PasswordField、NumberInput、
+   OTPInput、Autocomplete、TagInput、Slider、Rating、FileUpload、Form、FieldGroup */
+
+@layer tessera {
+
+/* ---------- 链接 Link ---------- */
+.ts-link {
+  color: var(--ts-accent-text); text-decoration: underline; text-decoration-thickness: 1px;
+  text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  transition: text-decoration-color var(--ts-duration-instant) var(--ts-ease-standard);
+  border-radius: 4px;
+}
+.ts-link:hover { text-decoration-color: currentColor; }
+.ts-link .ts-icon { width: .9em; height: .9em; margin-inline-start: 2px; vertical-align: -1px; }
+
+/* ---------- 悬浮按钮 FAB：一块大釉面砖 ---------- */
+.ts-fab {
+  position: fixed; z-index: var(--ts-z-sticky);
+  right: max(var(--ts-space-5), env(safe-area-inset-right)); bottom: max(var(--ts-space-5), env(safe-area-inset-bottom));
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--ts-space-2);
+  min-width: 56px; height: 56px; padding: 0 16px 2px; border: 0; border-radius: 20px; cursor: pointer;
+  background-color: var(--ts-accent-solid); color: var(--ts-text-on-solid); font: var(--ts-font-label); font-size: 15px;
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  box-shadow: var(--ts-shadow-2);
+}
+.ts-fab.ts-static { position: static; }
+.ts-fab .ts-icon { width: 24px; height: 24px; }
+.ts-fab:active { background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid-pressed); }
+
+/* ---------- 按钮组 ButtonGroup / 分割按钮 SplitButton：拼贴组 ---------- */
+.ts-button-group, .ts-split-button { display: inline-flex; gap: var(--ts-tile-grout); --_outer: var(--ts-radius-md); }
+.ts-button-group > *, .ts-split-button > * { border-radius: var(--ts-radius-grout) !important; }
+.ts-button-group > :first-child, .ts-split-button > :first-child { border-start-start-radius: var(--_outer) !important; border-end-start-radius: var(--_outer) !important; }
+.ts-button-group > :last-child, .ts-split-button > :last-child { border-start-end-radius: var(--_outer) !important; border-end-end-radius: var(--_outer) !important; }
+.ts-button-group > [aria-pressed="true"] { background-color: var(--ts-text-primary); color: var(--ts-bg-surface); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+.ts-split-button > :last-child { --_px: 10px; }
+
+/* ---------- 多行文本 TextArea ---------- */
+.ts-textarea { flex-direction: column; }
+.ts-textarea > textarea { width: 100%; }
+.ts-textarea[data-autosize] > textarea { resize: none; overflow: hidden; }
+
+/* ---------- 密码框 PasswordField ---------- */
+.ts-password .ts-reveal { margin-inline-end: -6px; width: 30px; height: 30px; border-radius: 10px; color: var(--ts-text-secondary); }
+.ts-caps { display: none; font: var(--ts-font-caption); color: var(--ts-warning-text); }
+.ts-field[data-caps] .ts-caps { display: inline; }
+
+/* ---------- 数字步进器 NumberInput：[−][数值][+] 三块砖 ---------- */
+.ts-number { display: inline-flex; gap: var(--ts-tile-grout); --_outer: var(--ts-radius-md); }
+.ts-number > .ts-input { width: 88px; border-radius: var(--ts-radius-grout); padding: 0 var(--ts-space-2); }
+.ts-number > .ts-input > input { text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
+.ts-number > .ts-icon-button { border-radius: var(--ts-radius-grout); }
+.ts-number > :first-child { border-radius: var(--_outer) var(--ts-radius-grout) var(--ts-radius-grout) var(--_outer); }
+.ts-number > :last-child { border-radius: var(--ts-radius-grout) var(--_outer) var(--_outer) var(--ts-radius-grout); }
+
+/* ---------- 验证码 OTPInput：一排凹槽砖；真正的输入框盖在上面、透明 ---------- */
+.ts-otp { position: relative; display: inline-grid; grid-auto-flow: column; gap: var(--ts-space-2); }
+.ts-otp-cell {
+  width: 48px; height: 56px; display: grid; place-items: center; border-radius: var(--ts-radius-md);
+  background: var(--ts-fill-default); box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field);
+  font: 600 24px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes); font-variant-numeric: tabular-nums;
+  transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), box-shadow var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-otp-cell[data-filled] { animation: ts-settle var(--ts-spring-snappy-duration) var(--ts-spring-snappy); }
+.ts-otp-cell[data-active] { background: var(--ts-bg-surface); box-shadow: inset 0 0 0 1px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow); }
+.ts-otp-cell[data-active]:not([data-filled])::after { content: ""; width: 2px; height: 24px; border-radius: 1px; background: var(--ts-accent-solid); animation: ts-caret 1s steps(1) infinite; }
+@keyframes ts-caret { 50% { opacity: 0; } }
+.ts-otp > input {
+  position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; padding: 0;
+  font-size: 16px; /* 防止 iOS 聚焦时自动放大 */ letter-spacing: 2em; caret-color: transparent; color: transparent;
+}
+.ts-otp[data-invalid] .ts-otp-cell { box-shadow: inset 0 0 0 1px var(--ts-danger-text); animation: ts-shake 300ms var(--ts-ease-standard); }
+@keyframes ts-shake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+
+/* ---------- 下拉列表（自动补全、选择器共用）---------- */
+.ts-listbox {
+  position: fixed; z-index: var(--ts-z-popover); margin: 0; padding: var(--ts-space-1); list-style: none;
+  min-width: 200px; max-height: 320px; overflow: auto; overscroll-behavior: contain;
+  border-radius: var(--ts-radius-lg); background: var(--ts-bg-elevated); color: var(--ts-text-primary);
+  box-shadow: var(--ts-shadow-2), 0 0 0 var(--ts-border-width) var(--ts-border-subtle);
+}
+.ts-option {
+  display: flex; align-items: center; gap: var(--ts-space-3); min-height: 36px; padding: 6px var(--ts-space-3);
+  border-radius: calc(var(--ts-radius-lg) - var(--ts-space-1)); font: var(--ts-font-body-sm); cursor: pointer;
+}
+.ts-option[aria-selected="true"] { background: var(--ts-state-hover); }
+.ts-option mark { background: none; color: var(--ts-accent-text); font-weight: 600; }
+.ts-option .ts-caption { margin-inline-start: auto; color: var(--ts-text-tertiary); }
+.ts-listbox-empty { padding: var(--ts-space-4); text-align: center; font: var(--ts-font-body-sm); color: var(--ts-text-tertiary); }
+
+/* ---------- 标签输入 TagInput ---------- */
+.ts-taginput { height: auto; min-height: var(--ts-size-md); flex-wrap: wrap; padding: 5px 6px; gap: 4px; cursor: text; }
+.ts-taginput > input { min-width: 80px; height: 28px; padding: 0 6px; }
+.ts-taginput .ts-tag { height: 28px; padding: 0 4px 0 10px; font: var(--ts-font-label); font-size: 13px; background: var(--ts-bg-surface); color: var(--ts-text-primary); box-shadow: 0 0 0 1px var(--ts-border-subtle); background-image: var(--ts-layer-edge-soft); animation: ts-settle var(--ts-spring-snappy-duration) var(--ts-spring-snappy); }
+.ts-taginput .ts-tag button { display: grid; place-items: center; width: 20px; height: 20px; border: 0; border-radius: 6px; background: none; color: var(--ts-text-tertiary); cursor: pointer; padding: 0; }
+.ts-taginput .ts-tag button:hover { background: var(--ts-state-hover); color: var(--ts-text-primary); }
+.ts-taginput .ts-tag[data-armed] { box-shadow: 0 0 0 1.5px var(--ts-danger-text); }
+
+/* ---------- 滑块 Slider（单值 / 范围）：凹槽轨道 + 釉面填充 + 方砖滑块 ---------- */
+.ts-slider {
+  --_h: 8px; --_thumb: 22px;
+  position: relative; height: 32px; display: flex; align-items: center; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: pointer;
+}
+.ts-slider-track { position: relative; flex: 1; height: var(--_h); border-radius: 4px; background: var(--ts-fill-control-off); box-shadow: var(--ts-recess); }
+.ts-slider-fill { position: absolute; top: 0; bottom: 0; border-radius: 4px; background-color: var(--ts-accent-control); background-image: var(--ts-layer-sheen); }
+.ts-slider-ticks { position: absolute; inset: 0; display: flex; justify-content: space-between; padding: 0 1px; pointer-events: none; }
+.ts-slider-ticks i { width: 2px; height: 2px; margin-top: 3px; border-radius: 1px; background: var(--ts-text-tertiary); opacity: .6; }
+.ts-slider-thumb {
+  position: absolute; top: 50%; width: var(--_thumb); height: var(--_thumb); margin: calc(var(--_thumb) / -2) 0 0 calc(var(--_thumb) / -2);
+  border-radius: 8px; background-color: #fff; background-image: linear-gradient(to top, rgb(31 27 22 / .08), transparent 45%);
+  box-shadow: 0 0.5px 1px rgb(31 27 22 / .22), 0 2px 6px rgb(31 27 22 / .16), 0 0 0 var(--ts-border-width) var(--ts-border-field);
+  transition: transform var(--ts-spring-snappy-duration) var(--ts-spring-snappy);
+  will-change: left;
+}
+.ts-slider-thumb:focus-visible { outline: var(--ts-focus-ring-width) solid var(--ts-focus-ring); outline-offset: 2px; }
+.ts-slider[data-dragging] .ts-slider-thumb[data-active] { transform: scale(1.12); }
+.ts-slider-value {
+  position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%) translateY(4px) scale(.9); opacity: 0;
+  padding: 4px 8px; border-radius: 8px; background: var(--ts-bg-inverse); color: var(--ts-text-inverse);
+  font: 600 12px/1.2 var(--ts-font-sans); font-variant-numeric: tabular-nums; white-space: nowrap; pointer-events: none;
+  transition: opacity var(--ts-duration-fast) var(--ts-ease-standard), transform var(--ts-spring-snappy-duration) var(--ts-spring-snappy);
+}
+.ts-slider-thumb:focus-visible .ts-slider-value, .ts-slider[data-dragging] .ts-slider-thumb[data-active] .ts-slider-value { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+.ts-slider[aria-disabled="true"] { opacity: var(--ts-opacity-disabled); pointer-events: none; }
+
+/* ---------- 评分 Rating ---------- */
+.ts-rating { display: inline-flex; gap: 2px; }
+.ts-rating button {
+  display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 10px; background: none; cursor: pointer;
+  color: var(--ts-fill-control-off); transition: color var(--ts-duration-instant) var(--ts-ease-standard), transform var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy);
+}
+.ts-rating button .ts-icon { width: 24px; height: 24px; }
+.ts-rating button[data-on] { color: var(--ts-pigment-ochre); }
+.ts-rating button[data-pop] { transform: scale(1.25); }
+.ts-rating[aria-readonly="true"] button { cursor: default; }
+
+/* ---------- 文件上传 FileUpload ---------- */
+.ts-upload {
+  display: grid; justify-items: center; gap: var(--ts-space-2); padding: var(--ts-space-8) var(--ts-space-6); text-align: center; cursor: pointer;
+  border-radius: var(--ts-radius-lg); background: var(--ts-fill-default); box-shadow: var(--ts-recess);
+  outline: 1.5px dashed var(--ts-border-strong); outline-offset: -8px;
+  transition: background-color var(--ts-duration-fast) var(--ts-ease-standard), outline-color var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-upload:focus-visible { outline: var(--ts-focus-ring-width) solid var(--ts-focus-ring); outline-offset: 2px; }
+.ts-upload[data-over] { background: var(--ts-accent-subtle); outline-color: var(--ts-accent-text); }
+.ts-upload > .ts-icon { width: 32px; height: 32px; color: var(--ts-accent-text); }
+.ts-upload input[type="file"] { display: none; }
+.ts-upload-list { list-style: none; margin: var(--ts-space-3) 0 0; padding: 0; display: grid; gap: var(--ts-tile-grout); }
+.ts-upload-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--ts-space-3); padding: 10px 12px; border-radius: var(--ts-radius-grout); background: var(--ts-bg-surface); box-shadow: 0 0 0 1px var(--ts-border-subtle); }
+.ts-upload-list > :first-child { border-top-left-radius: var(--ts-radius-lg); border-top-right-radius: var(--ts-radius-lg); }
+.ts-upload-list > :last-child { border-bottom-left-radius: var(--ts-radius-lg); border-bottom-right-radius: var(--ts-radius-lg); }
+.ts-upload-item .ts-progress { grid-column: 2; }
+
+/* ---------- 表单 Form / 表单分组 FieldGroup ---------- */
+.ts-form { display: grid; gap: var(--ts-space-5); }
+.ts-form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--ts-space-4); }
+.ts-fieldset { margin: 0; padding: var(--ts-space-5); border: 0; border-radius: var(--ts-radius-lg); background: var(--ts-bg-surface); box-shadow: 0 0 0 1px var(--ts-border-subtle); display: grid; gap: var(--ts-space-4); }
+.ts-fieldset > legend { float: left; width: 100%; padding: 0; margin-bottom: var(--ts-space-1); font: var(--ts-font-title-3); font-variation-settings: var(--ts-font-serif-axes); }
+.ts-fieldset > legend + * { clear: both; }
+.ts-required::after { content: " *"; color: var(--ts-danger-text); }
+.ts-form-actions { display: flex; gap: var(--ts-space-2); justify-content: flex-end; }
+
+}

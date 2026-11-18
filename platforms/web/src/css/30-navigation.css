@@ -1,0 +1,109 @@
+/* 导航：Sidebar、Breadcrumb、Pagination、Steps、ContextMenu、CommandPalette、Anchor */
+
+@layer tessera {
+
+/* ---------- 侧边栏 Sidebar ---------- */
+.ts-sidebar {
+  --_w: 248px; width: var(--_w); flex: none; display: flex; flex-direction: column; gap: var(--ts-space-1);
+  padding: var(--ts-space-3); background: var(--ts-bg-canvas); overflow: hidden auto;
+  transition: width var(--ts-spring-smooth-duration) var(--ts-spring-smooth);
+}
+.ts-sidebar[data-collapsed] { --_w: 68px; }
+.ts-sidebar-head { display: flex; align-items: center; gap: var(--ts-space-2); min-height: 44px; padding: 0 4px var(--ts-space-2); }
+.ts-sidebar-section { margin: var(--ts-space-4) 12px var(--ts-space-1); white-space: nowrap; }
+.ts-sidebar-item {
+  position: relative; display: flex; align-items: center; gap: var(--ts-space-3); min-height: 40px; padding: 0 12px;
+  border-radius: var(--ts-radius-md); color: var(--ts-text-secondary); font: var(--ts-font-label); text-decoration: none; white-space: nowrap;
+  transition: background-color var(--ts-duration-instant) var(--ts-ease-standard), color var(--ts-duration-instant) var(--ts-ease-standard);
+}
+.ts-sidebar-item .ts-icon { width: 20px; height: 20px; flex: none; }
+.ts-sidebar-item:hover { background: var(--ts-state-hover); color: var(--ts-text-primary); }
+.ts-sidebar-item[aria-current="page"] {
+  background-color: var(--ts-bg-surface); color: var(--ts-text-primary);
+  background-image: var(--ts-layer-edge-soft); box-shadow: 0 0 0 var(--ts-border-width) var(--ts-border-surface), var(--ts-shadow-1);
+}
+.ts-sidebar-item[aria-current="page"] .ts-icon { color: var(--ts-accent-text); }
+.ts-sidebar-item .ts-badge { margin-inline-start: auto; }
+.ts-sidebar-label { transition: opacity var(--ts-duration-fast) var(--ts-ease-standard); }
+.ts-sidebar[data-collapsed] :is(.ts-sidebar-label, .ts-sidebar-section, .ts-sidebar-item .ts-badge) { opacity: 0; pointer-events: none; }
+.ts-sidebar[data-collapsed] .ts-sidebar-section { height: 0; margin: var(--ts-space-2) 0; }
+
+/* ---------- 面包屑 Breadcrumb ---------- */
+.ts-breadcrumb ol { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; margin: 0; padding: 0; list-style: none; font: var(--ts-font-body-sm); }
+.ts-breadcrumb li { display: inline-flex; align-items: center; gap: 2px; }
+.ts-breadcrumb li + li::before {
+  content: ""; width: 14px; height: 14px; background: var(--ts-text-tertiary);
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>') center / contain no-repeat;
+}
+.ts-breadcrumb a { padding: 4px 6px; border-radius: 8px; color: var(--ts-text-secondary); text-decoration: none; }
+.ts-breadcrumb a:hover { background: var(--ts-state-hover); color: var(--ts-text-primary); }
+.ts-breadcrumb [aria-current="page"] { padding: 4px 6px; color: var(--ts-text-primary); font-weight: 600; }
+
+/* ---------- 分页 Pagination：一排砖 ---------- */
+.ts-pagination { display: flex; align-items: center; gap: var(--ts-space-3); flex-wrap: wrap; }
+.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); }
+.ts-page {
+  min-width: 36px; height: 36px; padding: 0 8px; border: 0; border-radius: var(--ts-radius-grout); cursor: pointer;
+  background-color: var(--ts-fill-default); color: var(--ts-text-secondary); font: 600 13px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
+  background-image: var(--ts-layer-edge-soft); display: inline-grid; place-items: center;
+}
+.ts-pages > :first-child { border-radius: 12px var(--ts-radius-grout) var(--ts-radius-grout) 12px; }
+.ts-pages > :last-child { border-radius: var(--ts-radius-grout) 12px 12px var(--ts-radius-grout); }
+.ts-page[aria-current="page"] { background-color: var(--ts-text-primary); color: var(--ts-bg-surface); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+.ts-page[data-gap] { background: none; cursor: default; color: var(--ts-text-tertiary); min-width: 24px; }
+.ts-page .ts-icon { width: 16px; height: 16px; }
+.ts-page:disabled { opacity: .35; cursor: not-allowed; }
+
+/* ---------- 步骤条 Steps ---------- */
+.ts-steps { display: flex; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.ts-step { flex: 1; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: var(--ts-space-3); position: relative; counter-increment: step; min-width: 0; }
+.ts-step::before {
+  content: counter(step); grid-row: span 2; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 11px;
+  background-color: var(--ts-fill-default); color: var(--ts-text-secondary); font: 600 14px/1 var(--ts-font-serif); font-variation-settings: var(--ts-font-serif-axes);
+  box-shadow: var(--ts-recess); position: relative; z-index: 1;
+}
+/* 连接线是一道砖缝样式的细槽 */
+.ts-step:not(:last-child)::after { content: ""; position: absolute; top: 15px; left: 44px; right: 12px; height: 3px; border-radius: 2px; background: var(--ts-fill-control-off); }
+.ts-step-title { font: var(--ts-font-label); padding-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-inline-end: var(--ts-space-3); background: var(--_bg, var(--ts-bg-surface)); position: relative; z-index: 1; justify-self: start; }
+.ts-step-desc { font: var(--ts-font-caption); color: var(--ts-text-secondary); padding-inline-end: var(--ts-space-3); }
+.ts-step[data-status="done"]::before { content: ""; box-shadow: none; background:
+  url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12.5l4 4 8-9"/></svg>') center / 16px no-repeat, var(--ts-layer-sheen), var(--ts-layer-edge-solid), var(--ts-accent-control); }
+.ts-step[data-status="done"]:not(:last-child)::after { background: var(--ts-accent-control); }
+.ts-step[data-status="current"]::before { background-color: var(--ts-text-primary); color: var(--ts-bg-surface); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); box-shadow: 0 0 0 4px var(--ts-accent-subtle); }
+.ts-step[data-status="error"]::before { content: "!"; background-color: var(--ts-danger-solid); color: #fff; box-shadow: none; }
+.ts-steps.ts-vertical { flex-direction: column; gap: var(--ts-space-5); }
+.ts-steps.ts-vertical .ts-step:not(:last-child)::after { top: 40px; bottom: calc(var(--ts-space-5) * -1 + 6px); left: 14.5px; right: auto; width: 3px; height: auto; }
+
+/* ---------- 命令面板 CommandPalette ---------- */
+dialog.ts-command {
+  width: min(600px, calc(100vw - 24px)); max-height: min(520px, 80vh); margin-top: 12vh; padding: 0; border: 0;
+  border-radius: var(--ts-radius-xl); background: var(--ts-bg-elevated); color: var(--ts-text-primary); overflow: hidden;
+  box-shadow: var(--ts-shadow-3), 0 0 0 var(--ts-border-width) var(--ts-border-surface);
+}
+dialog.ts-command[open] { display: flex; flex-direction: column; }
+dialog.ts-command::backdrop { background: var(--ts-bg-scrim); }
+.ts-command-search { display: flex; align-items: center; gap: var(--ts-space-3); padding: 0 var(--ts-space-5); height: 60px; box-shadow: inset 0 -1px 0 var(--ts-border-subtle); }
+.ts-command-search .ts-icon { width: 20px; height: 20px; color: var(--ts-text-tertiary); }
+.ts-command-search input { flex: 1; height: 100%; border: 0; outline: 0; background: none; color: var(--ts-text-primary); font: var(--ts-font-body); font-size: 17px; }
+.ts-command-search input::placeholder { color: var(--ts-text-tertiary); }
+.ts-command-list { flex: 1; overflow: auto; padding: var(--ts-space-2); overscroll-behavior: contain; }
+.ts-command-group { margin: var(--ts-space-3) var(--ts-space-3) var(--ts-space-1); }
+.ts-command-item { display: flex; align-items: center; gap: var(--ts-space-3); min-height: 44px; padding: 0 var(--ts-space-3); border-radius: var(--ts-radius-md); cursor: pointer; font: var(--ts-font-body-sm); }
+.ts-command-item .ts-icon { width: 18px; height: 18px; color: var(--ts-text-secondary); }
+.ts-command-item[aria-selected="true"] { background: var(--ts-state-hover); }
+.ts-command-item[aria-selected="true"] .ts-icon { color: var(--ts-accent-text); }
+.ts-command-item mark { background: none; color: var(--ts-accent-text); font-weight: 600; }
+.ts-command-foot { display: flex; gap: var(--ts-space-4); padding: 10px var(--ts-space-5); box-shadow: inset 0 1px 0 var(--ts-border-subtle); font: var(--ts-font-caption); color: var(--ts-text-tertiary); }
+.ts-command-foot .ts-kbd { margin: 0 4px 0 0; }
+.ts-command-empty { padding: var(--ts-space-10) var(--ts-space-4); text-align: center; color: var(--ts-text-tertiary); font: var(--ts-font-body-sm); }
+
+/* ---------- 目录锚点 Anchor ---------- */
+.ts-anchor { position: relative; display: grid; gap: 2px; padding-inline-start: 14px; font: var(--ts-font-body-sm); }
+.ts-anchor::before { content: ""; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; border-radius: 2px; background: var(--ts-fill-control-off); }
+.ts-anchor a { display: block; padding: 5px 8px; border-radius: 8px; color: var(--ts-text-secondary); text-decoration: none; transition: color var(--ts-duration-fast) var(--ts-ease-standard); }
+.ts-anchor a:hover { color: var(--ts-text-primary); background: var(--ts-state-hover); }
+.ts-anchor a[aria-current="true"] { color: var(--ts-accent-text); font-weight: 600; }
+.ts-anchor a[data-level="3"] { padding-inline-start: 22px; }
+.ts-anchor-indicator { position: absolute; left: 0; top: 0; width: 3px; height: 30px; border-radius: 2px; background: var(--ts-accent-solid); will-change: transform; }
+
+}

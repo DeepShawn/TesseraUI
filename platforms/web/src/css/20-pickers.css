@@ -1,0 +1,92 @@
+/* 选择器：Calendar、DatePicker、DateRangePicker、TimePicker、WheelPicker、ColorPicker */
+
+@layer tessera {
+
+/* ---------- 弹出面板（选择器共用） ---------- */
+.ts-picker-panel {
+  position: fixed; z-index: var(--ts-z-popover); padding: var(--ts-space-3);
+  border-radius: var(--ts-radius-xl); background: var(--ts-bg-elevated); color: var(--ts-text-primary);
+  box-shadow: var(--ts-shadow-2), 0 0 0 var(--ts-border-width) var(--ts-border-subtle);
+}
+.ts-picker-trigger { cursor: pointer; }
+.ts-picker-trigger > input { cursor: pointer; }
+.ts-picker-footer { display: flex; justify-content: space-between; align-items: center; gap: var(--ts-space-2); margin-top: var(--ts-space-3); }
+
+/* ---------- 日历 Calendar：日期是一块块小砖 ---------- */
+.ts-calendar { width: 300px; user-select: none; -webkit-user-select: none; }
+.ts-calendar-head { display: flex; align-items: center; gap: var(--ts-space-1); margin-bottom: var(--ts-space-2); }
+.ts-calendar-title { flex: 1; padding-inline-start: var(--ts-space-2); font: var(--ts-font-title-3); font-variation-settings: var(--ts-font-serif-axes); }
+.ts-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.ts-calendar-dow { height: 28px; display: grid; place-items: center; font: var(--ts-font-caption); color: var(--ts-text-tertiary); }
+.ts-day {
+  position: relative; aspect-ratio: 1; display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
+  border-radius: 12px; background: none; color: var(--ts-text-primary);
+  font: 400 14px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
+  transition: background-color var(--ts-duration-instant) var(--ts-ease-standard), color var(--ts-duration-instant) var(--ts-ease-standard);
+}
+.ts-day:hover { background: var(--ts-state-hover); }
+.ts-day[data-outside] { color: var(--ts-text-tertiary); }
+.ts-day[data-weekend]:not([data-outside]) { color: var(--ts-text-secondary); }
+.ts-day[data-today]::after { content: ""; position: absolute; bottom: 5px; width: 4px; height: 4px; border-radius: 1.5px; background: var(--ts-accent-text); }
+.ts-day:disabled { opacity: .3; cursor: not-allowed; background: none; }
+/* 范围中间段：浅釉色连成一片（砖缝仍在） */
+.ts-day[data-in-range] { background: var(--ts-accent-subtle); color: var(--ts-accent-text); border-radius: 6px; }
+.ts-day[aria-selected="true"] {
+  background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font-weight: 600;
+  background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+}
+.ts-day[aria-selected="true"]::after { background: var(--ts-bg-surface); }
+.ts-day[data-range-start] { border-radius: 12px 6px 6px 12px; }
+.ts-day[data-range-end] { border-radius: 6px 12px 12px 6px; }
+.ts-day[data-range-start][data-range-end] { border-radius: 12px; }
+.ts-day:focus-visible { outline: var(--ts-focus-ring-width) solid var(--ts-focus-ring); outline-offset: 1px; }
+.ts-calendar-grid[data-slide="next"] { animation: ts-cal-next var(--ts-spring-smooth-duration) var(--ts-spring-smooth); }
+.ts-calendar-grid[data-slide="prev"] { animation: ts-cal-prev var(--ts-spring-smooth-duration) var(--ts-spring-smooth); }
+@keyframes ts-cal-next { from { opacity: 0; transform: translateX(16px); } }
+@keyframes ts-cal-prev { from { opacity: 0; transform: translateX(-16px); } }
+.ts-calendars { display: flex; gap: var(--ts-space-5); }
+@media (max-width: 700px) { .ts-calendars > :nth-child(2) { display: none; } }
+
+/* ---------- 滚轮选择器 WheelPicker：原生滚动 + 吸附，惯性由系统提供 ---------- */
+.ts-wheel { --_row: 36px; --_rows: 5; position: relative; display: flex; gap: var(--ts-space-1); height: calc(var(--_row) * var(--_rows)); user-select: none; -webkit-user-select: none; }
+/* 选中带：一块凹槽砖 */
+.ts-wheel::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 50%; height: var(--_row); margin-top: calc(var(--_row) / -2);
+  border-radius: 12px; background: var(--ts-fill-default); box-shadow: var(--ts-recess); pointer-events: none;
+}
+.ts-wheel-col {
+  position: relative; flex: 1; min-width: 56px; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain;
+  scrollbar-width: none; padding: calc(var(--_row) * (var(--_rows) - 1) / 2) 0;
+  mask-image: linear-gradient(transparent, #000 35%, #000 65%, transparent);
+  -webkit-mask-image: linear-gradient(transparent, #000 35%, #000 65%, transparent);
+}
+.ts-wheel-col::-webkit-scrollbar { display: none; }
+.ts-wheel-col:focus-visible { outline: none; }
+.ts-wheel-col:focus-visible ~ .ts-wheel-focus, .ts-wheel:focus-within::before { box-shadow: var(--ts-recess), 0 0 0 2px var(--ts-focus-ring); }
+.ts-wheel-item {
+  height: var(--_row); display: grid; place-items: center; scroll-snap-align: center;
+  font: 400 17px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums; color: var(--ts-text-secondary); cursor: pointer;
+  transition: color var(--ts-duration-fast) var(--ts-ease-standard), transform var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-wheel-item[aria-selected="true"] { color: var(--ts-text-primary); font-weight: 600; transform: scale(1.06); }
+.ts-wheel-sep { align-self: center; font: 600 17px/1 var(--ts-font-sans); color: var(--ts-text-tertiary); }
+
+/* ---------- 颜色选择器 ColorPicker ---------- */
+.ts-colorpicker { width: 260px; display: grid; gap: var(--ts-space-3); }
+.ts-color-area { position: relative; height: 160px; border-radius: 14px; touch-action: none; cursor: crosshair;
+  background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), hsl(var(--_hue, 0) 100% 50%); }
+.ts-color-hue { position: relative; height: 14px; border-radius: 7px; touch-action: none; cursor: pointer;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); box-shadow: var(--ts-recess); }
+.ts-color-handle {
+  position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 7px; pointer-events: none;
+  box-shadow: 0 0 0 2.5px #fff, 0 0 0 3.5px rgb(31 27 22 / .25), 0 2px 6px rgb(31 27 22 / .3);
+}
+.ts-color-hue .ts-color-handle { top: 50%; }
+.ts-color-row { display: flex; gap: var(--ts-space-2); align-items: center; }
+.ts-color-preview { width: 40px; height: 40px; flex: none; border-radius: var(--ts-radius-md); box-shadow: inset 0 0 0 1px var(--ts-border-subtle); }
+.ts-color-swatches { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+.ts-color-swatches button { aspect-ratio: 1; border: 0; padding: 0; border-radius: 7px; cursor: pointer; background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+.ts-color-swatches button[aria-pressed="true"] { outline: 2px solid var(--ts-text-primary); outline-offset: 2px; }
+.ts-color-trigger-swatch { width: 18px; height: 18px; border-radius: 6px; box-shadow: inset 0 0 0 1px var(--ts-border-subtle); }
+
+}

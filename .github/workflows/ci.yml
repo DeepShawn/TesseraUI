@@ -13,3 +13,17 @@ jobs:
       - run: npm test
       - name: 生成的产物必须和 token 源文件一致
         run: git diff --exit-code
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run build
+      - name: 安装 Playwright（仅用于测试，不是项目依赖）
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: 启动静态服务器
+        run: python3 -m http.server 5173 &
+      - run: npm run test:e2e
