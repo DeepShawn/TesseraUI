@@ -31,6 +31,10 @@ jobs:
         run: npm run test:e2e
         env:
           TESSERA_SHAPE: round
+      - name: 端到端测试（流韵外观）
+        run: npm run test:e2e
+        env:
+          TESSERA_SHAPE: flow
 
   android:
     runs-on: ubuntu-latest
