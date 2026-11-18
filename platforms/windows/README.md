@@ -85,4 +85,4 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 
 ## 验证
 
-持续集成在 `windows-latest` 上执行 `dotnet build -c Release -p:Platform=x64`。目前没有截图测试，外观请在 Visual Studio 中运行验证。
+持续集成在 `windows-latest` 上用 Visual Studio 的 MSBuild 执行 `msbuild TesseraUI.csproj -restore -p:Configuration=Release -p:Platform=x64`（`dotnet build` 缺少生成 PRI 资源索引的任务，无法编译含 XAML 的 WinUI 库）。目前没有截图测试，外观请在 Visual Studio 中运行验证。
