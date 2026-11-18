@@ -64,6 +64,7 @@ struct TileSurface<S: InsettableShape>: ViewModifier {
     let shape: S
     let pressed: Bool
     @Environment(\.tesseraShape) private var tesseraShape
+    @Environment(\.colorSchemeContrast) private var contrast
 
     func body(content: Content) -> some View {
         content.background {
@@ -101,7 +102,7 @@ struct TileSurface<S: InsettableShape>: ViewModifier {
                 }
             }
             .clipShape(shape)
-            .overlay { shape.strokeBorder(style == .sunken && !tesseraShape.isRound ? TesseraColor.borderField : .clear, lineWidth: 1) }
+            .overlay { shape.strokeBorder(style == .sunken && tesseraShape.showsOutline(contrast) ? TesseraColor.borderField : .clear, lineWidth: 1) }
         }
     }
 }

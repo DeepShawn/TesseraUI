@@ -188,6 +188,7 @@ public struct TesseraDialogPanel: View {
     let onCancel: () -> Void
     let onConfirm: () -> Void
     @Environment(\.tesseraShape) private var tesseraShape
+    @Environment(\.colorSchemeContrast) private var contrast
 
     public init(title: String, message: String? = nil, confirmTitle: String, cancelTitle: String? = "取消", destructive: Bool = false,
                 onCancel: @escaping () -> Void = {}, onConfirm: @escaping () -> Void = {}) {
@@ -219,7 +220,7 @@ public struct TesseraDialogPanel: View {
         .padding(TesseraSpace.s6)
         .frame(maxWidth: 440)
         .background(TesseraColor.bgElevated, in: shape)
-        .overlay { shape.strokeBorder(round ? .clear : TesseraColor.borderSurface, lineWidth: 1) }
+        .overlay { shape.strokeBorder(tesseraShape.showsOutline(contrast) ? TesseraColor.borderSurface : .clear, lineWidth: 1) }
         .tesseraShadow(.level3)
         .padding(TesseraSpace.s4)
     }

@@ -151,6 +151,7 @@ public struct TesseraCard<Content: View>: View {
     let padding: CGFloat
     let content: Content
     @Environment(\.tesseraShape) private var tesseraShape
+    @Environment(\.colorSchemeContrast) private var contrast
 
     public init(elevated: Bool = false, padding: CGFloat = TesseraSpace.s6, @ViewBuilder content: () -> Content) {
         self.elevated = elevated
@@ -165,7 +166,7 @@ public struct TesseraCard<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(elevated ? TesseraColor.bgElevated : TesseraColor.bgSurface, in: shape)
             // 圆融外观没有描边，只靠柔和的投影
-            .overlay { shape.strokeBorder(tesseraShape.isRound ? .clear : TesseraColor.borderSurface, lineWidth: 1) }
+            .overlay { shape.strokeBorder(tesseraShape.showsOutline(contrast) ? TesseraColor.borderSurface : .clear, lineWidth: 1) }
             .tesseraShadow(elevated ? .level2 : .level1)
     }
 }

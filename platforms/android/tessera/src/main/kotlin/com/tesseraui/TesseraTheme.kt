@@ -66,6 +66,8 @@ val LocalTesseraColors = staticCompositionLocalOf { TesseraLightColors }
 val LocalTesseraTypography = staticCompositionLocalOf { TesseraTypography.from(TesseraFonts()) }
 val LocalTesseraFonts = staticCompositionLocalOf { TesseraFonts() }
 val LocalTesseraDark = staticCompositionLocalOf { false }
+/** 增强对比度色板是否生效 */
+val LocalTesseraHighContrast = staticCompositionLocalOf { false }
 /** 系统“移除动画”打开时为 true：去掉位移和缩放，统一改为 150ms 淡入淡出 */
 val LocalReduceMotion = staticCompositionLocalOf { false }
 /** 当前内容颜色（文字、图标默认使用） */
@@ -102,6 +104,7 @@ fun TesseraTheme(
         LocalTesseraTypography provides typography,
         LocalTesseraFonts provides fonts,
         LocalTesseraDark provides darkTheme,
+        LocalTesseraHighContrast provides highContrast,
         LocalReduceMotion provides reduceMotion,
         LocalTesseraShape provides resolvedShape,
         LocalContentColor provides colors.textPrimary,

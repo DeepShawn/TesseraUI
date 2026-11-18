@@ -27,6 +27,12 @@ val LocalTesseraShape = staticCompositionLocalOf { TesseraShape.Tile }
 val isRound: Boolean
     @Composable @ReadOnlyComposable get() = LocalTesseraShape.current != TesseraShape.Tile
 
+/**
+ * 是否画描边：拼贴外观一直画；圆融、流韵平时不画，增强对比度下加回 1dp 描边，保证边界可辨。
+ */
+val showOutline: Boolean
+    @Composable @ReadOnlyComposable get() = !isRound || com.tesseraui.LocalTesseraHighContrast.current
+
 /** 当前是否为流韵外观 */
 val isFlow: Boolean
     @Composable @ReadOnlyComposable get() = LocalTesseraShape.current == TesseraShape.Flow

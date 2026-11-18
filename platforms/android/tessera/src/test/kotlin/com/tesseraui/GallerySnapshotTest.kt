@@ -10,7 +10,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * 截图测试：在 JVM 上渲染组件总览（拼贴 / 圆融 / 流韵 × 浅色 / 深色），不需要模拟器。
+ * 截图测试：在 JVM 上渲染组件总览（拼贴 / 圆融 / 流韵 × 浅色 / 深色 / 增强对比度），不需要模拟器。
  * 录制基准图：gradle :tessera:recordPaparazziDebug
  * 对比基准图：gradle :tessera:verifyPaparazziDebug
  */
@@ -23,13 +23,14 @@ class GallerySnapshotTest {
         maxPercentDifference = 0.1,
     )
 
-    /** 每个分区截 6 张：拼贴 / 圆融 / 流韵 × 浅色 / 深色 */
+    /** 每个分区截 9 张：拼贴 / 圆融 / 流韵 × 浅色 / 深色 / 增强对比度（浅色） */
     private fun shoot(section: GallerySection) {
-        for (shape in TesseraShape.entries) for (dark in listOf(false, true)) {
+        for (shape in TesseraShape.entries) for ((dark, hc) in listOf(false to false, true to false, false to true)) {
             val prefix = when (shape) { TesseraShape.Round -> "round-"; TesseraShape.Flow -> "flow-"; else -> "" }
-            paparazzi.snapshot(name = "$prefix${section.name.lowercase()}-${if (dark) "dark" else "light"}") {
+            val theme = when { hc -> "light-hc"; dark -> "dark"; else -> "light" }
+            paparazzi.snapshot(name = "$prefix${section.name.lowercase()}-$theme") {
                 // 流韵在“移除动画”下会自动改用圆融，所以流韵截图不打开它（静态截图不会触发动效）
-                TesseraTheme(darkTheme = dark, highContrast = false, reduceMotion = shape != TesseraShape.Flow, shape = shape, requireCapableDevice = false) { TesseraGallery(section) }
+                TesseraTheme(darkTheme = dark, highContrast = hc, reduceMotion = shape != TesseraShape.Flow, shape = shape, requireCapableDevice = false) { TesseraGallery(section) }
             }
         }
     }

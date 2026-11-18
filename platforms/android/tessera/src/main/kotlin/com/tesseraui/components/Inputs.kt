@@ -1,5 +1,6 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.showOutline
 import com.tesseraui.foundation.flowRipple
 import com.tesseraui.TesseraRound
 import com.tesseraui.foundation.shapeRadius
@@ -154,7 +155,7 @@ fun TesseraTextField(
                         .clip(shape)
                         .background(bg)
                         .then(if (!focused) Modifier.sunken() else Modifier)
-                        .then(if (round) Modifier else Modifier.border(1.dp, c.borderField, shape))
+                        .then(if (!showOutline) Modifier else Modifier.border(1.dp, c.borderField, shape))
                         .padding(horizontal = if (round) TesseraSpace.s4 else TesseraSpace.s3, vertical = if (singleLine) 0.dp else TesseraSpace.s3),
                     verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top,
                     horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s2),
@@ -249,7 +250,7 @@ fun TesseraMenuPanel(modifier: Modifier = Modifier, minWidth: Dp = 220.dp, conte
             .shadow(12.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
             .clip(shape)
             .background(c.bgElevated)
-            .then(if (round) Modifier else Modifier.border(1.dp, c.borderSubtle, shape))
+            .then(if (!showOutline) Modifier else Modifier.border(1.dp, c.borderSubtle, shape))
             .padding(if (round) 6.dp else TesseraSpace.s1),
     ) { CompositionLocalProvider(LocalContentColor provides c.textPrimary) { content() } }
 }
@@ -322,7 +323,7 @@ fun TesseraSelect(
                     .clip(shape)
                     .background(c.fillDefault)
                     .sunken()
-                    .then(if (round) Modifier else Modifier.border(1.dp, c.borderField, shape))
+                    .then(if (!showOutline) Modifier else Modifier.border(1.dp, c.borderField, shape))
                     .clickable(role = Role.DropdownList) { open = true }
                     .semantics { stateDescription = options.getOrNull(selectedIndex) ?: placeholder }
                     .padding(horizontal = if (round) TesseraSpace.s4 else TesseraSpace.s3),

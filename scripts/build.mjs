@@ -700,14 +700,20 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
+            <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
             <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].light)}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
+            <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
             <SolidColorBrush x:Key="TesseraListContainerBrush" Color="${toARGB(colors['bg.surface'].dark)}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
             <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <Thickness x:Key="TesseraSurfaceBorderThickness">1</Thickness>
+            <Thickness x:Key="TesseraNavBarBorderThickness">0,0,0,1</Thickness>
             <SolidColorBrush x:Key="TesseraListContainerBrush" Color="{ThemeResource SystemColorWindowColor}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
@@ -748,9 +754,7 @@ ${Object.entries(accent).map(([k, v]) => `    <Color x:Key="${k}">#FF${v.slice(1
     <CornerRadius x:Key="TesseraListItemRadius">${RD.row}</CornerRadius>
     <Thickness x:Key="TesseraListItemMargin">0</Thickness>
     <Thickness x:Key="TesseraListContainerPadding">6</Thickness>
-    <!-- 没有描边和分割线 -->
-    <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
-    <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
+    <!-- 没有描边和分割线：数值放在上面的主题字典里，高对比度主题下加回描边 -->
 
     <!-- 系统控件 -->
     <CornerRadius x:Key="ControlCornerRadius">${F.size.md / 2}</CornerRadius>

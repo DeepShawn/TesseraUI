@@ -1,5 +1,6 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.showOutline
 import com.tesseraui.TesseraRound
 import com.tesseraui.foundation.softSheen
 import com.tesseraui.foundation.pillGap
@@ -233,7 +234,7 @@ fun TesseraDialogPanel(
             .shadow(24.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
             .clip(shape)
             .background(c.bgElevated)
-            .then(if (round) Modifier else Modifier.border(1.dp, c.borderSurface, shape))
+            .then(if (!showOutline) Modifier else Modifier.border(1.dp, c.borderSurface, shape))
             .semantics { paneTitle = title }
             .padding(TesseraSpace.s6),
     ) {

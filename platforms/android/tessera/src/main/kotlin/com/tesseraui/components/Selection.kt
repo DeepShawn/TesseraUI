@@ -1,5 +1,6 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.showOutline
 import androidx.compose.ui.graphics.graphicsLayer
 import com.tesseraui.foundation.roundRadius
 import com.tesseraui.foundation.TesseraHaptic
@@ -266,7 +267,7 @@ fun TesseraSwitch(
                     .clip(shape)
                     .background(track)
                     .sunken()
-                    .then(if (round) Modifier else Modifier.border(1.dp, c.borderField, shape))
+                    .then(if (!showOutline) Modifier else Modifier.border(1.dp, c.borderField, shape))
                     .draggable(
                         dragState, Orientation.Horizontal, enabled = enabled && onCheckedChange != null,
                         onDragStarted = { dragging = true },
@@ -328,7 +329,8 @@ fun TesseraSegmentedControl(
     val pill = RoundedCornerShape(roundRadius(TesseraRound.pill))
     val haptic = rememberFlowHaptic()
     val tension = rememberTension(selectedIndex)
-    val track = if (round) Modifier.height(height + 6.dp).clip(pill).background(c.fillDefault).padding(3.dp) else Modifier.height(height)
+    val track = if (round) Modifier.height(height + 6.dp).clip(pill).background(c.fillDefault)
+        .then(if (showOutline) Modifier.border(1.dp, c.borderField, pill) else Modifier).padding(3.dp) else Modifier.height(height)
     BoxWithConstraints(modifier.fillMaxWidth().then(track).selectableGroup()) {
         val n = options.size
         val gap = if (round) 0.dp else TesseraTile.grout

@@ -1,5 +1,6 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.showOutline
 import com.tesseraui.foundation.flowRipple
 import com.tesseraui.foundation.roundRadius
 import com.tesseraui.TesseraRound
@@ -194,7 +195,7 @@ fun TesseraCard(
             .clip(shape)
             .background(if (elevated) c.bgElevated else c.bgSurface)
             // 圆融外观没有描边，只靠柔和的投影
-            .then(if (isRound) Modifier else Modifier.border(1.dp, c.borderSurface, shape))
+            .then(if (!showOutline) Modifier else Modifier.border(1.dp, c.borderSurface, shape))
             .then(if (onClick != null) Modifier.clickable(interaction, null, role = Role.Button, onClick = onClick) else Modifier)
             .padding(padding),
     ) { CompositionLocalProvider(LocalContentColor provides c.textPrimary) { content() } }

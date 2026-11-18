@@ -210,6 +210,7 @@ public struct TesseraSegmentedControl: View {
     @State private var dragging = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.tesseraShape) private var tesseraShape
+    @Environment(\.colorSchemeContrast) private var contrast
 
     public init(_ options: [String], selection: Binding<Int>, small: Bool = false) {
         self.options = options
@@ -287,6 +288,7 @@ public struct TesseraSegmentedControl: View {
         .frame(height: height)
         .padding(round ? 3 : 0)
         .background { if round { pill.fill(TesseraColor.fillDefault) } }
+        .overlay { if round && contrast == .increased { pill.strokeBorder(TesseraColor.borderField, lineWidth: 1) } }
         .tesseraHaptic(.selection, trigger: selection)
         .accessibilityElement(children: .contain)
     }

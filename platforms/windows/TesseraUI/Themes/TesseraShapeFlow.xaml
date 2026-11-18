@@ -11,14 +11,20 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
+            <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
             <SolidColorBrush x:Key="TesseraListContainerBrush" Color="#FFFBF9F5" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
+            <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
             <SolidColorBrush x:Key="TesseraListContainerBrush" Color="#FF1E1C18" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
             <SolidColorBrush x:Key="TesseraListItemBackgroundBrush" Color="Transparent" />
+            <Thickness x:Key="TesseraSurfaceBorderThickness">1</Thickness>
+            <Thickness x:Key="TesseraNavBarBorderThickness">0,0,0,1</Thickness>
             <SolidColorBrush x:Key="TesseraListContainerBrush" Color="{ThemeResource SystemColorWindowColor}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
@@ -59,9 +65,7 @@
     <CornerRadius x:Key="TesseraListItemRadius">18</CornerRadius>
     <Thickness x:Key="TesseraListItemMargin">0</Thickness>
     <Thickness x:Key="TesseraListContainerPadding">6</Thickness>
-    <!-- 没有描边和分割线 -->
-    <Thickness x:Key="TesseraSurfaceBorderThickness">0</Thickness>
-    <Thickness x:Key="TesseraNavBarBorderThickness">0</Thickness>
+    <!-- 没有描边和分割线：数值放在上面的主题字典里，高对比度主题下加回描边 -->
 
     <!-- 系统控件 -->
     <CornerRadius x:Key="ControlCornerRadius">17</CornerRadius>

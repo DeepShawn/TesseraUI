@@ -32,6 +32,9 @@ public enum TesseraShape: Sendable {
         isRound ? roundRadius(round) : tile
     }
 
+    /// 是否画描边：拼贴一直画；圆融、流韵平时不画，系统“增强对比度”打开时加回 1pt 描边
+    public func showsOutline(_ contrast: ColorSchemeContrast) -> Bool { !isRound || contrast == .increased }
+
     /// 成组控件之间的缝：拼贴 3pt，圆融 / 流韵 0（合成一整块）
     public var groupGap: CGFloat { isRound ? TesseraRound.groupGap : TesseraTile.grout }
 
