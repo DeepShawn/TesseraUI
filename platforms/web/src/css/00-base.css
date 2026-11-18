@@ -27,15 +27,10 @@
 
 .ts-root ::selection { background: var(--ts-selection); }
 
-/* 滚动条：细条，悬停变宽 */
-.ts-root { scrollbar-width: thin; scrollbar-color: var(--ts-border-strong) transparent; }
-.ts-root ::-webkit-scrollbar { width: 10px; height: 10px; }
-.ts-root ::-webkit-scrollbar-track { background: transparent; }
-.ts-root ::-webkit-scrollbar-thumb {
-  background: var(--ts-border-strong); border: 2px solid transparent; border-radius: 999px;
-  background-clip: content-box; min-height: 40px;
-}
-.ts-root ::-webkit-scrollbar-thumb:hover { border-width: 0; }
+/* 滚动条：全部隐藏，仍可用滚轮、触控板、手指和键盘滚动。
+   可滚动区域靠边缘渐隐（ScrollArea 的 data-fade-*）、吸附与内容露出一截来提示还能滚 */
+.ts-root, .ts-root * { scrollbar-width: none; }
+.ts-root::-webkit-scrollbar, .ts-root ::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 .ts-root input[type="number"]::-webkit-inner-spin-button,
 .ts-root input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }

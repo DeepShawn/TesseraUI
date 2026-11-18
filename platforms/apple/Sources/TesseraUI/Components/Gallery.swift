@@ -27,7 +27,7 @@ public struct TesseraGallery: View {
         VStack(spacing: 0) {
             TesseraNavBar("组件", leading: { TesseraIconButton(.chevronLeft, label: "返回") {} },
                           trailing: { TesseraIconButton(.bell, label: "通知", badge: 3) {} })
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: TesseraSpace.s5) {
                     TesseraLabel("早上好", style: .title1)
                     HStack(spacing: TesseraSpace.s2) {

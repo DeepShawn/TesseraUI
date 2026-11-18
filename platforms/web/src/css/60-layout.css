@@ -32,7 +32,7 @@
 .ts-divider[data-label] > span { order: 1; }
 
 /* ---------- 滚动区域 ScrollArea：细滚动条 + 上下边缘渐隐提示还能滚 ---------- */
-.ts-scroll-area { overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--ts-border-strong) transparent; }
+.ts-scroll-area { overflow: auto; overscroll-behavior: contain; }
 .ts-scroll-area[data-fade-top] { mask-image: linear-gradient(transparent, #000 24px); -webkit-mask-image: linear-gradient(transparent, #000 24px); }
 .ts-scroll-area[data-fade-bottom] { mask-image: linear-gradient(#000 calc(100% - 24px), transparent); -webkit-mask-image: linear-gradient(#000 calc(100% - 24px), transparent); }
 .ts-scroll-area[data-fade-top][data-fade-bottom] { mask-image: linear-gradient(transparent, #000 24px, #000 calc(100% - 24px), transparent); -webkit-mask-image: linear-gradient(transparent, #000 24px, #000 calc(100% - 24px), transparent); }

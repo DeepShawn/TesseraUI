@@ -83,7 +83,7 @@ namespace TesseraUI
             stack.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             stack.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             Grid.SetRow(_title, 1);
-            var scroller = new ScrollViewer { Content = _body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };
+            var scroller = new ScrollViewer { Content = _body, VerticalScrollBarVisibility = ScrollBarVisibility.Hidden };
             Grid.SetRow(scroller, 2);
             stack.Children.Add(grabArea);
             stack.Children.Add(_title);
