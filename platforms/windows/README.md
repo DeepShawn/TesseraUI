@@ -17,12 +17,14 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
             <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraControls.xaml" />
             <!-- 可选：圆融外观（胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线）。不合并即为拼贴 -->
             <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraShapeRound.xaml" />
+            <!-- 或者：流韵外观（方圆之间的圆角，按下变成胶囊）。与圆融二选一；建议先用 TesseraResources.FlowCapable 判断设备 -->
+            <!-- <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraShapeFlow.xaml" /> -->
         </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
 </Application.Resources>
 ```
 
-两种外观共用同一套样式和控件：样式里随外观变化的圆角、描边、砖厚、按压都用 `ThemeResource` 引用，`TesseraShapeRound.xaml` 放在最后合并即可整体覆盖；C# 控件通过 `TesseraResources.IsRound` 判断外观。
+两种外观共用同一套样式和控件：样式里随外观变化的圆角、描边、砖厚、按压都用 `ThemeResource` 引用，`TesseraShapeRound.xaml` 放在最后合并即可整体覆盖；C# 控件通过 `TesseraResources.Shape`、`IsRound`、`IsFlow` 判断外观；`TesseraResources.FlowCapable` 判断设备是否适合流韵（系统“动画效果”打开、不少于 6 核、不少于 4GB 内存）。
 
 | 文件 | 内容 |
 |---|---|
@@ -31,6 +33,7 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 | `Themes/TesseraButton.xaml` | 按钮：主要、次要、文字、危险 |
 | `Themes/TesseraControls.xaml` | 其余控件的样式与模板 |
 | `Themes/TesseraShapeRound.xaml` | 圆融外观：覆盖圆角、砖缝、砖厚、按压等数值。可选，生成文件 |
+| `Themes/TesseraShapeFlow.xaml` | 流韵外观：以圆融为基础，圆角介于方砖与胶囊之间。可选，生成文件；水波与开关涟漪在 WinUI 上尚未实现 |
 | `Controls/*.cs` | 系统中没有对应控件、或系统控件无法改成 TesseraUI 交互的自定义控件 |
 | `Generated/*.g.cs` | 动效常量、层级、图标路径数据。生成文件 |
 

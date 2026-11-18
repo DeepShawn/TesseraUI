@@ -1,6 +1,6 @@
 {
   "name": "tesseraui",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "TesseraUI：面向 Apple、Android、Windows 与 Web 的跨平台 UI 设计标准库",
   "type": "module",
   "private": true,

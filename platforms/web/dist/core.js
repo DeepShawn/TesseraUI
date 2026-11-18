@@ -1,4 +1,4 @@
-// TesseraUI v0.3.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.3.1 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // TesseraUI Web 运行时核心：弹簧动画、手势工具、浮层、主题切换、中文输入法处理。无第三方依赖。
 // 各类组件的交互在 modules/*.js 中，入口为 tessera.js。
 import { tokens } from './tokens.mjs';
