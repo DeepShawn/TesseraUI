@@ -67,6 +67,9 @@ export function swipeAction(root) {
 // 业务方调用 event.detail.done() 结束刷新
 // ------------------------------------------------------------------
 export function pullToRefresh(root, { threshold = 64, onRefresh } = {}) {
+  // 可滚动区域：键盘可以聚焦后用方向键滚动
+  if (!root.hasAttribute('tabindex')) root.tabIndex = 0;
+  if (!root.hasAttribute('aria-label') && !root.hasAttribute('aria-labelledby')) root.setAttribute('aria-label', '可下拉刷新的列表');
   const content = root.querySelector('.ts-ptr-content') || root.firstElementChild;
   const ind = document.createElement('div');
   ind.className = 'ts-ptr-indicator';

@@ -10,8 +10,8 @@
 /* 开关的“灌满”动画需要可插值的长度变量 */
 @property --_fill { syntax: "<length>"; inherits: false; initial-value: 0px; }
 
-@layer tessera {
-
+/* 流韵的形状数值放在样式层外面：tokens.css 里的 --ts-round-* 定义在 :root（不在层内），
+   层内的覆盖会被它压过去，所以这里必须同样不在层内（:root[data-shape] 的优先级更高） */
 :root[data-shape="flow"] {
   /* 方圆之间的圆角 */
   --ts-round-pill: var(--ts-flow-control);
@@ -26,6 +26,10 @@
   --ts-flow-rim: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
   --ts-flow-wave: color-mix(in srgb, currentColor 13%, transparent);
 }
+
+@layer tessera {
+
+
 :root[data-shape="flow"][data-theme="dark"] { --ts-flow-rim: inset 0 1px 0 rgb(255 255 255 / .06); --ts-flow-glint: rgb(255 255 255 / .14); }
 @media (prefers-color-scheme: dark) {
   :root[data-shape="flow"]:not([data-theme="light"]) { --ts-flow-rim: inset 0 1px 0 rgb(255 255 255 / .06); --ts-flow-glint: rgb(255 255 255 / .14); }

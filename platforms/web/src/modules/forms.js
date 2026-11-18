@@ -435,21 +435,20 @@ export function rating(root) {
   let value = Number(root.dataset.value || 0);
   const readonly = root.hasAttribute('data-readonly');
   root.setAttribute('role', readonly ? 'img' : 'radiogroup');
-  if (readonly) root.setAttribute('aria-readonly', 'true');
   root.setAttribute('aria-label', root.getAttribute('aria-label') || '评分');
+  // 只读评分是一张“图”：星星用不可交互的 span，读屏只读整体的“评分 3 / 5”
   const btns = Array.from({ length: max }, (_, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
+    const b = document.createElement(readonly ? 'span' : 'button');
+    if (readonly) { b.className = 'ts-rating-star'; b.setAttribute('aria-hidden', 'true'); }
+    else { b.type = 'button'; b.setAttribute('role', 'radio'); b.setAttribute('aria-label', `${i + 1} 星`); }
     b.append(icon('star-fill'));
-    if (!readonly) { b.setAttribute('role', 'radio'); b.setAttribute('aria-label', `${i + 1} 星`); }
-    else b.tabIndex = -1;
     root.append(b);
     return b;
   });
   const show = (n) => btns.forEach((b, i) => b.toggleAttribute('data-on', i < n));
   const set = (n) => {
     value = n;
-    btns.forEach((b, i) => { b.setAttribute('aria-checked', i + 1 === n); b.tabIndex = readonly ? -1 : (i + 1 === (n || 1) ? 0 : -1); });
+    if (!readonly) btns.forEach((b, i) => { b.setAttribute('aria-checked', i + 1 === n); b.tabIndex = i + 1 === (n || 1) ? 0 : -1; });
     if (readonly) root.setAttribute('aria-label', `评分 ${n} / ${max}`);
     show(n);
   };

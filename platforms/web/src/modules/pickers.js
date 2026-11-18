@@ -52,7 +52,8 @@ export function calendar(root, { mode = 'single', value = null, min = null, max 
       if (m === months - 1) head.append(nav('chevron-right', '下个月', 1));
       const grid = document.createElement('div');
       grid.className = 'ts-calendar-grid';
-      grid.setAttribute('role', 'grid');
+      // 日期是一组切换按钮：用 group + aria-pressed（grid 角色要求 row / gridcell 结构）
+      grid.setAttribute('role', 'group');
       grid.setAttribute('aria-label', title.textContent);
       if (slide) grid.dataset.slide = slide;
       WEEK.forEach((w) => { const s = document.createElement('div'); s.className = 'ts-calendar-dow'; s.textContent = w; s.setAttribute('aria-hidden', 'true'); grid.append(s); });
@@ -72,15 +73,15 @@ export function calendar(root, { mode = 'single', value = null, min = null, max 
         btn.tabIndex = k === focusKey && sameMonth(d, month) ? 0 : -1;
         if (!sameMonth(d, month)) btn.dataset.outside = '';
         if (d.getDay() === 0 || d.getDay() === 6) btn.dataset.weekend = '';
-        if (k === today) btn.dataset.today = '';
+        if (k === today) { btn.dataset.today = ''; btn.setAttribute('aria-current', 'date'); }
         if ((min && k < min) || (max && k > max)) btn.disabled = true;
         const isSel = k === sel.start || k === sel.end;
-        btn.setAttribute('aria-selected', isSel);
+        btn.setAttribute('aria-pressed', isSel);
         if (mode === 'range' && a && b) {
           if (k > a && k < b) btn.dataset.inRange = '';
           if (k === a) btn.dataset.rangeStart = '';
           if (k === b) btn.dataset.rangeEnd = '';
-          if (k === a || k === b) btn.setAttribute('aria-selected', 'true');
+          if (k === a || k === b) btn.setAttribute('aria-pressed', 'true');
         }
         btn.addEventListener('click', () => pick(k));
         btn.addEventListener('pointerenter', () => { if (mode === 'range' && sel.start && !sel.end) { hoverKey = k; paintRange(); } });
@@ -106,7 +107,7 @@ export function calendar(root, { mode = 'single', value = null, min = null, max 
       btn.toggleAttribute('data-in-range', !!(a && b && k > a && k < b));
       btn.toggleAttribute('data-range-start', !!(b && k === a));
       btn.toggleAttribute('data-range-end', !!(b && k === b));
-      btn.setAttribute('aria-selected', k === a || k === b || k === sel.start);
+      btn.setAttribute('aria-pressed', k === a || k === b || k === sel.start);
     });
   };
   const pick = (k) => {

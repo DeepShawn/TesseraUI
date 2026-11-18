@@ -3,7 +3,7 @@
 > 由 `npm run check:contrast` 自动生成，请勿手改。标准：文字 ≥ 4.5:1；焦点框、实色控件、控件描边 ≥ 3:1。
 > 占位文字、禁用文字（`text.tertiary`）按 WCAG 规定不在检查范围内。
 
-共 284 项，全部通过。
+共 300 项，全部通过。
 
 ## light
 
@@ -11,24 +11,28 @@
 |---|---|---|---|---|
 | `text.primary` | `bg.canvas` | 14.41 | 4.5 | ✅ |
 | `text.secondary` | `bg.canvas` | 5.93 | 4.5 | ✅ |
+| `text.tertiary` | `bg.canvas` | 4.85 | 4.5 | ✅ |
 | `accent.text` | `bg.canvas` | 5.35 | 4.5 | ✅ |
 | `danger.text` | `bg.canvas` | 5.53 | 4.5 | ✅ |
 | `success.text` | `bg.canvas` | 5.33 | 4.5 | ✅ |
 | `warning.text` | `bg.canvas` | 5.18 | 4.5 | ✅ |
 | `text.primary` | `bg.surface` | 16.28 | 4.5 | ✅ |
 | `text.secondary` | `bg.surface` | 6.70 | 4.5 | ✅ |
+| `text.tertiary` | `bg.surface` | 5.48 | 4.5 | ✅ |
 | `accent.text` | `bg.surface` | 6.05 | 4.5 | ✅ |
 | `danger.text` | `bg.surface` | 6.25 | 4.5 | ✅ |
 | `success.text` | `bg.surface` | 6.02 | 4.5 | ✅ |
 | `warning.text` | `bg.surface` | 5.85 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated` | 17.12 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated` | 7.04 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated` | 5.77 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated` | 6.36 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated` | 6.57 | 4.5 | ✅ |
 | `success.text` | `bg.elevated` | 6.33 | 4.5 | ✅ |
 | `warning.text` | `bg.elevated` | 6.16 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated-2` | 17.12 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated-2` | 7.04 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated-2` | 5.77 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated-2` | 6.36 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated-2` | 6.57 | 4.5 | ✅ |
 | `success.text` | `bg.elevated-2` | 6.33 | 4.5 | ✅ |
@@ -86,24 +90,28 @@
 |---|---|---|---|---|
 | `text.primary` | `bg.canvas` | 15.74 | 4.5 | ✅ |
 | `text.secondary` | `bg.canvas` | 7.67 | 4.5 | ✅ |
+| `text.tertiary` | `bg.canvas` | 6.40 | 4.5 | ✅ |
 | `accent.text` | `bg.canvas` | 8.43 | 4.5 | ✅ |
 | `danger.text` | `bg.canvas` | 8.10 | 4.5 | ✅ |
 | `success.text` | `bg.canvas` | 9.86 | 4.5 | ✅ |
 | `warning.text` | `bg.canvas` | 8.57 | 4.5 | ✅ |
 | `text.primary` | `bg.surface` | 14.44 | 4.5 | ✅ |
 | `text.secondary` | `bg.surface` | 7.04 | 4.5 | ✅ |
+| `text.tertiary` | `bg.surface` | 5.88 | 4.5 | ✅ |
 | `accent.text` | `bg.surface` | 7.74 | 4.5 | ✅ |
 | `danger.text` | `bg.surface` | 7.43 | 4.5 | ✅ |
 | `success.text` | `bg.surface` | 9.05 | 4.5 | ✅ |
 | `warning.text` | `bg.surface` | 7.86 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated` | 12.95 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated` | 6.31 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated` | 5.27 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated` | 6.94 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated` | 6.66 | 4.5 | ✅ |
 | `success.text` | `bg.elevated` | 8.11 | 4.5 | ✅ |
 | `warning.text` | `bg.elevated` | 7.05 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated-2` | 11.31 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated-2` | 5.52 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated-2` | 4.60 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated-2` | 6.06 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated-2` | 5.82 | 4.5 | ✅ |
 | `success.text` | `bg.elevated-2` | 7.09 | 4.5 | ✅ |
@@ -161,24 +169,28 @@
 |---|---|---|---|---|
 | `text.primary` | `bg.canvas` | 14.41 | 4.5 | ✅ |
 | `text.secondary` | `bg.canvas` | 8.00 | 4.5 | ✅ |
+| `text.tertiary` | `bg.canvas` | 5.93 | 4.5 | ✅ |
 | `accent.text` | `bg.canvas` | 5.35 | 4.5 | ✅ |
 | `danger.text` | `bg.canvas` | 5.53 | 4.5 | ✅ |
 | `success.text` | `bg.canvas` | 5.33 | 4.5 | ✅ |
 | `warning.text` | `bg.canvas` | 5.18 | 4.5 | ✅ |
 | `text.primary` | `bg.surface` | 16.28 | 4.5 | ✅ |
 | `text.secondary` | `bg.surface` | 9.04 | 4.5 | ✅ |
+| `text.tertiary` | `bg.surface` | 6.70 | 4.5 | ✅ |
 | `accent.text` | `bg.surface` | 6.05 | 4.5 | ✅ |
 | `danger.text` | `bg.surface` | 6.25 | 4.5 | ✅ |
 | `success.text` | `bg.surface` | 6.02 | 4.5 | ✅ |
 | `warning.text` | `bg.surface` | 5.85 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated` | 17.12 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated` | 9.50 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated` | 7.04 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated` | 6.36 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated` | 6.57 | 4.5 | ✅ |
 | `success.text` | `bg.elevated` | 6.33 | 4.5 | ✅ |
 | `warning.text` | `bg.elevated` | 6.16 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated-2` | 17.12 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated-2` | 9.50 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated-2` | 7.04 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated-2` | 6.36 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated-2` | 6.57 | 4.5 | ✅ |
 | `success.text` | `bg.elevated-2` | 6.33 | 4.5 | ✅ |
@@ -238,24 +250,28 @@
 |---|---|---|---|---|
 | `text.primary` | `bg.canvas` | 15.74 | 4.5 | ✅ |
 | `text.secondary` | `bg.canvas` | 9.21 | 4.5 | ✅ |
+| `text.tertiary` | `bg.canvas` | 7.67 | 4.5 | ✅ |
 | `accent.text` | `bg.canvas` | 8.43 | 4.5 | ✅ |
 | `danger.text` | `bg.canvas` | 8.10 | 4.5 | ✅ |
 | `success.text` | `bg.canvas` | 9.86 | 4.5 | ✅ |
 | `warning.text` | `bg.canvas` | 8.57 | 4.5 | ✅ |
 | `text.primary` | `bg.surface` | 14.44 | 4.5 | ✅ |
 | `text.secondary` | `bg.surface` | 8.45 | 4.5 | ✅ |
+| `text.tertiary` | `bg.surface` | 7.04 | 4.5 | ✅ |
 | `accent.text` | `bg.surface` | 7.74 | 4.5 | ✅ |
 | `danger.text` | `bg.surface` | 7.43 | 4.5 | ✅ |
 | `success.text` | `bg.surface` | 9.05 | 4.5 | ✅ |
 | `warning.text` | `bg.surface` | 7.86 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated` | 12.95 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated` | 7.57 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated` | 6.31 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated` | 6.94 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated` | 6.66 | 4.5 | ✅ |
 | `success.text` | `bg.elevated` | 8.11 | 4.5 | ✅ |
 | `warning.text` | `bg.elevated` | 7.05 | 4.5 | ✅ |
 | `text.primary` | `bg.elevated-2` | 11.31 | 4.5 | ✅ |
 | `text.secondary` | `bg.elevated-2` | 6.62 | 4.5 | ✅ |
+| `text.tertiary` | `bg.elevated-2` | 5.52 | 4.5 | ✅ |
 | `accent.text` | `bg.elevated-2` | 6.06 | 4.5 | ✅ |
 | `danger.text` | `bg.elevated-2` | 5.82 | 4.5 | ✅ |
 | `success.text` | `bg.elevated-2` | 7.09 | 4.5 | ✅ |

@@ -23,7 +23,7 @@ jobs:
           node-version: 22
       - run: npm run build
       - name: 安装 Playwright（仅用于测试，不是项目依赖）
-        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+        run: npm install --no-save playwright axe-core@4 && npx playwright install --with-deps chromium
       - name: 启动静态服务器
         run: python3 -m http.server 5173 &
       - run: npm run test:e2e
@@ -40,6 +40,12 @@ jobs:
       - name: 输入框逐项截图审查（三种外观 × 浅色 / 深色 × 桌面 / 手机）
         if: always()
         run: npm run test:inputs
+      - name: 无障碍扫描（axe：两页 × 三种外观 × 浅色 / 深色 / 增强对比度 × 桌面 / 手机）
+        if: always()
+        run: npm run test:a11y
+      - name: 视觉回归（组件计算样式与基准比对）
+        if: always()
+        run: npm run test:visual
       # 每一项测试都会截图（三种外观各一组），失败的截图文件名带“失败”
       - name: 上传测试截图
         if: always()

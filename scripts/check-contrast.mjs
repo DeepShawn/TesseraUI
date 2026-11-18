@@ -9,7 +9,7 @@ const C = resolveSemanticColors(tokens);
 const get = (name, theme) => C[name][theme];
 
 const SURFACES = ['bg.canvas', 'bg.surface', 'bg.elevated', 'bg.elevated-2'];
-const TEXT = ['text.primary', 'text.secondary', 'accent.text', 'danger.text', 'success.text', 'warning.text'];
+const TEXT = ['text.primary', 'text.secondary', 'text.tertiary', 'accent.text', 'danger.text', 'success.text', 'warning.text'];
 const STATUS = ['danger', 'success', 'warning'];
 const AA = 4.5;
 const AA_LARGE = 3; // 大字、图标、控件边界

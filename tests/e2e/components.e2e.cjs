@@ -495,6 +495,41 @@ async function check(name, fn) {
     await m.keyboard.press('Escape');
   });
 
+  console.log('中文输入法');
+  shotPage = p;
+  const cdp = await p.context().newCDPSession(p);
+  await check('输入法：拼音组合中不触发自动补全筛选，选定汉字后才筛选', async () => {
+    const city = p.locator('#city');
+    await city.evaluate((e) => { e.scrollIntoView({ block: 'center', behavior: 'instant' }); e.value = ''; e.dispatchEvent(new Event('input', { bubbles: true })); });
+    await city.focus();
+    await cdp.send('Input.imeSetComposition', { text: 'zhou', selectionStart: 4, selectionEnd: 4 });
+    await p.waitForTimeout(300);
+    const during = await p.evaluate(() => { const i = document.querySelector('#city'); const l = document.getElementById(i.getAttribute('aria-controls')); return l && !l.hidden ? l.textContent : ''; });
+    assert.ok(!during.includes('没有匹配'), '组合中就按拼音字母筛选了：' + during.slice(0, 30));
+    await cdp.send('Input.insertText', { text: '州' });
+    await p.waitForTimeout(400);
+    const after = await p.evaluate(() => { const i = document.querySelector('#city'); const l = document.getElementById(i.getAttribute('aria-controls')); return [...(l?.querySelectorAll('.ts-option') || [])].map((o) => o.textContent); });
+    assert.ok(after.length > 0 && after.every((t) => t.includes('州')), '选定后没有按“州”筛选：' + after.join('、'));
+    await p.keyboard.press('Escape');
+  });
+  const ip = await ctx.newPage();
+  await ip.goto(`${BASE}/demo/index.html${SHAPE === 'tile' ? '' : `?shape=${SHAPE}&force`}`);
+  await ip.waitForTimeout(800);
+  shotPage = ip;
+  const icdp = await ip.context().newCDPSession(ip);
+  await check('输入法：拼音组合中不计字数，选定汉字后才计数', async () => {
+    const name = ip.locator('#f-name');
+    await name.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await name.focus();
+    await icdp.send('Input.imeSetComposition', { text: 'tessera', selectionStart: 7, selectionEnd: 7 });
+    await ip.waitForTimeout(250);
+    assert.equal(await ip.textContent('#f-count'), '0 / 20');
+    await icdp.send('Input.insertText', { text: '拼贴' });
+    await ip.waitForTimeout(250);
+    assert.equal(await ip.textContent('#f-count'), '2 / 20');
+  });
+  await ip.close();
+
   console.log('输入框');
   shotPage = p;
   await check('输入框聚焦时没有双重框（内部原生控件不画焦点框）', async () => {

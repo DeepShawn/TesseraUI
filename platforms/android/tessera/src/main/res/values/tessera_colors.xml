@@ -11,7 +11,7 @@
     <color name="tessera_fill_control_off">#FFD9D3C8</color>
     <color name="tessera_text_primary">#FF1F1B16</color>
     <color name="tessera_text_secondary">#FF5E584E</color>
-    <color name="tessera_text_tertiary">#FF77716A</color>
+    <color name="tessera_text_tertiary">#FF6B655C</color>
     <color name="tessera_text_on_solid">#FFFFFFFF</color>
     <color name="tessera_text_inverse">#FFF0ECE4</color>
     <color name="tessera_border_subtle">#141F1B16</color>

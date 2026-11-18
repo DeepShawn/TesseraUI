@@ -26,8 +26,8 @@
             <SolidColorBrush x:Key="TesseraTextPrimaryBrush" Color="#FF1F1B16" />
             <Color x:Key="TesseraTextSecondaryColor">#FF5E584E</Color>
             <SolidColorBrush x:Key="TesseraTextSecondaryBrush" Color="#FF5E584E" />
-            <Color x:Key="TesseraTextTertiaryColor">#FF77716A</Color>
-            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="#FF77716A" />
+            <Color x:Key="TesseraTextTertiaryColor">#FF6B655C</Color>
+            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="#FF6B655C" />
             <Color x:Key="TesseraTextOnSolidColor">#FFFFFFFF</Color>
             <SolidColorBrush x:Key="TesseraTextOnSolidBrush" Color="#FFFFFFFF" />
             <Color x:Key="TesseraTextInverseColor">#FFF0ECE4</Color>
@@ -148,8 +148,8 @@
             <SolidColorBrush x:Key="TesseraTextPrimaryBrush" Color="#FFF0ECE4" />
             <Color x:Key="TesseraTextSecondaryColor">#FFADA699</Color>
             <SolidColorBrush x:Key="TesseraTextSecondaryBrush" Color="#FFADA699" />
-            <Color x:Key="TesseraTextTertiaryColor">#FF7D776B</Color>
-            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="#FF7D776B" />
+            <Color x:Key="TesseraTextTertiaryColor">#FF9E978B</Color>
+            <SolidColorBrush x:Key="TesseraTextTertiaryBrush" Color="#FF9E978B" />
             <Color x:Key="TesseraTextOnSolidColor">#FFFFFFFF</Color>
             <SolidColorBrush x:Key="TesseraTextOnSolidBrush" Color="#FFFFFFFF" />
             <Color x:Key="TesseraTextInverseColor">#FF1F1B16</Color>

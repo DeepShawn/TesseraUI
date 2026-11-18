@@ -64,8 +64,8 @@
     "dark-hc": "{stone.300}"
   },
   "text.tertiary": {
-    "light": "{stone.550}",
-    "dark": "{stone.500}",
+    "light": "{stone.575}",
+    "dark": "{stone.450}",
     "light-hc": "{stone.600}",
     "dark-hc": "{stone.400}"
   },

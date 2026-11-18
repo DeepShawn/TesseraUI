@@ -112,7 +112,7 @@
   --ts-fill-control-off: #D9D3C8;
   --ts-text-primary: #1F1B16;
   --ts-text-secondary: #5E584E;
-  --ts-text-tertiary: #77716A;
+  --ts-text-tertiary: #6B655C;
   --ts-text-on-solid: #FFFFFF;
   --ts-text-inverse: #F0ECE4;
   --ts-border-subtle: rgb(31 27 22 / 0.08);
@@ -180,7 +180,7 @@
     --ts-fill-control-off: #4A453D;
     --ts-text-primary: #F0ECE4;
     --ts-text-secondary: #ADA699;
-    --ts-text-tertiary: #7D776B;
+    --ts-text-tertiary: #9E978B;
     --ts-text-on-solid: #FFFFFF;
     --ts-text-inverse: #1F1B16;
     --ts-border-subtle: rgb(240 236 228 / 0.08);
@@ -246,7 +246,7 @@
   --ts-fill-control-off: #4A453D;
   --ts-text-primary: #F0ECE4;
   --ts-text-secondary: #ADA699;
-  --ts-text-tertiary: #7D776B;
+  --ts-text-tertiary: #9E978B;
   --ts-text-on-solid: #FFFFFF;
   --ts-text-inverse: #1F1B16;
   --ts-border-subtle: rgb(240 236 228 / 0.08);
@@ -1112,14 +1112,14 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 
 /* ---------- 评分 Rating ---------- */
 .ts-rating { display: inline-flex; gap: 2px; }
-.ts-rating button {
+.ts-rating :is(button, .ts-rating-star) {
   display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 10px; background: none; cursor: pointer;
   color: var(--ts-fill-control-off); transition: color var(--ts-duration-instant) var(--ts-ease-standard), transform var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy);
 }
-.ts-rating button .ts-icon { width: 24px; height: 24px; }
-.ts-rating button[data-on] { color: var(--ts-pigment-ochre); }
-.ts-rating button[data-pop] { transform: scale(1.25); }
-.ts-rating[aria-readonly="true"] button { cursor: default; }
+.ts-rating :is(button, .ts-rating-star) .ts-icon { width: 24px; height: 24px; }
+.ts-rating :is(button, .ts-rating-star)[data-on] { color: var(--ts-pigment-ochre); }
+.ts-rating :is(button, .ts-rating-star)[data-pop] { transform: scale(1.25); }
+.ts-rating .ts-rating-star { cursor: default; }
 
 /* ---------- 文件上传 FileUpload ---------- */
 .ts-upload {
@@ -1183,11 +1183,11 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 .ts-day:disabled { opacity: .3; cursor: not-allowed; background: none; }
 /* 范围中间段：浅釉色连成一片（砖缝仍在） */
 .ts-day[data-in-range] { background: var(--ts-accent-subtle); color: var(--ts-accent-text); border-radius: 6px; }
-.ts-day[aria-selected="true"] {
+.ts-day[aria-pressed="true"] {
   background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font-weight: 600;
   background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
 }
-.ts-day[aria-selected="true"]::after { background: var(--ts-bg-surface); }
+.ts-day[aria-pressed="true"]::after { background: var(--ts-bg-surface); }
 .ts-day[data-range-start] { border-radius: 12px 6px 6px 12px; }
 .ts-day[data-range-end] { border-radius: 6px 12px 12px 6px; }
 .ts-day[data-range-start][data-range-end] { border-radius: 12px; }
@@ -2176,8 +2176,8 @@ img[data-viewer] { cursor: zoom-in; }
 /* 开关的“灌满”动画需要可插值的长度变量 */
 @property --_fill { syntax: "<length>"; inherits: false; initial-value: 0px; }
 
-@layer tessera {
-
+/* 流韵的形状数值放在样式层外面：tokens.css 里的 --ts-round-* 定义在 :root（不在层内），
+   层内的覆盖会被它压过去，所以这里必须同样不在层内（:root[data-shape] 的优先级更高） */
 :root[data-shape="flow"] {
   /* 方圆之间的圆角 */
   --ts-round-pill: var(--ts-flow-control);
@@ -2192,6 +2192,10 @@ img[data-viewer] { cursor: zoom-in; }
   --ts-flow-rim: inset 0 1px 0 color-mix(in srgb, #fff 55%, transparent);
   --ts-flow-wave: color-mix(in srgb, currentColor 13%, transparent);
 }
+
+@layer tessera {
+
+
 :root[data-shape="flow"][data-theme="dark"] { --ts-flow-rim: inset 0 1px 0 rgb(255 255 255 / .06); --ts-flow-glint: rgb(255 255 255 / .14); }
 @media (prefers-color-scheme: dark) {
   :root[data-shape="flow"]:not([data-theme="light"]) { --ts-flow-rim: inset 0 1px 0 rgb(255 255 255 / .06); --ts-flow-glint: rgb(255 255 255 / .14); }

@@ -21,7 +21,7 @@ public enum TesseraColor {
     public static let fillControlOff = Color.tessera(light: 0xD9D3C8FF, dark: 0x4A453DFF, lightHC: 0x7D776BFF, darkHC: 0x7D776BFF)
     public static let textPrimary = Color.tessera(light: 0x1F1B16FF, dark: 0xF0ECE4FF, lightHC: 0x1F1B16FF, darkHC: 0xF0ECE4FF)
     public static let textSecondary = Color.tessera(light: 0x5E584EFF, dark: 0xADA699FF, lightHC: 0x4A453DFF, darkHC: 0xBDB6A9FF)
-    public static let textTertiary = Color.tessera(light: 0x77716AFF, dark: 0x7D776BFF, lightHC: 0x5E584EFF, darkHC: 0xADA699FF)
+    public static let textTertiary = Color.tessera(light: 0x6B655CFF, dark: 0x9E978BFF, lightHC: 0x5E584EFF, darkHC: 0xADA699FF)
     public static let textOnSolid = Color.tessera(light: 0xFFFFFFFF, dark: 0xFFFFFFFF, lightHC: 0xFFFFFFFF, darkHC: 0xFFFFFFFF)
     public static let textInverse = Color.tessera(light: 0xF0ECE4FF, dark: 0x1F1B16FF, lightHC: 0xF0ECE4FF, darkHC: 0x1F1B16FF)
     public static let borderSubtle = Color.tessera(light: 0x1F1B1614, dark: 0xF0ECE414, lightHC: 0x1F1B1647, darkHC: 0xF0ECE44D)

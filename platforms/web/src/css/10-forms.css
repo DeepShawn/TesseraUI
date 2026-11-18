@@ -126,14 +126,14 @@
 
 /* ---------- 评分 Rating ---------- */
 .ts-rating { display: inline-flex; gap: 2px; }
-.ts-rating button {
+.ts-rating :is(button, .ts-rating-star) {
   display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 10px; background: none; cursor: pointer;
   color: var(--ts-fill-control-off); transition: color var(--ts-duration-instant) var(--ts-ease-standard), transform var(--ts-spring-bouncy-duration) var(--ts-spring-bouncy);
 }
-.ts-rating button .ts-icon { width: 24px; height: 24px; }
-.ts-rating button[data-on] { color: var(--ts-pigment-ochre); }
-.ts-rating button[data-pop] { transform: scale(1.25); }
-.ts-rating[aria-readonly="true"] button { cursor: default; }
+.ts-rating :is(button, .ts-rating-star) .ts-icon { width: 24px; height: 24px; }
+.ts-rating :is(button, .ts-rating-star)[data-on] { color: var(--ts-pigment-ochre); }
+.ts-rating :is(button, .ts-rating-star)[data-pop] { transform: scale(1.25); }
+.ts-rating .ts-rating-star { cursor: default; }
 
 /* ---------- 文件上传 FileUpload ---------- */
 .ts-upload {

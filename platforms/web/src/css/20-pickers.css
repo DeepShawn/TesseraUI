@@ -31,11 +31,11 @@
 .ts-day:disabled { opacity: .3; cursor: not-allowed; background: none; }
 /* 范围中间段：浅釉色连成一片（砖缝仍在） */
 .ts-day[data-in-range] { background: var(--ts-accent-subtle); color: var(--ts-accent-text); border-radius: 6px; }
-.ts-day[aria-selected="true"] {
+.ts-day[aria-pressed="true"] {
   background-color: var(--ts-text-primary); color: var(--ts-bg-surface); font-weight: 600;
   background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
 }
-.ts-day[aria-selected="true"]::after { background: var(--ts-bg-surface); }
+.ts-day[aria-pressed="true"]::after { background: var(--ts-bg-surface); }
 .ts-day[data-range-start] { border-radius: 12px 6px 6px 12px; }
 .ts-day[data-range-end] { border-radius: 6px 12px 12px 6px; }
 .ts-day[data-range-start][data-range-end] { border-radius: 12px; }

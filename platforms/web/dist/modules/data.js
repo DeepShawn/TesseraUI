@@ -546,6 +546,9 @@ function openViewer(start) {
 // ------------------------------------------------------------------
 export function codeBlock(root) {
   const pre = root.querySelector('pre');
+  // 长代码可以横向滚动：让键盘也能进入并滚动
+  if (!pre.hasAttribute('tabindex')) pre.tabIndex = 0;
+  if (!pre.hasAttribute('aria-label')) pre.setAttribute('aria-label', `${root.dataset.lang || ''} 代码`.trim());
   if (root.hasAttribute('data-lines')) {
     const code = pre.querySelector('code') || pre;
     code.innerHTML = code.innerHTML.replace(/\n$/, '').split('\n').map((l) => `<span class="ts-line">${l}</span>`).join('\n');

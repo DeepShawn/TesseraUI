@@ -13,7 +13,7 @@
             <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#00000000" />
             <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#FF1F1B16" />
             <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#FF5E584E" />
-            <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#FF77716A" />
+            <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#FF6B655C" />
             <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="#FFFFFFFF" />
             <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#FF0F6B63" />
             <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="#FF0F6B63" />
@@ -35,9 +35,9 @@
             <SolidColorBrush x:Key="TextControlForeground" Color="#FF1F1B16" />
             <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="#FF1F1B16" />
             <SolidColorBrush x:Key="TextControlForegroundFocused" Color="#FF1F1B16" />
-            <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#FF77716A" />
-            <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#FF77716A" />
-            <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#FF77716A" />
+            <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#FF6B655C" />
+            <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#FF6B655C" />
+            <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#FF6B655C" />
             <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="#381F8A7E" />
             <SolidColorBrush x:Key="ComboBoxBackground" Color="#0F1F1B16" />
             <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#0F1F1B16" />
@@ -103,7 +103,7 @@
             <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="#0FF0ECE4" />
             <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#FFF0ECE4" />
             <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#FFADA699" />
-            <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#FF7D776B" />
+            <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#FF9E978B" />
             <SolidColorBrush x:Key="TextOnAccentFillColorPrimaryBrush" Color="#FFFFFFFF" />
             <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#FF0F6B63" />
             <SolidColorBrush x:Key="AccentTextFillColorPrimaryBrush" Color="#FF6CBDB1" />
@@ -125,9 +125,9 @@
             <SolidColorBrush x:Key="TextControlForeground" Color="#FFF0ECE4" />
             <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="#FFF0ECE4" />
             <SolidColorBrush x:Key="TextControlForegroundFocused" Color="#FFF0ECE4" />
-            <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#FF7D776B" />
-            <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#FF7D776B" />
-            <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#FF7D776B" />
+            <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#FF9E978B" />
+            <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#FF9E978B" />
+            <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#FF9E978B" />
             <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="#521F8A7E" />
             <SolidColorBrush x:Key="ComboBoxBackground" Color="#14F0ECE4" />
             <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#14F0ECE4" />

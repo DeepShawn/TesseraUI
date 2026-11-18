@@ -112,7 +112,7 @@
   --ts-fill-control-off: #D9D3C8;
   --ts-text-primary: #1F1B16;
   --ts-text-secondary: #5E584E;
-  --ts-text-tertiary: #77716A;
+  --ts-text-tertiary: #6B655C;
   --ts-text-on-solid: #FFFFFF;
   --ts-text-inverse: #F0ECE4;
   --ts-border-subtle: rgb(31 27 22 / 0.08);
@@ -180,7 +180,7 @@
     --ts-fill-control-off: #4A453D;
     --ts-text-primary: #F0ECE4;
     --ts-text-secondary: #ADA699;
-    --ts-text-tertiary: #7D776B;
+    --ts-text-tertiary: #9E978B;
     --ts-text-on-solid: #FFFFFF;
     --ts-text-inverse: #1F1B16;
     --ts-border-subtle: rgb(240 236 228 / 0.08);
@@ -246,7 +246,7 @@
   --ts-fill-control-off: #4A453D;
   --ts-text-primary: #F0ECE4;
   --ts-text-secondary: #ADA699;
-  --ts-text-tertiary: #7D776B;
+  --ts-text-tertiary: #9E978B;
   --ts-text-on-solid: #FFFFFF;
   --ts-text-inverse: #1F1B16;
   --ts-border-subtle: rgb(240 236 228 / 0.08);
