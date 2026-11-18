@@ -352,6 +352,10 @@ object TesseraRadius {
 ${Object.entries(F.radius).map(([k, v]) => `    val ${ktKey(k)} = ${v}.dp`).join('\n')}
 }
 
+object TesseraOpacity {
+    const val DISABLED = ${F.opacity.disabled}f
+}
+
 /** 拼贴：成组的砖之间留缝，实色砖底部有砖厚 */
 object TesseraTile {
     val grout = ${F.tile.grout}.dp

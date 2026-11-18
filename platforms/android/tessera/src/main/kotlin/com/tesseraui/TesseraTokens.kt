@@ -377,6 +377,10 @@ object TesseraRadius {
     val full = 9999.dp
 }
 
+object TesseraOpacity {
+    const val DISABLED = 0.4f
+}
+
 /** 拼贴：成组的砖之间留缝，实色砖底部有砖厚 */
 object TesseraTile {
     val grout = 3.dp
