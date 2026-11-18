@@ -77,6 +77,10 @@ async function check(name, fn) {
       assert.equal(await p.locator('.ts-flow-splash').count(), 0);
       await sw.click();
     });
+    await check('流韵：触感接口在不支持的环境里静默降级，返回布尔值', async () => {
+      const r = await p.evaluate(async () => { const T = (await import('/platforms/web/dist/tessera.js')).default; return ['selection', 'light', 'medium', 'success', 'warning', 'unknown'].map((k) => typeof T.haptic(k)); });
+      assert.deepEqual([...new Set(r)], ['boolean']);
+    });
   }
 
   console.log('操作与输入');
@@ -333,8 +337,11 @@ async function check(name, fn) {
     assert.match(await p.textContent('.ts-accordion details[open] summary'), /商用/);
   });
   await check('工具提示：悬停出现，title 被替换', async () => {
+    // 先滚动到位并停稳再悬停：工具提示在滚动时会主动隐藏
+    await p.locator('[data-tooltip="下载"]').evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await p.waitForTimeout(300);
     await p.hover('[data-tooltip="下载"]');
-    await p.waitForTimeout(700);
+    await p.waitForTimeout(800);
     assert.equal(await p.textContent('.ts-tooltip'), '下载');
     assert.equal(await p.locator('[aria-label="帮助"]').getAttribute('title'), null);
   });
@@ -435,6 +442,21 @@ async function check(name, fn) {
     await p.waitForTimeout(1500);
     assert.ok((await p.locator('#feed li').count()) > before);
   });
+
+  if (SHAPE === 'flow') {
+    await check('流韵：持续掉帧时自动退回圆融', async () => {
+      const got = p.evaluate(() => new Promise((res) => document.addEventListener('tessera:flow-degraded', (e) => res(e.detail.reason), { once: true })));
+      // 持续占住主线程，帧率降到 15 左右
+      await p.evaluate(() => { window.__busy = setInterval(() => { const t = performance.now(); while (performance.now() - t < 60); }, 64); });
+      const reason = await Promise.race([got, new Promise((r) => setTimeout(() => r('timeout'), 9000))]);
+      await p.evaluate(() => clearInterval(window.__busy));
+      assert.equal(reason, 'fps');
+      assert.equal(await p.evaluate(() => document.documentElement.dataset.shape), 'round');
+      // 恢复流韵，继续后面的测试
+      await p.evaluate(async () => { const T = (await import('/platforms/web/dist/tessera.js')).default; T.setShape('flow', { force: true }); });
+      await p.waitForTimeout(400);
+    });
+  }
 
   console.log('手机');
   const m = await browser.newPage({ ...devices['iPhone 13'] });

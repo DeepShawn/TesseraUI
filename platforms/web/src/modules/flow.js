@@ -13,29 +13,94 @@ const quiet = () => prefersReducedMotion();
 let iosHaptic = null;
 const isIOS = () => /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+/** 四端统一的触感种类：选择（切换选项）、轻触、中等（开关打开）、确认（成功）、警告（危险操作、失败） */
+export const HAPTICS = ['selection', 'light', 'medium', 'success', 'warning'];
+const PATTERNS = { selection: 6, light: 8, medium: 14, success: [8, 40, 12], warning: [18, 60, 18, 60, 18] };
+
 /**
- * 触感反馈。Android 浏览器用 Vibration API；iOS Safari（18+）借用系统开关控件自带的触感。
- * 桌面浏览器没有触感硬件，调用无效果。必须在用户操作（点击、按下）的回调里调用。
- * @param {'light'|'medium'|'success'} kind
+ * 触感反馈。Android 浏览器用 Vibration API；iOS Safari 18+ 借用系统开关控件自带的触感（只有一种强度）；
+ * 桌面浏览器没有触感硬件。必须在用户操作（点击、按下）的回调里调用。
+ * 返回是否尝试触发了触感：浏览器不支持时静默降级并返回 false，不会抛错。
+ * @param {'selection'|'light'|'medium'|'success'|'warning'} kind
+ * @returns {boolean}
  */
 export function haptic(kind = 'light') {
-  if (navigator.vibrate) {
-    navigator.vibrate(kind === 'success' ? [8, 40, 12] : kind === 'medium' ? 14 : 8);
-    return;
+  const pattern = PATTERNS[kind] ?? PATTERNS.light;
+  try {
+    if (typeof navigator.vibrate === 'function') return navigator.vibrate(pattern) === true;
+    if (!isIOS()) return false;
+    if (!iosHaptic) {
+      iosHaptic = document.createElement('label');
+      iosHaptic.setAttribute('aria-hidden', 'true');
+      iosHaptic.style.cssText = 'position:fixed;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;left:-10px;top:-10px';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.setAttribute('switch', '');
+      input.tabIndex = -1;
+      iosHaptic.append(input);
+      document.body.append(iosHaptic);
+    }
+    // 旧版 iOS 不认识 switch 属性，此时没有触感，也不会有副作用
+    if (!('switch' in iosHaptic.firstChild)) return false;
+    iosHaptic.click();
+    return true;
+  } catch {
+    return false;
   }
-  if (!isIOS()) return;
-  if (!iosHaptic) {
-    iosHaptic = document.createElement('label');
-    iosHaptic.setAttribute('aria-hidden', 'true');
-    iosHaptic.style.cssText = 'position:fixed;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;left:-10px;top:-10px';
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.setAttribute('switch', '');
-    input.tabIndex = -1;
-    iosHaptic.append(input);
-    document.body.append(iosHaptic);
+}
+
+// ------------------------------------------------------------------
+// 性能保护：持续掉帧、电量低、页面切到后台时的处理
+// ------------------------------------------------------------------
+
+let monitorFrame = 0, monitorLast = 0, frames = 0, windowStart = 0, slowWindows = 0;
+const MIN_FPS = 45;
+
+function degrade(reason) {
+  stopMonitor();
+  document.documentElement.dataset.shape = 'round';
+  window.dispatchEvent(new Event('resize'));
+  document.dispatchEvent(new CustomEvent('tessera:shape', { detail: 'round' }));
+  document.dispatchEvent(new CustomEvent('tessera:flow-degraded', { detail: { reason } }));
+}
+
+function tick(t) {
+  monitorFrame = 0;
+  if (!isFlow() || document.hidden) return;
+  if (!windowStart) windowStart = t;
+  // 两帧间隔超过 1 秒说明页面被挂起过（切后台、锁屏），不计入
+  if (monitorLast && t - monitorLast > 1000) { windowStart = t; frames = 0; }
+  monitorLast = t;
+  frames++;
+  if (t - windowStart >= 1000) {
+    const fps = (frames * 1000) / (t - windowStart);
+    slowWindows = fps < MIN_FPS ? slowWindows + 1 : 0;
+    windowStart = t; frames = 0;
+    // 连续 2 个 1 秒窗口低于 45 帧：退回圆融
+    if (slowWindows >= 2) { degrade('fps'); return; }
   }
-  iosHaptic.click();
+  monitorFrame = requestAnimationFrame(tick);
+}
+
+function startMonitor() {
+  if (monitorFrame || !isFlow() || document.hidden) return;
+  windowStart = 0; frames = 0; slowWindows = 0; monitorLast = 0;
+  monitorFrame = requestAnimationFrame(tick);
+}
+
+function stopMonitor() {
+  cancelAnimationFrame(monitorFrame);
+  monitorFrame = 0;
+}
+
+async function checkBattery() {
+  if (!isFlow() || !navigator.getBattery) return;
+  try {
+    const b = await navigator.getBattery();
+    const low = () => !b.charging && b.level <= 0.2;
+    if (low()) degrade('battery');
+    else b.addEventListener('levelchange', () => { if (isFlow() && low()) degrade('battery'); }, { once: false });
+  } catch { /* 不支持就跳过 */ }
 }
 
 // ------------------------------------------------------------------
@@ -122,12 +187,21 @@ export function initFlow() {
   if (installed || typeof document === 'undefined') return;
   installed = true;
 
+  // 性能保护：流韵外观下持续监测帧率；页面切到后台时暂停监测与釉光；电量低于 20% 且未充电时退回圆融
+  const onShape = () => { if (isFlow()) { startMonitor(); checkBattery(); } else stopMonitor(); };
+  document.addEventListener('tessera:shape', onShape);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { stopMonitor(); clearGlint(glintTarget); glintTarget = null; } else onShape();
+  });
+  onShape();
+
   document.addEventListener('pointerdown', (e) => {
     if (!isFlow() || e.button > 0) return;
     const host = e.target.closest?.(RIPPLE_HOSTS);
     if (!host) return;
     if (!quiet()) ripple(host, e.clientX, e.clientY);
-    if (host.matches('.ts-button.ts-primary, .ts-button.ts-danger, .ts-fab')) haptic('light');
+    if (host.matches('.ts-button.ts-danger')) haptic('warning');
+    else if (host.matches('.ts-button.ts-primary, .ts-fab')) haptic('light');
   }, { passive: true });
 
   document.addEventListener('change', (e) => {
@@ -135,9 +209,9 @@ export function initFlow() {
     const t = e.target;
     if (!(t instanceof HTMLInputElement)) return;
     if (t.matches('.ts-switch')) { haptic(t.checked ? 'medium' : 'light'); if (!quiet()) splash(t, true); }
-    else if (t.matches('.ts-checkbox, .ts-radio')) { haptic('light'); if (!quiet()) splash(t, false); }
+    else if (t.matches('.ts-checkbox, .ts-radio')) { haptic('selection'); if (!quiet()) splash(t, false); }
     else if (t.closest('.ts-segmented')) {
-      haptic('light');
+      haptic('selection');
       const seg = t.closest('.ts-segmented');
       if (!quiet()) { seg.classList.remove('is-flowing'); void seg.offsetWidth; seg.classList.add('is-flowing'); setTimeout(() => seg.classList.remove('is-flowing'), 600); }
     }
@@ -145,7 +219,7 @@ export function initFlow() {
 
   document.addEventListener('click', (e) => {
     if (!isFlow()) return;
-    if (e.target.closest?.('.ts-tabbar-item, .ts-tab, .ts-page:not([data-gap])')) haptic('light');
+    if (e.target.closest?.('.ts-tabbar-item, .ts-tab, .ts-page:not([data-gap])')) haptic('selection');
   });
 
   document.addEventListener('pointermove', (e) => {
