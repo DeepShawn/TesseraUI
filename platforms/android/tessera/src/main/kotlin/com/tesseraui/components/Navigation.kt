@@ -1,5 +1,9 @@
 package com.tesseraui.components
 
+import androidx.compose.ui.draw.shadow
+import com.tesseraui.TesseraRound
+import com.tesseraui.foundation.groupGap
+import com.tesseraui.foundation.isRound
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -71,12 +75,14 @@ fun TesseraNavBar(
 ) {
     val c = Tessera.colors
     val line = c.borderSubtle
+    val round = isRound
     Column(
         modifier
             .fillMaxWidth()
             .background(c.bgCanvas)
             .then(if (applyStatusBarInsets) Modifier.windowInsetsPadding(WindowInsets.statusBars) else Modifier)
-            .drawBehind { drawLine(line, Offset(0f, size.height), Offset(size.width, size.height), 1.dp.toPx()) },
+            // 圆融外观没有底部分割线
+            .drawBehind { if (!round) drawLine(line, Offset(0f, size.height), Offset(size.width, size.height), 1.dp.toPx()) },
     ) {
         Row(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             Box(Modifier.width(56.dp)) { navigationIcon?.invoke() }
@@ -112,7 +118,9 @@ fun TesseraTabs(titles: List<String>, selectedIndex: Int, onSelect: (Int) -> Uni
         launch { right.animateTo(r, if (goingRight) snappy else smooth) }
     }
     val line = c.borderSubtle
-    Box(modifier.fillMaxWidth().drawBehind { drawLine(line, Offset(0f, size.height - 0.5f), Offset(size.width, size.height - 0.5f), 1.dp.toPx()) }) {
+    val round = isRound
+    // 圆融外观：没有底线，指示器是一颗圆头短条
+    Box(modifier.fillMaxWidth().drawBehind { if (!round) drawLine(line, Offset(0f, size.height - 0.5f), Offset(size.width, size.height - 0.5f), 1.dp.toPx()) }) {
         Row(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s6)) {
             titles.forEachIndexed { i, t ->
                 val selected = i == selectedIndex
@@ -135,8 +143,8 @@ fun TesseraTabs(titles: List<String>, selectedIndex: Int, onSelect: (Int) -> Uni
                 .align(Alignment.BottomStart)
                 .offset { IntOffset(l.roundToInt(), 0) }
                 .width(w)
-                .height(3.dp)
-                .clip(RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp))
+                .height(if (round) 4.dp else 3.dp)
+                .clip(if (round) RoundedCornerShape(TesseraRound.pill) else RoundedCornerShape(topStart = 2.dp, topEnd = 2.dp))
                 .background(c.accentSolid),
         )
     }
@@ -153,15 +161,32 @@ data class TesseraTabBarItem(val label: String, val icon: ImageVector, val selec
 fun TesseraTabBar(items: List<TesseraTabBarItem>, selectedIndex: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier, applyNavigationBarInsets: Boolean = true) {
     val c = Tessera.colors
     val line = c.borderSubtle
-    Row(
+    val round = isRound
+    val pill = RoundedCornerShape(TesseraRound.pill)
+    // 拼贴：一排砖，顶部一条细线；圆融：浮起的一颗胶囊，没有线
+    val bar = if (round) {
+        modifier
+            .fillMaxWidth()
+            .background(c.bgCanvas)
+            .then(if (applyNavigationBarInsets) Modifier.windowInsetsPadding(WindowInsets.navigationBars) else Modifier)
+            .padding(start = TesseraSpace.s3, end = TesseraSpace.s3, bottom = TesseraSpace.s3)
+            .shadow(10.dp, pill, ambientColor = c.shadowColor, spotColor = c.shadowColor)
+            .clip(pill)
+            .background(c.bgElevated)
+            .padding(6.dp)
+            .selectableGroup()
+    } else {
         modifier
             .fillMaxWidth()
             .background(c.bgCanvas)
             .drawBehind { drawLine(line, Offset(0f, 0f), Offset(size.width, 0f), 1.dp.toPx()) }
             .then(if (applyNavigationBarInsets) Modifier.windowInsetsPadding(WindowInsets.navigationBars) else Modifier)
             .padding(horizontal = TesseraSpace.s3, vertical = TesseraSpace.s2)
-            .selectableGroup(),
-        horizontalArrangement = Arrangement.spacedBy(TesseraTile.grout),
+            .selectableGroup()
+    }
+    Row(
+        bar,
+        horizontalArrangement = Arrangement.spacedBy(groupGap),
     ) {
         items.forEachIndexed { i, item ->
             val selected = i == selectedIndex
@@ -170,8 +195,8 @@ fun TesseraTabBar(items: List<TesseraTabBarItem>, selectedIndex: Int, onSelect: 
             Column(
                 Modifier
                     .weight(1f)
-                    .height(52.dp)
-                    .clip(RoundedCornerShape(TesseraRadius.md))
+                    .height(if (round) 50.dp else 52.dp)
+                    .clip(if (round) pill else RoundedCornerShape(TesseraRadius.md))
                     .background(bg)
                     .selectable(selected, role = Role.Tab) { onSelect(i) },
                 horizontalAlignment = Alignment.CenterHorizontally,

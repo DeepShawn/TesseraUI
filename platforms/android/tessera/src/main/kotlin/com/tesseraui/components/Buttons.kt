@@ -1,5 +1,7 @@
 package com.tesseraui.components
 
+import com.tesseraui.foundation.isRound
+import com.tesseraui.foundation.shapeOf
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
@@ -94,7 +96,7 @@ fun TesseraButton(
         hovered && enabled -> if (solid) c.stateSolidHover else c.stateHover
         else -> Color.Transparent
     }
-    val s = shape ?: RoundedCornerShape(size.radius)
+    val s = shape ?: shapeOf(size.radius)
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = TesseraSize.touchMin, minHeight = TesseraSize.touchMin)
@@ -151,7 +153,7 @@ fun TesseraIconButton(
     val c = Tessera.colors
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val s = shape ?: RoundedCornerShape(size.radius)
+    val s = shape ?: shapeOf(size.radius)
     Box(
         modifier = modifier
             .size(maxOf(size.height, TesseraSize.touchMin))
@@ -186,11 +188,13 @@ fun TesseraSpinner(modifier: Modifier = Modifier, size: Dp = 20.dp, color: Color
     val tile = (size - gap) / 2
     // 顺时针：左上 → 右上 → 右下 → 左下
     val order = listOf(0, 1, 3, 2)
+    // 圆融外观：四颗小圆点
+    val dot = if (isRound) RoundedCornerShape(50) else RoundedCornerShape(tile / 3)
     Column(modifier.size(size).semantics { contentDescription = "加载中" }, verticalArrangement = Arrangement.spacedBy(gap)) {
         for (row in 0..1) Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
             for (col in 0..1) {
                 val i = order.indexOf(row * 2 + col)
-                Box(Modifier.size(tile).clip(RoundedCornerShape(tile / 3)).background(c.copy(alpha = if (step.toInt() % 4 == i) 1f else 0.25f)))
+                Box(Modifier.size(tile).clip(dot).background(c.copy(alpha = if (step.toInt() % 4 == i) 1f else 0.25f)))
             }
         }
     }

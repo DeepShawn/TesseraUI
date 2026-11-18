@@ -1,5 +1,11 @@
 package com.tesseraui.components
 
+import com.tesseraui.TesseraRound
+import com.tesseraui.foundation.softSheen
+import com.tesseraui.foundation.pillGap
+import com.tesseraui.foundation.shapeRadius
+import com.tesseraui.foundation.shapeOf
+import com.tesseraui.foundation.isRound
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -146,7 +152,9 @@ fun TesseraToast(message: String, icon: ImageVector? = null, actionLabel: String
     val density = LocalDensity.current
     val y = remember { Animatable(0f) }
     val scope = rememberCoroutineScope()
-    val shape = RoundedCornerShape(TesseraRadius.lg)
+    // 拼贴：一块反色砖；圆融：一颗反色胶囊
+    val round = isRound
+    val shape = shapeOf(TesseraRadius.lg)
     val drag = rememberDraggableState { d -> scope.launch { y.snapTo(if (y.value + d > 0) (y.value + d) * 0.3f else y.value + d) } }
     Row(
         Modifier
@@ -160,9 +168,9 @@ fun TesseraToast(message: String, icon: ImageVector? = null, actionLabel: String
             .shadow(12.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
             .clip(shape)
             .background(c.bgInverse)
-            .glaze(c.edgeSolid, c.sheen)
+            .then(if (round) Modifier.softSheen() else Modifier.glaze(c.edgeSolid, c.sheen))
             .semantics { liveRegion = LiveRegionMode.Polite; dismiss { onDismiss(); true } }
-            .padding(start = TesseraSpace.s4, end = if (actionLabel != null) TesseraSpace.s2 else TesseraSpace.s5),
+            .padding(start = if (round) TesseraSpace.s5 else TesseraSpace.s4, end = if (actionLabel != null) TesseraSpace.s2 else TesseraSpace.s5),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s3),
     ) {
@@ -215,7 +223,8 @@ fun TesseraDialogPanel(
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val c = Tessera.colors
-    val shape = RoundedCornerShape(TesseraRadius.s2xl)
+    val round = isRound
+    val shape = shapeOf(TesseraRadius.s2xl, TesseraRound.panel)
     Column(
         Modifier
             .padding(16.dp)
@@ -224,17 +233,19 @@ fun TesseraDialogPanel(
             .shadow(24.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
             .clip(shape)
             .background(c.bgElevated)
-            .border(1.dp, c.borderSurface, shape)
+            .then(if (round) Modifier else Modifier.border(1.dp, c.borderSurface, shape))
             .semantics { paneTitle = title }
             .padding(TesseraSpace.s6),
     ) {
         TesseraText(title, style = Tessera.type.title2)
         if (text != null) TesseraText(text, Modifier.padding(top = TesseraSpace.s2), style = Tessera.type.bodySm, color = c.textSecondary)
         content?.invoke(this)
-        Row(Modifier.fillMaxWidth().padding(top = TesseraSpace.s6), horizontalArrangement = Arrangement.spacedBy(TesseraTile.grout)) {
-            if (dismissText != null) TesseraButton(dismissText, onDismiss, Modifier.weight(1f), variant = TesseraButtonVariant.Secondary, size = TesseraButtonSize.Lg, shape = tileShape(TilePosition.First, TesseraRadius.lg))
+        // 拼贴：一组拼贴砖；圆融：两颗独立的胶囊，间距 8
+        Row(Modifier.fillMaxWidth().padding(top = TesseraSpace.s6), horizontalArrangement = Arrangement.spacedBy(pillGap)) {
+            if (dismissText != null) TesseraButton(dismissText, onDismiss, Modifier.weight(1f), variant = TesseraButtonVariant.Secondary, size = TesseraButtonSize.Lg,
+                shape = if (round) shapeOf(0.dp) else tileShape(TilePosition.First, TesseraRadius.lg))
             TesseraButton(confirmText, onConfirm, Modifier.weight(1f), variant = if (danger) TesseraButtonVariant.Danger else TesseraButtonVariant.Primary, size = TesseraButtonSize.Lg,
-                shape = tileShape(if (dismissText != null) TilePosition.Last else TilePosition.Single, TesseraRadius.lg))
+                shape = if (round) shapeOf(0.dp) else tileShape(if (dismissText != null) TilePosition.Last else TilePosition.Single, TesseraRadius.lg))
         }
     }
 }
@@ -282,7 +293,8 @@ fun TesseraBottomSheet(
                 Modifier.fillMaxSize().graphicsLayer { alpha = (visibleH.value / stops[1]).coerceIn(0f, 1f) }.background(c.bgScrim)
                     .clickable(remember { MutableInteractionSource() }, null, onClickLabel = "关闭") { onDismissRequest() },
             )
-            val shape = RoundedCornerShape(topStart = TesseraRadius.s2xl, topEnd = TesseraRadius.s2xl)
+            val top = shapeRadius(TesseraRadius.s2xl, TesseraRound.panel)
+            val shape = RoundedCornerShape(topStart = top, topEnd = top)
             Column(
                 Modifier
                     .align(Alignment.BottomCenter)
@@ -325,7 +337,8 @@ fun TesseraBottomSheet(
 @Composable
 fun TesseraSheetPanel(title: String?, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     val c = Tessera.colors
-    val shape = RoundedCornerShape(topStart = TesseraRadius.s2xl, topEnd = TesseraRadius.s2xl)
+    val top = shapeRadius(TesseraRadius.s2xl, TesseraRound.panel)
+    val shape = RoundedCornerShape(topStart = top, topEnd = top)
     Column(modifier.fillMaxWidth().shadow(24.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor).clip(shape).background(c.bgElevated).padding(horizontal = TesseraSpace.s5)) {
         Box(Modifier.fillMaxWidth().height(28.dp), contentAlignment = Alignment.Center) { Box(Modifier.size(36.dp, 5.dp).clip(RoundedCornerShape(3.dp)).background(c.borderStrong)) }
         if (title != null) TesseraText(title, Modifier.padding(bottom = TesseraSpace.s4), style = Tessera.type.title2)

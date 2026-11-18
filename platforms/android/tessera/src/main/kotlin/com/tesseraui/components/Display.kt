@@ -1,5 +1,9 @@
 package com.tesseraui.components
 
+import com.tesseraui.TesseraRound
+import com.tesseraui.foundation.avatarShape
+import com.tesseraui.foundation.isRound
+import com.tesseraui.foundation.shapeOf
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -85,7 +89,7 @@ internal fun toneColors(tone: TesseraTone): Pair<Color, Color> {
 fun TesseraTag(text: String, modifier: Modifier = Modifier, tone: TesseraTone = TesseraTone.Neutral, icon: ImageVector? = null) {
     val (bg, fg) = toneColors(tone)
     Row(
-        modifier.height(24.dp).clip(RoundedCornerShape(TesseraRadius.sm)).background(bg).padding(horizontal = 8.dp),
+        modifier.height(24.dp).clip(shapeOf(TesseraRadius.sm)).background(bg).padding(horizontal = if (isRound) 10.dp else 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -101,7 +105,7 @@ fun TesseraTag(text: String, modifier: Modifier = Modifier, tone: TesseraTone = 
 fun TesseraBadge(count: Int?, modifier: Modifier = Modifier, color: Color = Tessera.colors.dangerSolid, max: Int = 99) {
     val ring = Tessera.colors.bgSurface
     if (count == null) {
-        Box(modifier.size(8.dp).clip(RoundedCornerShape(3.dp)).background(color).semantics { contentDescription = "有新消息" })
+        Box(modifier.size(8.dp).clip(shapeOf(3.dp)).background(color).semantics { contentDescription = "有新消息" })
         return
     }
     val label = if (count > max) "$max+" else "$count"
@@ -109,9 +113,9 @@ fun TesseraBadge(count: Int?, modifier: Modifier = Modifier, color: Color = Tess
         modifier
             .defaultMinSize(minWidth = 18.dp)
             .height(18.dp)
-            .border(2.dp, ring, RoundedCornerShape(8.dp))
+            .border(2.dp, ring, shapeOf(8.dp))
             .padding(1.dp)
-            .clip(RoundedCornerShape(7.dp))
+            .clip(shapeOf(7.dp))
             .background(color)
             .padding(horizontal = 5.dp)
             .clearAndSetSemantics { contentDescription = "$count 条未读" },
@@ -138,7 +142,7 @@ fun TesseraAvatar(
     val (bg, fg) = toneColors(tone)
     Box(modifier.size(size.dp)) {
         Box(
-            Modifier.size(size.dp).clip(RoundedCornerShape(36)).background(Tessera.colors.bgSurface).background(bg)
+            Modifier.size(size.dp).clip(avatarShape()).background(Tessera.colors.bgSurface).background(bg)
                 .semantics { contentDescription = text },
             contentAlignment = Alignment.Center,
         ) {
@@ -153,12 +157,15 @@ fun TesseraAvatar(
 fun TesseraAvatarGroup(names: List<String>, modifier: Modifier = Modifier, max: Int = 4, size: TesseraAvatarSize = TesseraAvatarSize.Sm) {
     val tones = listOf(TesseraTone.Lapis, TesseraTone.Olive, TesseraTone.Amethyst, TesseraTone.Ochre, TesseraTone.Cinnabar)
     Row(modifier.semantics(mergeDescendants = true) { contentDescription = names.joinToString("、") }) {
+        // 圆融外观：头像之间的描边细一些（2dp），叠得更紧
+        val ring = if (isRound) 2.dp else TesseraTile.grout
+        val overlap = if (isRound) 8 else 6
         names.take(max).forEachIndexed { i, n ->
-            Box(Modifier.offset(x = (-6 * i).dp).border(TesseraTile.grout, Tessera.colors.bgSurface, RoundedCornerShape(36)).padding(TesseraTile.grout)) {
+            Box(Modifier.offset(x = (-overlap * i).dp).border(ring, Tessera.colors.bgSurface, avatarShape()).padding(ring)) {
                 TesseraAvatar(n, tone = tones[i % tones.size], size = size)
             }
         }
-        if (names.size > max) Box(Modifier.offset(x = (-6 * max).dp).border(TesseraTile.grout, Tessera.colors.bgSurface, RoundedCornerShape(36)).padding(TesseraTile.grout)) {
+        if (names.size > max) Box(Modifier.offset(x = (-overlap * max).dp).border(ring, Tessera.colors.bgSurface, avatarShape()).padding(ring)) {
             TesseraAvatar("+${names.size - max}", tone = TesseraTone.Neutral, size = size)
         }
     }
@@ -177,14 +184,15 @@ fun TesseraCard(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val c = Tessera.colors
-    val shape = RoundedCornerShape(TesseraRadius.xl)
+    val shape = shapeOf(TesseraRadius.xl, TesseraRound.card)
     val interaction = remember { MutableInteractionSource() }
     Column(
         modifier
             .shadow(if (elevated) 10.dp else 3.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
             .clip(shape)
             .background(if (elevated) c.bgElevated else c.bgSurface)
-            .border(1.dp, c.borderSurface, shape)
+            // 圆融外观没有描边，只靠柔和的投影
+            .then(if (isRound) Modifier else Modifier.border(1.dp, c.borderSurface, shape))
             .then(if (onClick != null) Modifier.clickable(interaction, null, role = Role.Button, onClick = onClick) else Modifier)
             .padding(padding),
     ) { CompositionLocalProvider(LocalContentColor provides c.textPrimary) { content() } }
@@ -194,10 +202,21 @@ fun TesseraCard(
 // 列表 List：每行一块砖，砖缝分隔，首尾外角大
 // ------------------------------------------------------------------
 
-/** 拼贴列表：按顺序排列子项，砖缝 3dp */
+/**
+ * 列表。拼贴：每行一块砖，砖缝 3dp；圆融：整个列表是一整块圆角面，行与行之间没有缝、没有线，按下时行内浮出一颗胶囊。
+ */
 @Composable
 fun TesseraList(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(TesseraTile.grout), content = content)
+    if (isRound) {
+        val c = Tessera.colors
+        val shape = RoundedCornerShape(TesseraRound.card)
+        Column(
+            modifier.shadow(3.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor).clip(shape).background(c.bgSurface).padding(6.dp),
+            content = content,
+        )
+    } else {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(TesseraTile.grout), content = content)
+    }
 }
 
 @Composable
@@ -217,11 +236,11 @@ fun TesseraListItem(
         modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 60.dp)
-            .clip(tileShape(position, TesseraRadius.lg, vertical = true))
-            .background(c.bgSurface)
+            .clip(if (isRound) RoundedCornerShape(TesseraRound.row) else tileShape(position, TesseraRadius.lg, vertical = true))
+            .background(if (isRound) Color.Transparent else c.bgSurface)
             .background(if (pressed) c.statePressed else Color.Transparent)
             .then(if (onClick != null) Modifier.clickable(interaction, null, role = Role.Button, onClick = onClick) else Modifier)
-            .padding(horizontal = TesseraSpace.s4, vertical = TesseraSpace.s2),
+            .padding(horizontal = if (isRound) TesseraSpace.s3 else TesseraSpace.s4, vertical = TesseraSpace.s2),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s3),
     ) {
@@ -239,7 +258,7 @@ fun TesseraListItem(
 // ------------------------------------------------------------------
 
 @Composable
-fun TesseraSkeleton(modifier: Modifier = Modifier, shape: Shape = RoundedCornerShape(TesseraRadius.grout)) {
+fun TesseraSkeleton(modifier: Modifier = Modifier, shape: Shape = shapeOf(TesseraRadius.grout)) {
     val c = Tessera.colors
     val reduce = LocalReduceMotion.current
     val x = if (reduce) -1f else {
@@ -260,7 +279,7 @@ fun TesseraSkeleton(modifier: Modifier = Modifier, shape: Shape = RoundedCornerS
 @Composable
 fun TesseraSkeletonRow(modifier: Modifier = Modifier) {
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s3)) {
-        TesseraSkeleton(Modifier.size(40.dp), RoundedCornerShape(36))
+        TesseraSkeleton(Modifier.size(40.dp), avatarShape())
         Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             TesseraSkeleton(Modifier.fillMaxWidth(0.4f).height(12.dp))
             TesseraSkeleton(Modifier.fillMaxWidth(0.9f).height(12.dp))

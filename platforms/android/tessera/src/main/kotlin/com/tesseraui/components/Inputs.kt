@@ -1,5 +1,9 @@
 package com.tesseraui.components
 
+import com.tesseraui.TesseraRound
+import com.tesseraui.foundation.shapeRadius
+import com.tesseraui.foundation.shapeOf
+import com.tesseraui.foundation.isRound
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
@@ -109,7 +113,9 @@ fun TesseraTextField(
     val focused by interactionSource.collectIsFocusedAsState()
     val glow by animateFloatAsState(if (focused || error != null) 1f else 0f, tween(TesseraMotion.DURATION_FAST), label = "glow")
     val bg by animateColorAsState(if (focused) c.bgSurface else c.fillDefault, tween(TesseraMotion.DURATION_FAST), label = "bg")
-    val radius = if (singleLine) TesseraRadius.md else TesseraRadius.lg
+    // 圆融：单行是胶囊、多行是 22 圆角，没有凹槽和描边
+    val round = isRound
+    val radius = if (singleLine) shapeRadius(TesseraRadius.md) else shapeRadius(TesseraRadius.lg, TesseraRound.row)
     val shape = RoundedCornerShape(radius)
 
     // 内部保留 TextFieldValue，用来判断输入法是否还在组合中
@@ -147,8 +153,8 @@ fun TesseraTextField(
                         .clip(shape)
                         .background(bg)
                         .then(if (!focused) Modifier.sunken() else Modifier)
-                        .border(1.dp, c.borderField, shape)
-                        .padding(horizontal = TesseraSpace.s3, vertical = if (singleLine) 0.dp else TesseraSpace.s3),
+                        .then(if (round) Modifier else Modifier.border(1.dp, c.borderField, shape))
+                        .padding(horizontal = if (round) TesseraSpace.s4 else TesseraSpace.s3, vertical = if (singleLine) 0.dp else TesseraSpace.s3),
                     verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top,
                     horizontalArrangement = Arrangement.spacedBy(TesseraSpace.s2),
                 ) {
@@ -183,7 +189,7 @@ fun TesseraSearchField(
         placeholder = placeholder,
         leadingIcon = TesseraIcons.Search,
         trailing = if (query.isNotEmpty()) ({
-            Box(Modifier.size(28.dp).clip(RoundedCornerShape(10.dp)).clickable(role = Role.Button) { onQueryChange(""); onCommittedQueryChange?.invoke("") }
+            Box(Modifier.size(28.dp).clip(shapeOf(10.dp)).clickable(role = Role.Button) { onQueryChange(""); onCommittedQueryChange?.invoke("") }
                 .semantics { contentDescription = "清除" }, contentAlignment = Alignment.Center) { TesseraIcon(TesseraIcons.Close, null, size = 16.dp) }
         }) else null,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -234,15 +240,16 @@ fun TesseraMenu(expanded: Boolean, onDismissRequest: () -> Unit, modifier: Modif
 @Composable
 fun TesseraMenuPanel(modifier: Modifier = Modifier, minWidth: Dp = 220.dp, content: @Composable ColumnScope.() -> Unit) {
     val c = Tessera.colors
-    val shape = RoundedCornerShape(TesseraRadius.lg)
+    val round = isRound
+    val shape = shapeOf(TesseraRadius.lg, TesseraRound.menu)
     Column(
         modifier
             .widthIn(min = minWidth)
             .shadow(12.dp, shape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
             .clip(shape)
             .background(c.bgElevated)
-            .border(1.dp, c.borderSubtle, shape)
-            .padding(TesseraSpace.s1),
+            .then(if (round) Modifier else Modifier.border(1.dp, c.borderSubtle, shape))
+            .padding(if (round) 6.dp else TesseraSpace.s1),
     ) { CompositionLocalProvider(LocalContentColor provides c.textPrimary) { content() } }
 }
 
@@ -264,7 +271,7 @@ fun TesseraMenuItem(
         Modifier
             .fillMaxWidth()
             .height(40.dp)
-            .clip(RoundedCornerShape(TesseraRadius.lg - TesseraSpace.s1))
+            .clip(shapeOf(TesseraRadius.lg - TesseraSpace.s1, TesseraRound.menu - 6.dp))
             .background(if (pressed) c.statePressed else Color.Transparent)
             .clickable(interaction, null, enabled = enabled, role = Role.Button, onClick = onClick)
             .semantics { if (selected) stateDescription = "已选择" }
@@ -279,10 +286,11 @@ fun TesseraMenuItem(
     }
 }
 
-/** 菜单分隔：一道砖缝 */
+/** 菜单分隔：拼贴是一道砖缝；圆融只留白，不画线 */
 @Composable
 fun TesseraMenuSeparator() {
-    Box(Modifier.fillMaxWidth().padding(vertical = TesseraSpace.s1).height(TesseraTile.grout).background(Tessera.colors.bgCanvas))
+    if (isRound) Box(Modifier.fillMaxWidth().height(TesseraRound.gap))
+    else Box(Modifier.fillMaxWidth().padding(vertical = TesseraSpace.s1).height(TesseraTile.grout).background(Tessera.colors.bgCanvas))
 }
 
 // ------------------------------------------------------------------
@@ -300,7 +308,8 @@ fun TesseraSelect(
 ) {
     val c = Tessera.colors
     var open by remember { mutableStateOf(false) }
-    val shape = RoundedCornerShape(TesseraRadius.md)
+    val round = isRound
+    val shape = shapeOf(TesseraRadius.md)
     Column(modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (label != null) TesseraText(label, style = Tessera.type.label)
         Box {
@@ -311,10 +320,10 @@ fun TesseraSelect(
                     .clip(shape)
                     .background(c.fillDefault)
                     .sunken()
-                    .border(1.dp, c.borderField, shape)
+                    .then(if (round) Modifier else Modifier.border(1.dp, c.borderField, shape))
                     .clickable(role = Role.DropdownList) { open = true }
                     .semantics { stateDescription = options.getOrNull(selectedIndex) ?: placeholder }
-                    .padding(horizontal = TesseraSpace.s3),
+                    .padding(horizontal = if (round) TesseraSpace.s4 else TesseraSpace.s3),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val text = options.getOrNull(selectedIndex)

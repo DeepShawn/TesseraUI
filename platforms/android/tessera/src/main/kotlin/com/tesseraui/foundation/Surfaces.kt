@@ -23,6 +23,7 @@ import com.tesseraui.LocalReduceMotion
 import com.tesseraui.Tessera
 import com.tesseraui.TesseraMotion
 import com.tesseraui.TesseraRadius
+import com.tesseraui.TesseraRound
 import com.tesseraui.TesseraTile
 
 /** 拼贴组里一块砖的位置：决定哪几个角是“外角”（大圆角） */
@@ -66,21 +67,29 @@ fun Modifier.glaze(edgeColor: Color, sheenColor: Color = Color.Transparent, edge
     }
 }
 
-/** 实色砖：釉光 + 深色砖厚 */
+/** 实色砖：釉光 + 深色砖厚。圆融外观下改为整面柔光：顶部略亮、底部略暗，没有硬边 */
 @Composable
 fun Modifier.raisedSolid(pressed: Boolean = false): Modifier {
     val c = Tessera.colors
+    if (isRound) return softSheen()
     return glaze(c.edgeSolid, c.sheen, if (pressed) 1.dp else TesseraTile.edge)
 }
 
-/** 浅色砖：只有浅砖厚 */
+/** 浅色砖：只有浅砖厚。圆融外观下没有砖厚 */
 @Composable
 fun Modifier.raisedSoft(pressed: Boolean = false): Modifier =
-    glaze(Tessera.colors.edgeSoft, edge = if (pressed) 1.dp else TesseraTile.edge)
+    if (isRound) this else glaze(Tessera.colors.edgeSoft, edge = if (pressed) 1.dp else TesseraTile.edge)
 
-/** 凹槽：顶部 3dp 渐隐的内阴影（相当于 Web 的 inset 0 1px 2px） */
+/** 圆融外观的整面柔光 */
+fun Modifier.softSheen(): Modifier = drawBehind {
+    drawRect(Brush.verticalGradient(0f to Color.White.copy(alpha = 0.14f), 0.6f to Color.Transparent))
+    drawRect(Brush.verticalGradient(0.45f to Color.Transparent, 1f to Color.Black.copy(alpha = 0.06f)))
+}
+
+/** 凹槽：顶部 3dp 渐隐的内阴影（相当于 Web 的 inset 0 1px 2px）。圆融外观下是平的浅底，没有凹槽 */
 @Composable
 fun Modifier.sunken(): Modifier {
+    if (isRound) return this
     val c = Tessera.colors.edgeSoft
     return drawBehind {
         val h = 3.dp.toPx()
@@ -88,16 +97,27 @@ fun Modifier.sunken(): Modifier {
     }
 }
 
-/** 按下下沉：按下 80ms 下沉 1dp，松手 snappy 弹回；系统“移除动画”时不位移 */
+/**
+ * 按下反馈：拼贴外观下沉 1dp，圆融外观轻轻一捏（缩小到 97%）；按下 80ms，松手 snappy 弹回。
+ * 系统“移除动画”时不位移、不缩放。
+ */
 fun Modifier.pressSink(interactionSource: InteractionSource, enabled: Boolean = true): Modifier = composed {
     val pressed by interactionSource.collectIsPressedAsState()
     val reduce = LocalReduceMotion.current
-    val y by animateFloatAsState(
-        targetValue = if (pressed && enabled && !reduce) TesseraMotion.PRESS_SINK_DP else 0f,
+    val round = LocalTesseraShape.current == TesseraShape.Round
+    val t by animateFloatAsState(
+        targetValue = if (pressed && enabled && !reduce) 1f else 0f,
         animationSpec = if (pressed) tween(TesseraMotion.PRESS_DURATION) else TesseraMotion.snappy(),
         label = "pressSink",
     )
-    graphicsLayer { translationY = y * density }
+    graphicsLayer {
+        if (round) {
+            val s = 1f - (1f - TesseraRound.PRESS_SCALE) * t
+            scaleX = s; scaleY = s
+        } else {
+            translationY = TesseraMotion.PRESS_SINK_DP * t * density
+        }
+    }
 }
 
 /**

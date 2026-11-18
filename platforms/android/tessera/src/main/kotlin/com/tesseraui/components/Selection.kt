@@ -1,5 +1,8 @@
 package com.tesseraui.components
 
+import com.tesseraui.TesseraRound
+import com.tesseraui.foundation.softSheen
+import com.tesseraui.foundation.isRound
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
@@ -119,10 +122,11 @@ fun TesseraCheckbox(
         contentAlignment = Alignment.CenterStart,
     ) {
         Labeled(label) {
-            val shape = RoundedCornerShape(7.dp)
+            val round = isRound
+            val shape = RoundedCornerShape(if (round) 8.dp else 7.dp)
             Box(
                 Modifier.pressSink(interaction, enabled).size(20.dp).clip(shape).background(fill)
-                    .then(if (on) Modifier.glaze(c.edgeSolid, c.sheen, 1.5.dp) else Modifier.border(1.5.dp, c.borderStrong, shape)),
+                    .then(if (on) (if (round) Modifier.softSheen() else Modifier.glaze(c.edgeSolid, c.sheen, 1.5.dp)) else Modifier.border(1.5.dp, c.borderStrong, shape)),
             ) {
                 val mark = c.textOnSolid
                 Canvas(Modifier.size(20.dp)) {
@@ -163,13 +167,16 @@ fun TesseraRadio(selected: Boolean, onClick: (() -> Unit)?, modifier: Modifier =
     ) {
         Labeled(label) {
             val fill = if (selected) c.accentControl else c.fillDefault
+            val round = isRound
             Box(
                 Modifier.pressSink(interaction, enabled).size(20.dp).clip(CircleShape).background(fill)
-                    .then(if (selected) Modifier.glaze(c.edgeSolid, c.sheen, 1.5.dp) else Modifier.border(1.5.dp, c.borderStrong, CircleShape)),
+                    .then(if (selected) (if (round) Modifier.softSheen() else Modifier.glaze(c.edgeSolid, c.sheen, 1.5.dp)) else Modifier.border(1.5.dp, c.borderStrong, CircleShape)),
             ) {
                 val dot = c.textOnSolid
                 Canvas(Modifier.size(20.dp)) {
                     if (p <= 0.01f) return@Canvas
+                    // 圆融外观：中间是一颗圆点，直接放大
+                    if (round) { drawCircle(dot, radius = 4.5.dp.toPx() * p); return@Canvas }
                     rotate(-45f * (1 - p)) {
                         scale(p) {
                             val s = 8.dp.toPx()
@@ -226,14 +233,16 @@ fun TesseraSwitch(
         contentAlignment = Alignment.CenterStart,
     ) {
         Labeled(label) {
-            val shape = RoundedCornerShape(13.dp)
+            val round = isRound
+            // 圆融：胶囊轨道 + 圆形滑块，没有描边
+            val shape = RoundedCornerShape(if (round) TesseraRound.pill else 13.dp)
             Box(
                 Modifier
                     .size(trackW, trackH)
                     .clip(shape)
                     .background(track)
                     .sunken()
-                    .border(1.dp, c.borderField, shape)
+                    .then(if (round) Modifier else Modifier.border(1.dp, c.borderField, shape))
                     .draggable(
                         dragState, Orientation.Horizontal, enabled = enabled && onCheckedChange != null,
                         onDragStarted = { dragging = true },
@@ -254,7 +263,7 @@ fun TesseraSwitch(
                     else drawCircle(off, radius = 3.8.dp.toPx(), center = Offset(size.width - 15.dp.toPx(), size.height / 2), style = Stroke(1.2.dp.toPx()))
                 }
                 val x = with(density) { (pad.toPx() + pos.value * (travelPx + (stretchMax - stretch).toPx()) - (if (pos.value > 0.5f) 0f else 0f)).roundToInt() }
-                val thumbShape = RoundedCornerShape(10.dp)
+                val thumbShape = RoundedCornerShape(if (round) TesseraRound.pill else 10.dp)
                 Box(
                     Modifier
                         .offset { IntOffset(x, with(density) { pad.roundToPx() }) }
@@ -263,6 +272,7 @@ fun TesseraSwitch(
                         .clip(thumbShape)
                         .then(
                             if (glass) Modifier.background(c.materialGlassThumb).background(Brush.verticalGradient(listOf(Color.White.copy(alpha = 0.55f), Color.Transparent))).border(1.dp, c.materialGlassRim, thumbShape)
+                            else if (round) Modifier.background(Color.White)
                             else Modifier.background(Color.White).background(Brush.verticalGradient(0.55f to Color.Transparent, 1f to Color(0x141F1B16))),
                         ),
                 )
@@ -286,11 +296,16 @@ fun TesseraSegmentedControl(
 ) {
     val c = Tessera.colors
     val density = LocalDensity.current
+    val round = isRound
     val height = if (small) TesseraSize.sm else TesseraSize.md
     val outer = if (small) 11.dp else TesseraRadius.md
-    BoxWithConstraints(modifier.fillMaxWidth().height(height).selectableGroup()) {
+    // 圆融：一整条浅底胶囊，选中块是一颗浮起的白色胶囊；拼贴：一排砖 + 墨色选中砖
+    val pill = RoundedCornerShape(TesseraRound.pill)
+    val track = if (round) Modifier.height(height + 6.dp).clip(pill).background(c.fillDefault).padding(3.dp) else Modifier.height(height)
+    BoxWithConstraints(modifier.fillMaxWidth().then(track).selectableGroup()) {
         val n = options.size
-        val gapPx = with(density) { TesseraTile.grout.toPx() }
+        val gap = if (round) 0.dp else TesseraTile.grout
+        val gapPx = with(density) { gap.toPx() }
         val itemPx = (constraints.maxWidth - gapPx * (n - 1)) / n
         fun leftOf(i: Int) = i * (itemPx + gapPx)
         val left = remember { Animatable(leftOf(selectedIndex)) }
@@ -307,15 +322,15 @@ fun TesseraSegmentedControl(
         }
         val latest by rememberUpdatedState(selectedIndex)
         val drag = rememberDraggableState { d -> scope.launch { val max = leftOf(n - 1); val nl = (left.value + d).coerceIn(-itemPx * 0.15f, max + itemPx * 0.15f); left.snapTo(nl); right.snapTo(nl + itemPx) } }
-        // 底砖
-        Row(Modifier.fillMaxWidth().fillMaxHeight(), horizontalArrangement = Arrangement.spacedBy(TesseraTile.grout)) {
+        // 底砖（圆融外观没有底砖，底色在外层胶囊上）
+        if (!round) Row(Modifier.fillMaxWidth().fillMaxHeight(), horizontalArrangement = Arrangement.spacedBy(TesseraTile.grout)) {
             options.indices.forEach { i ->
                 Box(Modifier.weight(1f).fillMaxHeight().clip(tileShape(tilePosition(i, n), outer)).background(c.fillDefault).sunken())
             }
         }
         // 选中砖（圆角跟随落脚的那块砖）
         val idxNow = ((left.value + itemPx / 2) / (itemPx + gapPx)).toInt().coerceIn(0, n - 1)
-        val indicatorShape = tileShape(tilePosition(idxNow, n), outer)
+        val indicatorShape = if (round) pill else tileShape(tilePosition(idxNow, n), outer)
         Box(
             Modifier
                 .offset { IntOffset(left.value.roundToInt(), 0) }
@@ -323,8 +338,7 @@ fun TesseraSegmentedControl(
                 .fillMaxHeight()
                 .shadow(2.dp, indicatorShape, ambientColor = c.shadowColor, spotColor = c.shadowColor)
                 .clip(indicatorShape)
-                .background(c.textPrimary)
-                .glaze(c.edgeSolid, c.sheen),
+                .then(if (round) Modifier.background(c.bgElevated).softSheen() else Modifier.background(c.textPrimary).glaze(c.edgeSolid, c.sheen)),
         )
         // 文字与点击区域
         Row(
@@ -340,11 +354,11 @@ fun TesseraSegmentedControl(
                     launch { right.animateTo(l + itemPx, snappy, initialVelocity = v) }
                     if (i != latest) onSelect(i)
                 }),
-            horizontalArrangement = Arrangement.spacedBy(TesseraTile.grout),
+            horizontalArrangement = Arrangement.spacedBy(gap),
         ) {
             options.forEachIndexed { i, o ->
                 val selected = i == selectedIndex
-                val fg by animateColorAsState(if (selected) c.bgSurface else c.textSecondary, tween(TesseraMotion.DURATION_NORMAL), label = "fg")
+                val fg by animateColorAsState(if (selected) (if (round) c.textPrimary else c.bgSurface) else c.textSecondary, tween(TesseraMotion.DURATION_NORMAL), label = "fg")
                 Box(
                     Modifier.weight(1f).fillMaxHeight().selectable(selected, role = Role.Tab) { onSelect(i) },
                     contentAlignment = Alignment.Center,

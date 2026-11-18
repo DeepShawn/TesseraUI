@@ -1,5 +1,8 @@
 package com.tesseraui
 
+import com.tesseraui.foundation.LocalTesseraShape
+import com.tesseraui.foundation.TesseraShape
+
 import android.app.UiModeManager
 import android.content.Context
 import android.os.Build
@@ -70,6 +73,7 @@ val LocalContentColor = compositionLocalOf { Color.Unspecified }
 /**
  * TesseraUI 主题。默认跟随系统深色模式；Android 14+ 跟随系统“对比度”设置（≥ 中等即使用增强对比度色板）；
  * 跟随系统“移除动画”设置。
+ * shape 选择外观：TesseraShape.Tile（拼贴，默认）或 TesseraShape.Round（圆融）。
  */
 @Composable
 fun TesseraTheme(
@@ -77,6 +81,7 @@ fun TesseraTheme(
     highContrast: Boolean = isSystemHighContrast(),
     fonts: TesseraFonts = TesseraFonts(),
     reduceMotion: Boolean = isSystemReduceMotion(),
+    shape: TesseraShape = TesseraShape.Tile,
     content: @Composable () -> Unit,
 ) {
     val colors = when {
@@ -92,6 +97,7 @@ fun TesseraTheme(
         LocalTesseraFonts provides fonts,
         LocalTesseraDark provides darkTheme,
         LocalReduceMotion provides reduceMotion,
+        LocalTesseraShape provides shape,
         LocalContentColor provides colors.textPrimary,
         content = content,
     )
@@ -106,6 +112,9 @@ object Tessera {
         @Composable @ReadOnlyComposable get() = LocalTesseraDark.current
     val reduceMotion: Boolean
         @Composable @ReadOnlyComposable get() = LocalReduceMotion.current
+    /** 当前外观：拼贴或圆融 */
+    val shape: TesseraShape
+        @Composable @ReadOnlyComposable get() = LocalTesseraShape.current
 }
 
 /** 弹簧动画；系统“移除动画”时退化为 150ms 线性过渡 */
