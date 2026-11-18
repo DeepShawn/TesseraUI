@@ -2,6 +2,29 @@
 
 本项目的所有重要变更均记录于此文件。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循[语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [未发布]
+
+新增“圆融”外观，与 v0.3.0 的全部内容对齐。两种外观共用同一套组件代码，今后的每次更新同时适用于两种外观。
+
+### 新增
+
+- 圆融外观：控件是胶囊与大圆角，成组控件合成一整块，没有砖缝和任何分割线；去掉砖厚和凹槽，改为整面柔光；按下是轻轻一捏（缩小到 97%）；增强对比度下自动加回描边。
+  - **Web**：全部 84 个组件。在 `<html>` 上写 `data-shape="round"`，或调用 `Tessera.setShape('round')`。
+  - **Android**：首批 22 个组件。`TesseraTheme(shape = TesseraShape.Round)`。
+  - **Apple**：首批 22 个组件。`.tesseraShape(.round)`。
+  - **Windows**：首批 22 个组件。在 `App.xaml` 中最后合并 `TesseraShapeRound.xaml`。
+- 设计令牌 `shape`：圆融外观的胶囊、卡片 28、面板 36、行 22、菜单 24、间距 8、按压缩放 0.97，导出到四端。
+- 预览页与组件总览加入外观切换，支持地址栏参数 `?shape=round`。
+- 测试：Web 交互测试在两种外观下各跑一遍；Android 新增 12 张圆融截图基准图。
+
+### 变更
+
+- Windows 按钮与控件模板中随外观变化的圆角、描边、砖厚和按压数值改用 `ThemeResource` 引用。
+
+### 修复
+
+- Web 表格的勾选列实际宽度只有 36px，与固定的第二列之间露出一道缝。
+
 ## [0.3.0] - 2026-11-18
 
 Apple、Android、Windows 三端提供首批 22 个原生组件，并在持续集成中编译验证；Web 端表格重做。

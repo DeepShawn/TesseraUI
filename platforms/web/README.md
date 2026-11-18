@@ -86,6 +86,7 @@ import { slider, datePicker } from './dist/modules/forms.js';
 | 接口 | 说明 |
 |---|---|
 | `setTheme(theme)` / `setContrast(on)` / `setMaterial(on)` | 切换主题、增强对比度、毛玻璃 |
+| `setShape(shape)` | 切换外观：`'tile'`（拼贴，默认）或 `'round'`（圆融），等同于在 `<html>` 上写 `data-shape="round"` |
 | `toast(message, options?)` | 提示消息 |
 | `openDialog(dialog)` / `closeDialog(dialog)` | 打开或关闭 `<dialog class="ts-dialog">` |
 | `confirm(options)` | 确认框，返回 `Promise<boolean>` |
