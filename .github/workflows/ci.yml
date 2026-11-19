@@ -73,6 +73,12 @@ jobs:
         run: gradle :tessera:compileDebugKotlin
       - name: 截图对比（Paparazzi）
         run: gradle :tessera:verifyPaparazziDebug
+      - name: 上传截图差异图（截图对比失败时）
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-snapshot-diffs
+          path: platforms/android/tessera/build/paparazzi/failures/
       - name: 无障碍检查（Robolectric）
         run: gradle :sample:testDebugUnitTest
       - name: 示例 App
