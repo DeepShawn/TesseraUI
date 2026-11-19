@@ -225,23 +225,25 @@ public struct TesseraSelect<Value: Hashable>: View {
                 }
                 .pickerStyle(.inline)
             } label: {
-                HStack {
-                    TesseraLabel(current, style: .bodySm)
-                    Spacer(minLength: 0)
-                    TesseraIcon(.chevronDown, size: 16).foregroundStyle(TesseraColor.textSecondary)
+                // 读屏名称取自 Label 的标题（不显示）；可见部分放在 icon 里
+                Label {
+                    Text(label ?? "选择")
+                } icon: {
+                    HStack {
+                        TesseraLabel(current, style: .bodySm)
+                        Spacer(minLength: 0)
+                        TesseraIcon(.chevronDown, size: 16).foregroundStyle(TesseraColor.textSecondary)
+                    }
+                    .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
+                    .frame(height: TesseraSize.md)
+                    .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
+                    .contentShape(shape)
                 }
-                .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
-                .frame(height: TesseraSize.md)
-                .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
-                .contentShape(shape)
+                .labelStyle(.iconOnly)
             }
             .buttonStyle(.plain)
-            // 读屏看到的是一个标准选择器：名称是标签，值是当前选项，可直接调整
-            .accessibilityRepresentation {
-                Picker(label ?? "选择", selection: $selection) {
-                    ForEach(options.indices, id: \.self) { i in Text(options[i].title).tag(options[i].value) }
-                }
-            }
+            .accessibilityLabel(label ?? "选择")
+            .accessibilityValue(current)
         }
     }
 }

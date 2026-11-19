@@ -188,15 +188,20 @@ public struct TesseraMenu<Content: View>: View {
 
     public var body: some View {
         Menu { content } label: {
-            TesseraIcon(icon)
-                .foregroundStyle(TesseraColor.textPrimary)
-                .frame(width: TesseraSize.md, height: TesseraSize.md)
-                .tesseraTile(TesseraColor.fillDefault, style: .soft, shape: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous))
-                .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
-                .contentShape(Rectangle())
+            // iOS 的 Menu 从 label 里的 Label 标题取读屏名称：标题不显示（iconOnly），只给读屏用
+            Label {
+                Text(label)
+            } icon: {
+                TesseraIcon(icon)
+                    .foregroundStyle(TesseraColor.textPrimary)
+                    .frame(width: TesseraSize.md, height: TesseraSize.md)
+                    .tesseraTile(TesseraColor.fillDefault, style: .soft, shape: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous))
+                    .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
+                    .contentShape(Rectangle())
+            }
+            .labelStyle(.iconOnly)
         }
         .buttonStyle(.plain)
-        // 自定义 label 的 Menu 在 iOS 上读不出名称：读屏改为看到一个带标题的标准菜单（范围仍是这个按钮）
-        .accessibilityRepresentation { Menu(label) { content } }
+        .accessibilityLabel(label)
     }
 }
