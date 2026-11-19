@@ -1,0 +1,43 @@
+# iOS 示例 App 与 UI 测试（读屏标签、尺寸、截图）。用 XcodeGen 生成工程：
+#   brew install xcodegen && cd platforms/apple/Examples && xcodegen generate
+name: TesseraSampleiOS
+options:
+  bundleIdPrefix: com.tesseraui
+  deploymentTarget:
+    iOS: "17.0"
+packages:
+  TesseraUI:
+    path: ..
+targets:
+  TesseraSampleiOS:
+    type: application
+    platform: iOS
+    sources: [iOS]
+    dependencies:
+      - package: TesseraUI
+        product: TesseraUI
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: TesseraUI 示例
+        MARKETING_VERSION: 0.4.0
+        CURRENT_PROJECT_VERSION: 1
+        CODE_SIGNING_ALLOWED: NO
+  TesseraSampleUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: TesseraSampleiOS
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGNING_ALLOWED: NO
+schemes:
+  TesseraSampleiOS:
+    build:
+      targets:
+        TesseraSampleiOS: all
+    test:
+      targets: [TesseraSampleUITests]
