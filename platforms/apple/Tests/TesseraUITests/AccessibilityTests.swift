@@ -25,22 +25,22 @@ final class AccessibilityTests: XCTestCase {
             RunLoop.main.run(until: Date().addingTimeInterval(0.5))
 
             var seen = Set<ObjectIdentifier>()
+            // 用属性接口读取（accessibilityAttributeValue）：所有辅助功能对象都支持，与 VoiceOver 读取的方式相同
+            func attr(_ el: NSObject, _ name: NSAccessibility.Attribute) -> Any? { el.accessibilityAttributeValue(name) }
             func visit(_ element: Any, depth: Int) {
-                // SwiftUI 的辅助功能节点与 NSView 都实现 NSAccessibilityProtocol；大部分方法是可选的
-                guard depth < 60, let el = element as? (NSObject & NSAccessibilityProtocol),
-                      seen.insert(ObjectIdentifier(el)).inserted else { return }
-                let hidden = el.isAccessibilityHidden?() ?? false
-                if let role = el.accessibilityRole?() ?? nil, interactiveRoles.contains(role), !hidden {
+                guard depth < 60, let el = element as? NSObject, seen.insert(ObjectIdentifier(el)).inserted else { return }
+                let hidden = (attr(el, NSAccessibility.Attribute(rawValue: "AXHidden")) as? Bool) ?? false
+                if let roleName = attr(el, .role) as? String, interactiveRoles.contains(NSAccessibility.Role(rawValue: roleName)), !hidden {
                     checked += 1
-                    let candidates: [String?] = [el.accessibilityLabel?() ?? nil, el.accessibilityTitle?() ?? nil, el.accessibilityPlaceholderValue?() ?? nil]
-                    let label = candidates.compactMap { $0 }.first { !$0.trimmingCharacters(in: CharacterSet.whitespaces).isEmpty }
-                    let frame = el.accessibilityFrame()
-                    if label == nil { problems.append("\(name)：\(role.rawValue) 没有读屏名称（\(frame)）") }
-                    if frame.width < 40 || frame.height < 40 {
-                        problems.append("\(name)：\(role.rawValue)“\(label ?? "?")”尺寸只有 \(Int(frame.width))×\(Int(frame.height))")
+                    let candidates = [attr(el, .description), attr(el, .title), attr(el, .placeholderValue)].compactMap { $0 as? String }
+                    let label = candidates.first { !$0.trimmingCharacters(in: CharacterSet.whitespaces).isEmpty }
+                    let size = (attr(el, .size) as? NSValue)?.sizeValue ?? .zero
+                    if label == nil { problems.append("\(name)：\(roleName) 没有读屏名称") }
+                    if size.width < 40 || size.height < 40 {
+                        problems.append("\(name)：\(roleName)“\(label ?? "?")”尺寸只有 \(Int(size.width))×\(Int(size.height))")
                     }
                 }
-                for child in (el.accessibilityChildren?() ?? nil) ?? [] { visit(child, depth: depth + 1) }
+                for child in (attr(el, .children) as? [Any]) ?? [] { visit(child, depth: depth + 1) }
             }
             visit(host, depth: 0)
             window.orderOut(nil)
