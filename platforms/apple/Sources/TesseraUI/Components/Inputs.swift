@@ -242,8 +242,11 @@ public struct TesseraSelect<Value: Hashable>: View {
                 .labelStyle(.iconOnly)
             }
             .buttonStyle(.plain)
+            // 系统把自定义 label 的 Menu 包在一个没有名称的按钮里：合并为一个元素，再指定名称与当前值
+            .accessibilityElement(children: .combine)
             .accessibilityLabel(label ?? "选择")
             .accessibilityValue(current)
+            .accessibilityAddTraits(.isButton)
         }
     }
 }

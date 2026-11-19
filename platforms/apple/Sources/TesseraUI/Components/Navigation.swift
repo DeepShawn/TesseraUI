@@ -202,6 +202,9 @@ public struct TesseraMenu<Content: View>: View {
             .labelStyle(.iconOnly)
         }
         .buttonStyle(.plain)
+        // 系统把自定义 label 的 Menu 包在一个没有名称的按钮里：合并为一个元素，再指定名称
+        .accessibilityElement(children: .combine)
         .accessibilityLabel(label)
+        .accessibilityAddTraits(.isButton)
     }
 }
