@@ -18,7 +18,8 @@ import com.tesseraui.foundation.tilePosition
 import com.tesseraui.icons.TesseraIcon
 import com.tesseraui.icons.TesseraIcons
 
-enum class GallerySection { Actions, Inputs, Selection, Navigation, Display, Feedback, MoreActions, MoreInputs, Range, Pickers, PickerFields, Color, Forms }
+enum class GallerySection { Actions, Inputs, Selection, Navigation, Display, Feedback, MoreActions, MoreInputs, Range, Pickers, PickerFields, Color, Forms,
+    Table, TableCards, Tree, Details, Timeline, Overlays, Media, Progress, Results, ResultsMore }
 
 /** 组件总览：开发时预览、截图测试共用 */
 @OptIn(ExperimentalLayoutApi::class)
@@ -74,6 +75,8 @@ fun TesseraGallery(section: GallerySection) {
                 TesseraCard(Modifier.fillMaxWidth()) { TesseraSkeletonRow() }
             }
             GallerySection.MoreActions, GallerySection.MoreInputs, GallerySection.Range, GallerySection.Pickers, GallerySection.PickerFields, GallerySection.Color, GallerySection.Forms -> GalleryForms(section)
+            GallerySection.Table, GallerySection.TableCards, GallerySection.Tree, GallerySection.Details, GallerySection.Timeline,
+            GallerySection.Overlays, GallerySection.Media, GallerySection.Progress, GallerySection.Results, GallerySection.ResultsMore -> GalleryData(section)
             else -> GalleryMore(section)
         }
     }
@@ -93,4 +96,14 @@ private val GallerySection.title get() = when (this) {
     GallerySection.PickerFields -> "滚轮 · 日期时间"
     GallerySection.Color -> "颜色"
     GallerySection.Forms -> "表单"
+    GallerySection.Table -> "表格"
+    GallerySection.TableCards -> "表格 · 窄屏"
+    GallerySection.Tree -> "树 · 折叠面板"
+    GallerySection.Details -> "描述列表 · 统计数字"
+    GallerySection.Timeline -> "时间线 · 按键"
+    GallerySection.Overlays -> "提示 · 气泡卡片 · 代码块"
+    GallerySection.Media -> "轮播 · 图片预览"
+    GallerySection.Progress -> "进度 · 加载 · 横幅"
+    GallerySection.Results -> "结果 · 空状态"
+    GallerySection.ResultsMore -> "结果页"
 }

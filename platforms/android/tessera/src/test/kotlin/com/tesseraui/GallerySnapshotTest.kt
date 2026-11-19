@@ -6,6 +6,8 @@ import com.android.ide.common.rendering.api.SessionParams
 import com.tesseraui.foundation.TesseraShape
 import com.tesseraui.samples.GallerySection
 import com.tesseraui.samples.TesseraGallery
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalInspectionMode
 import org.junit.Rule
 import org.junit.Test
 
@@ -30,7 +32,10 @@ class GallerySnapshotTest {
             val theme = when { hc -> "light-hc"; dark -> "dark"; else -> "light" }
             paparazzi.snapshot(name = "$prefix${section.name.lowercase()}-$theme") {
                 // 流韵在“移除动画”下会自动改用圆融，所以流韵截图不打开它（静态截图不会触发动效）
-                TesseraTheme(darkTheme = dark, highContrast = hc, reduceMotion = shape != TesseraShape.Flow, shape = shape, requireCapableDevice = false) { TesseraGallery(section) }
+                TesseraTheme(darkTheme = dark, highContrast = hc, reduceMotion = shape != TesseraShape.Flow, shape = shape, requireCapableDevice = false) {
+                    // 标记为预览：入场动效（结果页图标落下、提示气泡淡入）直接显示落定后的样子
+                    CompositionLocalProvider(LocalInspectionMode provides true) { TesseraGallery(section) }
+                }
             }
         }
     }
@@ -49,4 +54,15 @@ class GallerySnapshotTest {
     @Test fun pickerFields() = shoot(GallerySection.PickerFields)
     @Test fun color() = shoot(GallerySection.Color)
     @Test fun forms() = shoot(GallerySection.Forms)
+    // v0.6：数据展示
+    @Test fun table() = shoot(GallerySection.Table)
+    @Test fun tableCards() = shoot(GallerySection.TableCards)
+    @Test fun tree() = shoot(GallerySection.Tree)
+    @Test fun details() = shoot(GallerySection.Details)
+    @Test fun timeline() = shoot(GallerySection.Timeline)
+    @Test fun overlays() = shoot(GallerySection.Overlays)
+    @Test fun media() = shoot(GallerySection.Media)
+    @Test fun progress() = shoot(GallerySection.Progress)
+    @Test fun results() = shoot(GallerySection.Results)
+    @Test fun resultsMore() = shoot(GallerySection.ResultsMore)
 }
