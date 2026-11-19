@@ -59,8 +59,9 @@ private struct GroupTileStyle: ButtonStyle {
             .frame(minHeight: size.height)
             .tesseraTile(on ? TesseraColor.textPrimary : TesseraColor.fillDefault, style: on ? .solid : .soft, shape: shape, pressed: configuration.isPressed)
             .overlay { if configuration.isPressed { shape.fill(TesseraColor.statePressed) } }
-            .contentShape(Rectangle())
             .frame(minHeight: TesseraSize.touchMin)
+            // 命中与读屏范围要包括撑到 44 的外框（contentShape 放在外框之后）
+            .contentShape(Rectangle())
             .tesseraPress(configuration.isPressed, shape: tesseraShape, reduceMotion: reduceMotion)
             .animation(.tessera(TesseraMotion.snappy, reduceMotion: reduceMotion), value: configuration.isPressed)
     }

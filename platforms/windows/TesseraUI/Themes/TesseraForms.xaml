@@ -1,7 +1,8 @@
 <!-- v0.5 表单与输入：系统控件的 TesseraUI 样式。合并在 TesseraControls.xaml 之后（外观字典之前）。颜色由 TesseraTheme.xaml 的轻量样式提供。 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tessera="using:TesseraUI">
 
     <!-- 悬浮按钮：56 高的大釉面砖（拼贴 20 圆角，圆融为胶囊） -->
     <Style x:Key="TesseraFabButtonStyle" TargetType="Button" BasedOn="{StaticResource TesseraPrimaryButtonStyle}">
@@ -53,11 +54,14 @@
     <Style x:Key="TesseraDatePickerStyle" TargetType="DatePicker">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusMd}" />
         <Setter Property="MinHeight" Value="40" />
+        <Setter Property="tessera:TesseraTouch.MinTarget" Value="40" />
     </Style>
     <Style x:Key="TesseraTimePickerStyle" TargetType="TimePicker">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusMd}" />
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="ClockIdentifier" Value="24HourClock" />
+        <!-- 模板里的按钮只有 32 高，撑到 40 -->
+        <Setter Property="tessera:TesseraTouch.MinTarget" Value="40" />
     </Style>
 
     <!-- 颜色选择 -->
@@ -65,5 +69,9 @@
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusMd}" />
         <Setter Property="IsAlphaEnabled" Value="False" />
         <Setter Property="IsMoreButtonVisible" Value="False" />
+        <!-- 与其他端一致：只保留十六进制输入，不显示 RGB 三个通道输入框和颜色模式下拉 -->
+        <Setter Property="IsColorChannelTextInputVisible" Value="False" />
+        <!-- 亮度滑块、十六进制输入框默认 32 高，撑到 40 -->
+        <Setter Property="tessera:TesseraTouch.MinTarget" Value="40" />
     </Style>
 </ResourceDictionary>

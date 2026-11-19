@@ -303,6 +303,8 @@ public struct TesseraOtpInput: View {
                 #endif
                 .foregroundStyle(.clear)
                 .tint(.clear)
+                // SwiftUI 的 TextField 不会被 frame 撑高：用大字号让输入框本身有 50 多高，读屏范围才盖住整排格子
+                .font(.system(size: 44))
                 // 透明的输入框盖住整排格子：点哪里都能聚焦，读屏的范围就是整个验证码区域
                 .frame(maxWidth: .infinity, minHeight: 56)
                 .opacity(0.02)

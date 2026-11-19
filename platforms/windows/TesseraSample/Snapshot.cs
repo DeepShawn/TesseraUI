@@ -56,7 +56,7 @@ namespace TesseraSample
                             checkedCount++;
                             var label = peer.GetName();
                             var type = el.GetType().Name;
-                            if (string.IsNullOrWhiteSpace(label)) report.Add($"{page}{shape}：{type} 没有读屏名称");
+                            if (string.IsNullOrWhiteSpace(label)) report.Add($"{page}{shape}：{type} 没有读屏名称（位于 {Ancestry(el)}）");
                             if (el.ActualWidth < MinTarget || el.ActualHeight < MinTarget)
                                 report.Add($"{page}{shape}：{type}“{label}”尺寸只有 {el.ActualWidth:0}×{el.ActualHeight:0}");
                         }
@@ -95,6 +95,18 @@ namespace TesseraSample
             var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, file.AsRandomAccessStream());
             encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)rtb.PixelWidth, (uint)rtb.PixelHeight, 96, 96, pixels);
             await encoder.FlushAsync();
+        }
+
+        /// <summary>往上三层的类型与名称，方便定位没有读屏名称的元素</summary>
+        private static string Ancestry(DependencyObject el)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+            for (var p = VisualTreeHelper.GetParent(el); p != null && parts.Count < 3; p = VisualTreeHelper.GetParent(p))
+            {
+                var n = p is FrameworkElement f && !string.IsNullOrEmpty(f.Name) ? $"#{f.Name}" : "";
+                parts.Add(p.GetType().Name + n);
+            }
+            return string.Join(" ← ", parts);
         }
     }
 }

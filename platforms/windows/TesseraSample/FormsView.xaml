@@ -21,7 +21,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="16">
             <Button Style="{StaticResource TesseraFabButtonStyle}" AutomationProperties.Name="新建"><tessera:TesseraIcon Icon="plus" Size="24" /></Button>
-            <Button Style="{StaticResource TesseraFabButtonStyle}" Padding="20,0">
+            <Button Style="{StaticResource TesseraFabButtonStyle}" Padding="20,0" AutomationProperties.Name="写评论">
                 <StackPanel Orientation="Horizontal" Spacing="8"><tessera:TesseraIcon Icon="edit" Size="24" /><TextBlock Text="写评论" VerticalAlignment="Center" /></StackPanel>
             </Button>
         </StackPanel>

@@ -61,8 +61,9 @@ public struct TesseraButtonStyle: ButtonStyle {
             .tesseraTile(fill, style: variant == .text ? .plain : (isSolid ? .solid : .soft), shape: shape, pressed: pressed)
             .overlay { if pressed { shape.fill(isSolid ? TesseraColor.stateSolidPressed : TesseraColor.statePressed) } }
             .tesseraFlowRipple(pressed: pressed, active: flow && variant != .text, color: foreground.opacity(isSolid ? 0.22 : 0.13), in: shape)
-            .contentShape(Rectangle())
             .frame(minWidth: TesseraSize.touchMin, minHeight: TesseraSize.touchMin)
+            // 命中与读屏范围要包括撑到 44 的外框（contentShape 放在外框之后）
+            .contentShape(Rectangle())
             .tesseraPress(pressed, shape: tesseraShape, reduceMotion: reduceMotion)
             .animation(pressed ? .easeOut(duration: TesseraMotion.pressDuration) : .tessera(flow ? TesseraMotion.bouncy : TesseraMotion.snappy, reduceMotion: reduceMotion), value: pressed)
             .tesseraHaptic(variant == .danger ? .warning : .light, trigger: pressed) { _, now in now && isSolid }
