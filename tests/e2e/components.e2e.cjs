@@ -528,6 +528,24 @@ async function check(name, fn) {
     await ip.waitForTimeout(250);
     assert.equal(await ip.textContent('#f-count'), '2 / 20');
   });
+  await check('输入法：组合中的回车、Safari 补发的回车（keyCode 229）被拦下，不提交表单', async () => {
+    const r = await ip.evaluate(() => {
+      const input = document.querySelector('#f-name');
+      let reached = 0;
+      const count = () => { reached++; };
+      input.addEventListener('keydown', count);
+      const fire = (init) => { const e = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, ...init }); input.dispatchEvent(e); return e.defaultPrevented; };
+      const composing = fire({ isComposing: true });
+      const safari = fire({ keyCode: 229 });
+      const normal = fire({});
+      input.removeEventListener('keydown', count);
+      return { composing, safari, normal, reached };
+    });
+    assert.ok(r.composing, '组合中的回车没有被拦下');
+    assert.ok(r.safari, 'keyCode 229 的回车没有被拦下');
+    assert.ok(!r.normal, '选定汉字后的回车不应被拦下');
+    assert.equal(r.reached, 1, '被拦下的回车仍传到了输入框的监听器');
+  });
   await ip.close();
 
   console.log('输入框');
