@@ -93,4 +93,15 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 
 ## 验证
 
-持续集成在 `windows-latest` 上用 Visual Studio 的 MSBuild 执行 `msbuild TesseraUI.csproj -restore -p:Configuration=Release -p:Platform=x64`（`dotnet build` 缺少生成 PRI 资源索引的任务，无法编译含 XAML 的 WinUI 库）。目前没有截图测试，外观请在 Visual Studio 中运行验证。
+持续集成在 `windows-latest` 上用 Visual Studio 的 MSBuild 执行 `msbuild TesseraUI.csproj -restore -p:Configuration=Release -p:Platform=x64`（`dotnet build` 缺少生成 PRI 资源索引的任务，无法编译含 XAML 的 WinUI 库）。
+
+## 示例 App 与截图
+
+`platforms/windows/TesseraSample` 是一个不打包的 WinUI 3 应用（Windows App SDK 随应用自带，解压即可运行）：可切换三种外观和浅色 / 深色，查看首批 22 个组件。流韵在设备不满足要求时显示为圆融。
+
+```powershell
+msbuild TesseraSample.csproj -restore -p:Configuration=Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
+TesseraSample.exe --snapshot snapshots   # 截图与无障碍检查，完成后自动退出
+```
+
+`--snapshot` 依次切换三种外观 × 浅色 / 深色，每种截一张组件总览（共 6 张），并检查每个可聚焦元素都有读屏名称、尺寸不小于 40×40（Windows 触控目标的最小建议值），结果写到 `a11y.txt`，有问题时退出码为 1。持续集成每次都会运行，截图上传为 `windows-snapshots`，示例 App 上传为 `tessera-sample-windows`。高对比度主题只能由系统设置打开，应用无法强制切换，所以不截图，需在真机上检查。

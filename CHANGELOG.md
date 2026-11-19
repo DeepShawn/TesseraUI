@@ -27,6 +27,9 @@
 - Android 无障碍检查（`gradle :sample:testDebugUnitTest`，Robolectric）：三种外观 × 6 个分区共 174 个可交互元素，检查读屏名称和不小于 44dp 的触摸区域。
 - Android 示例 App（`platforms/android/sample`）：可切换外观、主题、对比度，展示首批 22 个组件；持续集成每次编译并上传 `tessera-sample-apk`，可直接安装到手机上评审。
 - Apple 截图测试（`swift test`，ImageRenderer）：三种外观 × 浅色 / 深色 / 增强对比度配色共 9 张，CI 上传 `apple-snapshots`；macOS 示例 App（`swift run TesseraSample`）。
+- Windows 示例 App（`platforms/windows/TesseraSample`）：可切换外观与浅色 / 深色；`--snapshot` 模式截图三种外观 × 浅色 / 深色共 6 张，并做无障碍检查（读屏名称、不小于 40×40，78 个可聚焦元素全部通过）。CI 上传 `windows-snapshots` 和可直接运行的 `tessera-sample-windows`。
+- 中文输入法测试清单 `docs/ime-checklist.md`：15 项检查、各平台必测输入法与记录表；Web 端新增“组合中的回车、Safari 补发的回车被拦下”自动化测试。
+- Android 截图对比失败时，CI 上传差异图 `android-snapshot-diffs`。
 - 中文输入法：用 CDP 模拟拼音组合输入，验证组合中不触发自动补全筛选与字数统计、选定汉字后才触发。
 
 ## [0.3.2] - 2026-11-18
