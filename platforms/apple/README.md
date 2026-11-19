@@ -67,6 +67,11 @@ swift build                                                            # macOS
 xcodebuild -scheme TesseraUI -destination 'generic/platform=iOS Simulator' build
 swift test                                                             # 截图：三种外观 × 浅色 / 深色 / 增强对比度配色，写到 .build/snapshots
 swift run TesseraSample                                                # macOS 示例 App：切换外观与浅色 / 深色
+cd Examples && xcodegen generate && open TesseraSampleiOS.xcodeproj    # iOS 示例 App 与 UI 测试（需 brew install xcodegen）
 ```
+
+**iOS 无障碍检查**（`Examples/UITests`，XCUITest，读取的就是 VoiceOver 看到的辅助功能树）：三种外观下每个按钮、开关、文本框、分段控制都要有读屏名称、尺寸不小于 40×40，每种外观截一张图。持续集成在 iOS 模拟器上运行，截图上传为 `ios-snapshots`。这项检查发现并修复了：标签页两个字的项只有 28 宽、搜索框清除按钮只有 16×16、开关整行只有 30 高、圆融 / 流韵输入框读屏范围不足 40。
+
+已知问题：下拉选择（`TesseraSelect`）和更多菜单（`TesseraMenu`）在 iOS 上没有读屏名称。两者用的是自定义外观的系统 `Menu`，系统把它包进一个没有名称的按钮里；Label 标题、`accessibilityLabel`、合并子元素、`accessibilityRepresentation` 都试过无效。测试里把这两项列为已知例外（数量变了会失败），待真机 VoiceOver 确认，v0.5 改为自绘弹层。
 
 持续集成在 macOS 机器上执行以上步骤，截图上传为 `apple-snapshots`。截图用 ImageRenderer 渲染，有两个限制：系统原生控件（文本输入框、系统菜单按钮）画不出来，会是空白；增强对比度只切换了配色，描边由系统设置决定，需在真机或 Xcode 预览里检查。iOS 示例请在 Xcode 中打开本包，使用 `Gallery.swift` 的预览或把 `TesseraGallery()` 放进自己的 App。`Generated/` 与 `Resources/TesseraIcons.xcassets` 由 `npm run build` 生成，请勿手动修改。

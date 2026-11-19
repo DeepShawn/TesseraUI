@@ -13,6 +13,7 @@
   - 只读评分不再嵌套按钮，可交互评分的每颗星都有读屏名称。
   - 日历日期改为一组切换按钮（`aria-pressed`），今天标 `aria-current="date"`。
   - 代码块、下拉刷新等可滚动区域可以用键盘聚焦后滚动。
+  - Apple（由新增的 iOS UI 测试发现）：标签页两个字的项可点范围只有 28 宽，改为至少 44；搜索框清除按钮只有 16×16，改为 40×40；开关在读屏中改为系统开关语义，范围是整行 44 高；输入框的读屏范围撑满整个框。
   - Android 文本框、搜索框没有读屏名称（标签显示在框外，读屏只会说“编辑框”）：现在以标签（没有标签时用占位文字）作为读屏名称。
 
 ### 新增
@@ -26,6 +27,7 @@
 - Android 截图测试增加增强对比度，共 54 张（三种外观 × 浅色 / 深色 / 增强对比度 × 6 个分区）。
 - Android 无障碍检查（`gradle :sample:testDebugUnitTest`，Robolectric）：三种外观 × 6 个分区共 174 个可交互元素，检查读屏名称和不小于 44dp 的触摸区域。
 - Android 示例 App（`platforms/android/sample`）：可切换外观、主题、对比度，展示首批 22 个组件；持续集成每次编译并上传 `tessera-sample-apk`，可直接安装到手机上评审。
+- iOS 示例 App 与 UI 测试（`platforms/apple/Examples`，XcodeGen 生成工程）：XCUITest 在三种外观下检查读屏名称与尺寸，每种截图，CI 上传 `ios-snapshots`。已知问题：下拉选择与更多菜单在 iOS 上没有读屏名称，v0.5 改为自绘弹层。
 - Apple 截图测试（`swift test`，ImageRenderer）：三种外观 × 浅色 / 深色 / 增强对比度配色共 9 张，CI 上传 `apple-snapshots`；macOS 示例 App（`swift run TesseraSample`）。
 - Windows 示例 App（`platforms/windows/TesseraSample`）：可切换外观与浅色 / 深色；`--snapshot` 模式截图三种外观 × 浅色 / 深色共 6 张，并做无障碍检查（读屏名称、不小于 40×40，78 个可聚焦元素全部通过）。CI 上传 `windows-snapshots` 和可直接运行的 `tessera-sample-windows`。
 - 中文输入法测试清单 `docs/ime-checklist.md`：15 项检查、各平台必测输入法与记录表；Web 端新增“组合中的回车、Safari 补发的回车被拦下”自动化测试。
