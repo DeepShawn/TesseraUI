@@ -28,6 +28,20 @@ TesseraTheme(fonts = TesseraFonts(display = fraunces, text = instrumentSans)) {
 | 数据展示 | `TesseraCard`、`TesseraList` / `TesseraListItem`、`TesseraAvatar` / `TesseraAvatarGroup`、`TesseraBadge`、`TesseraTag` |
 | 反馈 | `TesseraToastHost` / `TesseraToastHostState`、`TesseraDialog`、`TesseraBottomSheet`、`TesseraSkeleton` |
 
+## 组件（v0.5：表单与输入）
+
+| 类别 | 组件 |
+|---|---|
+| 操作 | `TesseraButtonGroup`（单选 / 多选）、`TesseraSplitButton`、`TesseraFab`（可带文字、可收起）、`TesseraLink` |
+| 文本 | `TesseraTextArea`（自动长高、字数只在选定汉字后计）、`TesseraPasswordField`（显示切换）、`TesseraAutocomplete`（拼音组合中不筛选）、`TesseraTagInput`（回车 / 逗号 / 顿号添加，空框退格删除） |
+| 数字 | `TesseraNumberInput`（按住连续调整并加速、全角数字）、`TesseraOtpInput`（整段粘贴自动取数字） |
+| 范围 | `TesseraSlider`、`TesseraRangeSlider`（刻度、拖动时数值气泡、读屏可调）、`TesseraRating`、`TesseraFileUpload` |
+| 日期 | `TesseraCalendar`（单选 / 范围，选中砖弹簧滑动、换月推入）、`TesseraWheel` / `TesseraWheelPicker`（与 Web 同一套滚轮手感）、`TesseraDatePicker`、`TesseraTimePicker`、`TesseraDateRangePicker`、`TesseraDate`（不依赖 java.time） |
+| 颜色 | `TesseraColorPicker`（饱和度 / 明度面板、色相条、HEX、预设颜料色） |
+| 表单 | `TesseraForm`、`TesseraFormField`、`TesseraFieldGroup`、`rememberTesseraFormState()`、`TesseraRules`（中文校验提示：必填、手机号、邮箱、长度） |
+
+文件上传只负责展示：选择文件由应用调用系统选择器（例如 `ActivityResultContracts.GetMultipleContents`），把结果放进 `files`。安卓软键盘读不到大写锁定状态，`TesseraPasswordField(capsLock = …)` 由应用在接实体键盘时传入。
+
 设计细节与 Web 端一致：
 - 拼贴：`tileShape(position, outer)` 与 `tilePosition(index, count)` 生成外角大、内角小的形状。
 - 釉面砖：`Modifier.raisedSolid()`、`raisedSoft()`、`sunken()`、`pressSink()`。
@@ -47,9 +61,10 @@ gradle :sample:testDebugUnitTest            # 无障碍检查
 gradle :sample:assembleDebug                # 示例 App（sample/build/outputs/apk/debug/sample-debug.apk）
 ```
 
-截图测试使用 [Paparazzi](https://github.com/cashapp/paparazzi)，在 JVM 上渲染，不需要模拟器；每个分区截拼贴 / 圆融 / 流韵 × 浅色 / 深色 / 浅色增强对比度共 9 张，共 54 张基准图。组件总览 `samples/TesseraGallery` 同时用于开发预览、截图测试、无障碍检查和示例 App。
+截图测试使用 [Paparazzi](https://github.com/cashapp/paparazzi)，在 JVM 上渲染，不需要模拟器；每个分区截拼贴 / 圆融 / 流韵 × 浅色 / 深色 / 浅色增强对比度共 9 张，13 个分区共 117 张基准图。组件总览 `samples/TesseraGallery` 同时用于开发预览、截图测试、无障碍检查和示例 App。
 
-- **无障碍检查**（`sample/src/test/.../AccessibilityTest.kt`）：用 Robolectric 在 JVM 上运行，三种外观 × 6 个分区，检查每个可点击、可切换的元素都有读屏名称，触摸区域不小于 44dp（按 Compose 自动扩展后的触摸范围计算）。放在 `sample` 模块是因为 Robolectric 与 Paparazzi 不能在同一模块里运行。
+- **无障碍检查**（`sample/src/test/.../AccessibilityTest.kt`）：用 Robolectric 在 JVM 上运行，三种外观 × 13 个分区（共 600 个可交互元素），检查每个可点击、可切换的元素都有读屏名称，触摸区域不小于 44dp（按 Compose 自动扩展后的触摸范围计算）。放在 `sample` 模块是因为 Robolectric 与 Paparazzi 不能在同一模块里运行。
+- **交互测试**（`sample/src/test/.../FormInteractionTest.kt`）：数字步进的点按、按住连续调整、上限禁用与全角数字；标签输入的逗号 / 顿号切分与去重；验证码整段粘贴；评分清零；按钮组多选；滑块与滚轮的读屏调整；日历范围选择（先晚后早自动调换）；表单提交后的中文校验提示。
 - **示例 App**（`sample`）：可在真机上切换三种外观和浅色 / 深色，逐个查看首批 22 个组件。持续集成每次都会编译并上传为 `tessera-sample-apk`，下载后直接安装即可做真机验证。
 
 - `TesseraTokens.kt`、`icons/TesseraIcons.kt`、`res/values*/tessera_*.xml` 由 `npm run build` 生成，请勿手动修改。

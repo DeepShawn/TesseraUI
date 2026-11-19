@@ -66,6 +66,32 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 
 命名空间：`xmlns:tessera="using:TesseraUI"`。
 
+## 组件（v0.5：表单与输入）
+
+在 `App.xaml` 里多合并一个字典（放在 `TesseraControls.xaml` 之后、外观字典之前）：`<ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraForms.xaml" />`。
+
+| 组件 | 用法 |
+|---|---|
+| ButtonGroup | `<tessera:TesseraButtonGroup Items="…" Multiple="True" />`，`Selected` 为选中下标，`SelectionChanged` 事件 |
+| SplitButton | `<tessera:TesseraSplitButton Text="保存" Click="…"><tessera:TesseraSplitButton.Flyout><MenuFlyout>…</MenuFlyout></…>` |
+| FAB | `<Button Style="{StaticResource TesseraFabButtonStyle}">` |
+| Link | `<HyperlinkButton Style="{StaticResource TesseraLinkButtonStyle}" />` |
+| TextArea | `<TextBox Style="{StaticResource TesseraTextAreaStyle}" />`；字数统计在 `TextCompositionEnded` 后更新 |
+| PasswordField | `PasswordBox` + `TesseraPasswordBoxStyle`，`PasswordRevealMode="Peek"`；`tessera:TesseraPassword.CapsLockWarning="True"` 在大写锁定打开时提示 |
+| NumberInput | `<tessera:TesseraNumberInput Header="数量" Minimum="1" Maximum="99" />`：按住 − / + 连续调整（RepeatButton），全角数字自动转半角，上下方向键调整 |
+| OTPInput | `<tessera:TesseraOtpInput Length="6" Completed="…" />`：整段粘贴自动取出数字 |
+| Autocomplete | `<tessera:TesseraAutocomplete />`，`Options` 为候选：拼音组合中不筛选，选定汉字后才筛选 |
+| TagInput | `<tessera:TesseraTagInput />`，`Tags` 为标签集合：回车、逗号、顿号、分号添加，空框退格删除 |
+| Slider / RangeSlider | `Slider` + `TesseraSliderStyle`；范围用 `<tessera:TesseraRangeSlider Lower="200" Upper="800" Step="100" />`（两个滑块不能交叉，方向键与读屏可调） |
+| Rating | 系统 `RatingControl`，颜色由 `TesseraTheme.xaml` 提供（建议 `Height="44"` 保证触摸范围） |
+| FileUpload | `<tessera:TesseraFileUpload PickRequested="…" Dropped="…" />`：点击时由应用打开 `FileOpenPicker`，也可拖入文件 |
+| Calendar / DateRange | `CalendarView` + `TesseraCalendarViewStyle`；范围用 `<tessera:TesseraDateRangeCalendar />` |
+| DatePicker / TimePicker | `CalendarDatePicker` + `TesseraCalendarDatePickerStyle`、`TimePicker` + `TesseraTimePickerStyle`（24 小时制）；滚轮使用系统控件 |
+| ColorPicker | 系统 `ColorPicker` + `TesseraColorPickerStyle` |
+| Form | `<tessera:TesseraFormField Label="姓名" Required="True" Error="…">`，`TesseraRules.Check(text, TesseraRules.Required("姓名"), TesseraRules.Phone)` 返回中文提示；出错时通过 UI 自动化通知朗读 |
+
+WheelPicker 在 Windows 上没有单独的控件：日期、时间的滚轮使用系统 `DatePicker` / `TimePicker` 的弹出层。
+
 ## 交互与动效
 
 - **分段控件**：点选或从任意一格按下后左右拖动，滑块跟手，松手吸附到最近的一格（snappy 弹簧）；左右方向键、Home、End 切换。读屏报告为“分段控件”，值为当前选中项。
@@ -104,4 +130,4 @@ msbuild TesseraSample.csproj -restore -p:Configuration=Release -p:Platform=x64 -
 TesseraSample.exe --snapshot snapshots   # 截图与无障碍检查，完成后自动退出
 ```
 
-`--snapshot` 依次切换三种外观 × 浅色 / 深色，每种截一张组件总览（共 6 张），并检查每个可聚焦元素都有读屏名称、尺寸不小于 40×40（Windows 触控目标的最小建议值），结果写到 `a11y.txt`，有问题时退出码为 1。持续集成每次都会运行，截图上传为 `windows-snapshots`，示例 App 上传为 `tessera-sample-windows`。高对比度主题只能由系统设置打开，应用无法强制切换，所以不截图，需在真机上检查。
+`--snapshot` 依次切换首批组件与表单两页 × 三种外观 × 浅色 / 深色，每种截一张（共 12 张），并检查每个可聚焦元素都有读屏名称、尺寸不小于 40×40（Windows 触控目标的最小建议值），结果写到 `a11y.txt`，有问题时退出码为 1。持续集成每次都会运行，截图上传为 `windows-snapshots`，示例 App 上传为 `tessera-sample-windows`。高对比度主题只能由系统设置打开，应用无法强制切换，所以不截图，需在真机上检查。

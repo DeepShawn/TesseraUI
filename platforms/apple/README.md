@@ -44,6 +44,21 @@ ContentView()
 | 数据展示 | `TesseraCard`、`TesseraList` / `TesseraListItem`、`TesseraAvatar` / `TesseraAvatarGroup`、`TesseraBadge`、`TesseraTag` |
 | 反馈 | `.tesseraToast`、`.tesseraDialog`、`.tesseraSheet`、`TesseraSkeleton` |
 
+## 组件（v0.5：表单与输入）
+
+| 类别 | 组件 |
+|---|---|
+| 操作 | `TesseraButtonGroup`、`TesseraSplitButton`、`TesseraFab`、`TesseraLink` |
+| 文本 | `TesseraTextArea`（iOS 上用 UITextView 判断输入法组合，字数只在选定后计）、`TesseraPasswordField`、`TesseraAutocomplete`、`TesseraTagInput`、`TesseraFlowLayout` |
+| 数字 | `TesseraNumberInput`（按住连续调整、全角数字、读屏可上下调整）、`TesseraOtpInput`（iOS 短信验证码自动填充 `oneTimeCode`、整段粘贴） |
+| 范围 | `TesseraSlider`、`TesseraRangeSlider`、`TesseraRating`、`TesseraFileUpload`（`.fileImporter` 打开系统文件选择器） |
+| 日期 | `TesseraCalendar`（单选 / 范围，`matchedGeometryEffect` 让选中砖滑动）、`TesseraWheel` / `TesseraWheelPicker`、`TesseraDatePicker`、`TesseraTimePicker`、`TesseraDateRangePicker` |
+| 颜色 | `TesseraColorPicker`（值是 HEX 字符串） |
+| 表单 | `TesseraForm`、`TesseraFormField`、`TesseraFieldGroup`、`TesseraFormState`、`TesseraRules` |
+| 弹层 | `.tesseraPopover`、`TesseraMenuPanel`、`TesseraMenuItemStyle`：自绘的菜单面板，iPhone 上也保持为弹层 |
+
+v0.5 起 `TesseraMenu` 与 `TesseraSelect` 改为自绘弹层（系统 popover 承载，内容是 TesseraUI 样式），触发按钮是普通按钮，修复了 v0.4 的已知问题（iOS 读屏读不出名称）。组件总览 `TesseraFormsGallery` 展示全部 v0.5 组件。
+
 在 Xcode 中打开 `Components/Gallery.swift` 的预览，可以查看全部组件。
 
 ## 与其他平台的差异
@@ -72,6 +87,6 @@ cd Examples && xcodegen generate && open TesseraSampleiOS.xcodeproj    # iOS 示
 
 **iOS 无障碍检查**（`Examples/UITests`，XCUITest，读取的就是 VoiceOver 看到的辅助功能树）：三种外观下每个按钮、开关、文本框、分段控制都要有读屏名称、尺寸不小于 40×40，每种外观截一张图。持续集成在 iOS 模拟器上运行，截图上传为 `ios-snapshots`。这项检查发现并修复了：标签页两个字的项只有 28 宽、搜索框清除按钮只有 16×16、开关整行只有 30 高、圆融 / 流韵输入框读屏范围不足 40。
 
-已知问题：下拉选择（`TesseraSelect`）和更多菜单（`TesseraMenu`）在 iOS 上没有读屏名称。两者用的是自定义外观的系统 `Menu`，系统把它包进一个没有名称的按钮里；Label 标题、`accessibilityLabel`、合并子元素、`accessibilityRepresentation` 都试过无效。测试里把这两项列为已知例外（数量变了会失败），待真机 VoiceOver 确认，v0.5 改为自绘弹层。
+v0.4 的已知问题（下拉选择与更多菜单没有读屏名称）已在 v0.5 改为自绘弹层后修复，测试里不再有例外。UI 测试覆盖首批组件总览与表单总览两页。
 
 持续集成在 macOS 机器上执行以上步骤，截图上传为 `apple-snapshots`。截图用 ImageRenderer 渲染，有两个限制：系统原生控件（文本输入框、系统菜单按钮）画不出来，会是空白；增强对比度只切换了配色，描边由系统设置决定，需在真机或 Xcode 预览里检查。iOS 示例请在 Xcode 中打开本包，使用 `Gallery.swift` 的预览或把 `TesseraGallery()` 放进自己的 App。`Generated/` 与 `Resources/TesseraIcons.xcassets` 由 `npm run build` 生成，请勿手动修改。
