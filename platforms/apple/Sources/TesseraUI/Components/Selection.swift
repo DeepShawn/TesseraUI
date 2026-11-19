@@ -115,16 +115,15 @@ public struct TesseraSwitchStyle: ToggleStyle {
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: TesseraSpace.s3) {
             SwitchTrack(isOn: configuration.$isOn, glass: glass)
-            // 读屏元素的范围是各子元素的并集，所以把 44 的高度放在文字上，而不只是外层
             configuration.label.tesseraText(.bodySm).foregroundStyle(TesseraColor.textPrimary)
-                .frame(minHeight: TesseraSize.touchMin)
         }
         .frame(minHeight: TesseraSize.touchMin)
+        .contentShape(Rectangle())
         .opacity(isEnabled ? 1 : TesseraOpacity.disabled)
-        .accessibilityElement(children: .combine)
-        .accessibilityAddTraits(.isButton)
-        .accessibilityValue(configuration.isOn ? "已开启" : "已关闭")
-        .accessibilityAction { configuration.isOn.toggle() }
+        // 读屏看到的是一个系统开关（角色、开 / 关状态、双击切换都与系统一致），范围是整行 44 高
+        .accessibilityRepresentation {
+            Toggle(isOn: configuration.$isOn) { configuration.label }.toggleStyle(.switch)
+        }
     }
 
     struct SwitchTrack: View {

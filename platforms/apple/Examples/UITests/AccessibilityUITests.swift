@@ -31,7 +31,8 @@ final class AccessibilityUITests: XCTestCase {
                     if f.isEmpty { continue }
                     checked += 1
                     if label == nil { problems.append("\(shape)：\(kind) 没有读屏名称（\(f)）") }
-                    if f.width < 40 || f.height < 40 { problems.append("\(shape)：\(kind)“\(label ?? "?")”尺寸只有 \(Int(f.width))×\(Int(f.height))") }
+                    // 3 倍屏上的坐标会有零点几的舍入误差，允许 0.5
+                    if f.width < 39.5 || f.height < 39.5 { problems.append("\(shape)：\(kind)“\(label ?? "?")”尺寸只有 \(String(format: "%.1f×%.1f", f.width, f.height))") }
                 }
             }
             app.terminate()

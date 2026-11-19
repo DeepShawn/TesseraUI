@@ -194,9 +194,9 @@ public struct TesseraMenu<Content: View>: View {
                 .tesseraTile(TesseraColor.fillDefault, style: .soft, shape: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous))
                 .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
                 .contentShape(Rectangle())
-                // iOS 的 Menu 按钮从 label 里取读屏名称
-                .accessibilityLabel(label)
         }
         .buttonStyle(.plain)
+        // 自定义 label 的 Menu 在 iOS 上读不出名称：读屏改为看到一个带标题的标准菜单（范围仍是这个按钮）
+        .accessibilityRepresentation { Menu(label) { content } }
     }
 }

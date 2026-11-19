@@ -234,12 +234,14 @@ public struct TesseraSelect<Value: Hashable>: View {
                 .frame(height: TesseraSize.md)
                 .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
                 .contentShape(shape)
-                // iOS 的 Menu 按钮从 label 里取读屏名称，所以写在 label 上
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(label ?? "选择")
-                .accessibilityValue(current)
             }
             .buttonStyle(.plain)
+            // 读屏看到的是一个标准选择器：名称是标签，值是当前选项，可直接调整
+            .accessibilityRepresentation {
+                Picker(label ?? "选择", selection: $selection) {
+                    ForEach(options.indices, id: \.self) { i in Text(options[i].title).tag(options[i].value) }
+                }
+            }
         }
     }
 }
