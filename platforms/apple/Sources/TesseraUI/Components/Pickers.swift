@@ -183,29 +183,21 @@ public struct TesseraWheel: View {
     }
 
     private var maxPos: CGFloat { CGFloat(max(items.count - 1, 0)) * row }
+    /// 上下边缘淡出
+    private static let fade = LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: .black, location: 0.28), .init(color: .black, location: 0.72), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom)
 
     public var body: some View {
         let p = pos ?? CGFloat(selection) * row
         let center = p / row
-        let step = 18.0 * .pi / 180
-        let radius = row / step
         ZStack {
             ForEach(visible(center), id: \.self) { i in
-                let a = min(max((Double(i) - Double(center)) * step, -.pi / 2), .pi / 2)
-                let sel = i == Int(center.rounded())
-                Text(items[i])
-                    .tesseraText(sel ? TesseraTextStyle(size: 16, lineHeight: 22, weight: .semibold, family: .text, tracking: 0, relativeTo: .body) : .body)
-                    .foregroundStyle(sel ? TesseraColor.textPrimary : TesseraColor.textSecondary)
-                    .lineLimit(1)
-                    .rotation3DEffect(.radians(-a), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
-                    .offset(y: radius * sin(a))
-                    .opacity(pow(max(cos(a), 0), 1.6))
+                WheelRow(text: items[i], offset: Double(i) - Double(center), selected: i == Int(center.rounded()), row: row)
             }
         }
         .frame(maxWidth: .infinity)
         .frame(height: row * 5)
         .clipped()
-        .mask(LinearGradient(stops: [.init(color: .clear, location: 0), .init(color: .black, location: 0.28), .init(color: .black, location: 0.72), .init(color: .clear, location: 1)], startPoint: .top, endPoint: .bottom))
+        .mask(Self.fade)
         .contentShape(Rectangle())
         .gesture(
             DragGesture(minimumDistance: 2)
@@ -246,6 +238,30 @@ public struct TesseraWheel: View {
             pos = CGFloat(i) * row
         }
         selection = i
+    }
+}
+
+/// 滚轮里的一行：沿圆柱排开（每行 18°），越远越倾斜、越淡
+private struct WheelRow: View {
+    let text: String
+    let offset: Double
+    let selected: Bool
+    let row: CGFloat
+
+    var body: some View {
+        let step: Double = 18.0 * Double.pi / 180.0
+        let a: Double = min(max(offset * step, -Double.pi / 2), Double.pi / 2)
+        let radius: Double = Double(row) / step
+        let y: CGFloat = CGFloat(radius * sin(a))
+        let alpha: Double = pow(max(cos(a), 0), 1.6)
+        let style: TesseraTextStyle = selected ? TesseraTextStyle(size: 16, lineHeight: 22, weight: .semibold, family: .text, tracking: 0, relativeTo: .body) : .body
+        return Text(text)
+            .tesseraText(style)
+            .foregroundStyle(selected ? TesseraColor.textPrimary : TesseraColor.textSecondary)
+            .lineLimit(1)
+            .rotation3DEffect(.radians(-a), axis: (x: 1, y: 0, z: 0), perspective: 0.5)
+            .offset(y: y)
+            .opacity(alpha)
     }
 }
 
@@ -318,7 +334,9 @@ public struct TesseraDatePicker: View {
     @Binding var date: Date?
     let placeholder: String
     @State private var open = false
-    @State private var y = 2026, m = 1, d = 1
+    @State private var y = 2026
+    @State private var m = 1
+    @State private var d = 1
 
     public init(_ label: String? = nil, date: Binding<Date?>, placeholder: String = "选择日期") {
         self.label = label
@@ -358,7 +376,8 @@ public struct TesseraTimePicker: View {
     let step: Int
     let placeholder: String
     @State private var open = false
-    @State private var h = 9, mi = 0
+    @State private var h = 9
+    @State private var mi = 0
 
     public init(_ label: String? = nil, hour: Binding<Int?>, minute: Binding<Int?>, step: Int = 1, placeholder: String = "选择时间") {
         self.label = label
