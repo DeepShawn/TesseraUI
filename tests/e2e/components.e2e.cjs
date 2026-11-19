@@ -210,6 +210,28 @@ async function check(name, fn) {
     await p.waitForTimeout(500);
     assert.match(await p.locator('.ts-daterange input').inputValue(), /10 日 – .*15 日/);
   });
+  await check('日历：换选日期时选中砖滑过去；切换月份时整月推入', async () => {
+    const cal = p.locator('.ts-calendar').first();
+    await cal.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    const days = cal.locator('.ts-day:not([data-outside])');
+    await days.nth(3).click(); await p.waitForTimeout(600);
+    await p.evaluate(() => { window.__dx = []; const loop = () => { const i = document.querySelector('.ts-calendar .ts-day-indicator'); window.__dx.push(i.style.transform); if (window.__dx.length < 40) requestAnimationFrame(loop); }; requestAnimationFrame(loop); });
+    await days.nth(20).click(); await p.waitForTimeout(800);
+    const tr = await p.evaluate(() => window.__dx);
+    assert.ok(new Set(tr).size > 6, '选中砖没有滑动');
+    const ind = await cal.locator('.ts-day-indicator').boundingBox(), d = await days.nth(20).boundingBox();
+    assert.ok(Math.abs(ind.x - d.x) < 1 && Math.abs(ind.y - d.y) < 1, '选中砖没有落在选中的日期上');
+    assert.equal(await days.nth(20).getAttribute('aria-pressed'), 'true');
+    const title = await cal.locator('.ts-calendar-title').textContent();
+    await cal.locator('[aria-label="下个月"]').click();
+    await p.waitForTimeout(100);
+    assert.equal(await p.locator('.ts-calendar').first().locator('.ts-calendar-grid').count(), 2, '换月时旧月份没有滑出');
+    await p.waitForTimeout(900);
+    const c2 = p.locator('.ts-calendar').first();
+    assert.equal(await c2.locator('.ts-calendar-grid').count(), 1);
+    assert.notEqual(await c2.locator('.ts-calendar-title').textContent(), title);
+    await c2.locator('[aria-label="上个月"]').click(); await p.waitForTimeout(900);
+  });
   await check('时间选择器：滚轮选择后确定', async () => {
     await p.click('.ts-timepicker');
     await p.waitForTimeout(400);
@@ -291,6 +313,20 @@ async function check(name, fn) {
     assert.equal(await pg.locator('[aria-current="page"]').textContent(), '7');
     await pg.locator('button[aria-label="第 20 页"]').click();
     assert.deepEqual(await pg.locator('.ts-page').allTextContents(), ['', '1', '…', '16', '17', '18', '19', '20', '']);
+  });
+  await check('分页：翻页时按钮复用不重建，当前页选中砖用弹簧滑过去', async () => {
+    const pg = p.locator('.ts-pagination').first();
+    await pg.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    const same = await pg.evaluate((root) => { window.__btn1 = root.querySelector('button[aria-label="第 1 页"]'); return !!window.__btn1; });
+    assert.ok(same);
+    await p.evaluate(() => { window.__px = []; const ind = document.querySelector('.ts-pagination .ts-page-indicator'); const loop = () => { window.__px.push(ind.style.transform); if (window.__px.length < 40) requestAnimationFrame(loop); }; requestAnimationFrame(loop); });
+    await pg.locator('button[aria-label="第 1 页"]').click();
+    await p.waitForTimeout(800);
+    const xs = await p.evaluate(() => window.__px);
+    assert.ok(new Set(xs).size > 6, `选中砖没有滑动（只有 ${new Set(xs).size} 个位置）`);
+    assert.ok(await pg.evaluate(() => window.__btn1.isConnected && window.__btn1.getAttribute('aria-current') === 'page'), '页码按钮被重建了');
+    const ind = await pg.locator('.ts-page-indicator').boundingBox(), cur = await pg.locator('[aria-current="page"]').boundingBox();
+    assert.ok(Math.abs(ind.x - cur.x) < 1 && Math.abs(ind.width - cur.width) < 1, '选中砖没有落在当前页上');
   });
   await check('右键菜单', async () => {
     await p.click('[data-context-menu="ctx"]', { button: 'right' });

@@ -42,7 +42,7 @@
 /* ---------- 分页 Pagination：一排砖 ---------- */
 .ts-pagination { display: flex; align-items: center; gap: var(--ts-space-3); flex-wrap: wrap; }
 /* 页码在很窄的屏幕上放不下时横向滑动，不撑宽页面 */
-.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.ts-pages { position: relative; display: inline-flex; gap: var(--ts-tile-grout); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .ts-pages::-webkit-scrollbar { display: none; }
 .ts-page { flex: none; }
 .ts-page {
@@ -50,9 +50,15 @@
   background-color: var(--ts-fill-default); color: var(--ts-text-secondary); font: 600 13px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
   background-image: var(--ts-layer-edge-soft); display: inline-grid; place-items: center;
 }
-.ts-pages > :first-child { border-radius: 12px var(--ts-radius-grout) var(--ts-radius-grout) 12px; }
+.ts-pages > button:first-of-type { border-radius: 12px var(--ts-radius-grout) var(--ts-radius-grout) 12px; }
 .ts-pages > :last-child { border-radius: var(--ts-radius-grout) 12px 12px var(--ts-radius-grout); }
 .ts-page[aria-current="page"] { background-color: var(--ts-text-primary); color: var(--ts-bg-surface); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+/* 当前页底下的深色砖是独立的一块，翻页时用弹簧滑到新页码（modules/navigation.js）；当前页按钮自己不再画底色 */
+.ts-page-indicator {
+  position: absolute; left: 0; top: var(--_pad, 0px); bottom: var(--_pad, 0px); z-index: 1; pointer-events: none;
+  border-radius: var(--ts-radius-grout); background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+}
+.ts-pages:has(.ts-page-indicator) .ts-page[aria-current="page"] { position: relative; z-index: 2; background: none; }
 .ts-page[data-gap] { background: none; cursor: default; color: var(--ts-text-tertiary); min-width: 24px; }
 .ts-page .ts-icon { width: 16px; height: 16px; }
 .ts-page:disabled { opacity: .35; cursor: not-allowed; }

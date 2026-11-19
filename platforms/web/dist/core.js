@@ -329,7 +329,7 @@ export function tabs(root, { onChange } = {}) {
 // 浮层通用动画（WAAPI + 弹簧 linear() 曲线）
 // ------------------------------------------------------------------
 export const cssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-const springEasing = (name) => ({ easing: cssVar(`--ts-spring-${name}`), duration: parseFloat(cssVar(`--ts-spring-${name}-duration`)) });
+export const springEasing = (name) => ({ easing: cssVar(`--ts-spring-${name}`), duration: parseFloat(cssVar(`--ts-spring-${name}-duration`)) });
 
 export function animateIn(el, from, preset = 'smooth') {
   if (prefersReducedMotion()) return el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: M.reducedMotion.duration }).finished;

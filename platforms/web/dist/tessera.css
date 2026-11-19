@@ -1168,7 +1168,17 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 .ts-calendar { width: 300px; user-select: none; -webkit-user-select: none; }
 .ts-calendar-head { display: flex; align-items: center; gap: var(--ts-space-1); margin-bottom: var(--ts-space-2); }
 .ts-calendar-title { flex: 1; padding-inline-start: var(--ts-space-2); font: var(--ts-font-title-3); font-variation-settings: var(--ts-font-serif-axes); }
-.ts-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.ts-calendar-grid { position: relative; display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+/* 单选的选中砖：独立的一块，换日期时用弹簧滑过去（modules/pickers.js），日期格本身不再换底色 */
+.ts-day-indicator {
+  position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; border-radius: 12px;
+  background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  transition: opacity var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-calendar-grid.has-indicator .ts-day { z-index: 1; transition: background-color var(--ts-duration-instant) var(--ts-ease-standard), color 160ms var(--ts-ease-standard); }
+/* 选中砖滑到一半时文字才变白：数字不会在砖到达前“消失”（浅底白字） */
+.ts-calendar-grid.has-indicator .ts-day[aria-pressed="true"] { transition-delay: 0s, 110ms; }
+.ts-calendar-grid.has-indicator .ts-day[aria-pressed="true"] { background: none; }
 .ts-calendar-dow { height: 28px; display: grid; place-items: center; font: var(--ts-font-caption); color: var(--ts-text-tertiary); }
 .ts-day {
   position: relative; aspect-ratio: 1; display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
@@ -1194,8 +1204,8 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 .ts-day:focus-visible { outline: var(--ts-focus-ring-width) solid var(--ts-focus-ring); outline-offset: 1px; }
 .ts-calendar-grid[data-slide="next"] { animation: ts-cal-next var(--ts-spring-smooth-duration) var(--ts-spring-smooth); }
 .ts-calendar-grid[data-slide="prev"] { animation: ts-cal-prev var(--ts-spring-smooth-duration) var(--ts-spring-smooth); }
-@keyframes ts-cal-next { from { opacity: 0; transform: translateX(16px); } }
-@keyframes ts-cal-prev { from { opacity: 0; transform: translateX(-16px); } }
+@keyframes ts-cal-next { from { opacity: 0.4; transform: translateX(calc(100% + 24px)); } }
+@keyframes ts-cal-prev { from { opacity: 0.4; transform: translateX(calc(-100% - 24px)); } }
 .ts-calendars { display: flex; gap: var(--ts-space-5); }
 @media (max-width: 700px) { .ts-calendars > :nth-child(2) { display: none; } }
 
@@ -1294,7 +1304,7 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 /* ---------- 分页 Pagination：一排砖 ---------- */
 .ts-pagination { display: flex; align-items: center; gap: var(--ts-space-3); flex-wrap: wrap; }
 /* 页码在很窄的屏幕上放不下时横向滑动，不撑宽页面 */
-.ts-pages { display: inline-flex; gap: var(--ts-tile-grout); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.ts-pages { position: relative; display: inline-flex; gap: var(--ts-tile-grout); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .ts-pages::-webkit-scrollbar { display: none; }
 .ts-page { flex: none; }
 .ts-page {
@@ -1302,9 +1312,15 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
   background-color: var(--ts-fill-default); color: var(--ts-text-secondary); font: 600 13px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums;
   background-image: var(--ts-layer-edge-soft); display: inline-grid; place-items: center;
 }
-.ts-pages > :first-child { border-radius: 12px var(--ts-radius-grout) var(--ts-radius-grout) 12px; }
+.ts-pages > button:first-of-type { border-radius: 12px var(--ts-radius-grout) var(--ts-radius-grout) 12px; }
 .ts-pages > :last-child { border-radius: var(--ts-radius-grout) 12px 12px var(--ts-radius-grout); }
 .ts-page[aria-current="page"] { background-color: var(--ts-text-primary); color: var(--ts-bg-surface); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid); }
+/* 当前页底下的深色砖是独立的一块，翻页时用弹簧滑到新页码（modules/navigation.js）；当前页按钮自己不再画底色 */
+.ts-page-indicator {
+  position: absolute; left: 0; top: var(--_pad, 0px); bottom: var(--_pad, 0px); z-index: 1; pointer-events: none;
+  border-radius: var(--ts-radius-grout); background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+}
+.ts-pages:has(.ts-page-indicator) .ts-page[aria-current="page"] { position: relative; z-index: 2; background: none; }
 .ts-page[data-gap] { background: none; cursor: default; color: var(--ts-text-tertiary); min-width: 24px; }
 .ts-page .ts-icon { width: 16px; height: 16px; }
 .ts-page:disabled { opacity: .35; cursor: not-allowed; }
@@ -2042,6 +2058,7 @@ img[data-viewer] { cursor: zoom-in; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-picker-panel { border-radius: var(--ts-round-card); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-calendar-grid { column-gap: 0; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day { border-radius: 50%; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-day-indicator { border-radius: 50%; background-image: var(--ts-layer-sheen); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-today]::after { border-radius: 50%; }
 /* 范围：中间段连成一条没有缝的浅色带，首尾是半圆 */
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-in-range] { border-radius: 0; }
@@ -2061,9 +2078,11 @@ img[data-viewer] { cursor: zoom-in; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-breadcrumb a { border-radius: var(--ts-round-pill); padding-inline: 10px; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-breadcrumb [aria-current="page"] { padding-inline: 10px; }
 /* 分页：一整条浅底胶囊，当前页是一颗墨色小胶囊 */
-:root:is([data-shape="round"], [data-shape="flow"]) .ts-pages { gap: 0; padding: 3px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); }
-:root:is([data-shape="round"], [data-shape="flow"]) .ts-page, :root:is([data-shape="round"], [data-shape="flow"]) .ts-pages > :is(:first-child, :last-child) { border-radius: var(--ts-round-pill); background-color: transparent; background-image: none; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-pages { --_pad: 3px; gap: 0; padding: 3px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-page, :root:is([data-shape="round"], [data-shape="flow"]) .ts-pages > :is(button:first-of-type, :last-child) { border-radius: var(--ts-round-pill); background-color: transparent; background-image: none; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-page[aria-current="page"] { background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-page-indicator { border-radius: var(--ts-round-pill); background-image: var(--ts-layer-sheen); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-pages:has(.ts-page-indicator) .ts-page[aria-current="page"] { background: none; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-step::before { border-radius: 50%; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-step:not(:last-child)::after { border-radius: var(--ts-round-pill); }
 :root:is([data-shape="round"], [data-shape="flow"]) dialog.ts-command { border-radius: var(--ts-round-card); }

@@ -191,6 +191,7 @@
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-picker-panel { border-radius: var(--ts-round-card); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-calendar-grid { column-gap: 0; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day { border-radius: 50%; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-day-indicator { border-radius: 50%; background-image: var(--ts-layer-sheen); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-today]::after { border-radius: 50%; }
 /* 范围：中间段连成一条没有缝的浅色带，首尾是半圆 */
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-in-range] { border-radius: 0; }
@@ -210,9 +211,11 @@
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-breadcrumb a { border-radius: var(--ts-round-pill); padding-inline: 10px; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-breadcrumb [aria-current="page"] { padding-inline: 10px; }
 /* 分页：一整条浅底胶囊，当前页是一颗墨色小胶囊 */
-:root:is([data-shape="round"], [data-shape="flow"]) .ts-pages { gap: 0; padding: 3px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); }
-:root:is([data-shape="round"], [data-shape="flow"]) .ts-page, :root:is([data-shape="round"], [data-shape="flow"]) .ts-pages > :is(:first-child, :last-child) { border-radius: var(--ts-round-pill); background-color: transparent; background-image: none; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-pages { --_pad: 3px; gap: 0; padding: 3px; border-radius: var(--ts-round-pill); background: var(--ts-fill-default); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-page, :root:is([data-shape="round"], [data-shape="flow"]) .ts-pages > :is(button:first-of-type, :last-child) { border-radius: var(--ts-round-pill); background-color: transparent; background-image: none; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-page[aria-current="page"] { background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-page-indicator { border-radius: var(--ts-round-pill); background-image: var(--ts-layer-sheen); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-pages:has(.ts-page-indicator) .ts-page[aria-current="page"] { background: none; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-step::before { border-radius: 50%; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-step:not(:last-child)::after { border-radius: var(--ts-round-pill); }
 :root:is([data-shape="round"], [data-shape="flow"]) dialog.ts-command { border-radius: var(--ts-round-card); }

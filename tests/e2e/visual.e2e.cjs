@@ -42,6 +42,8 @@ const TARGETS = [
   ['components', '滑块手柄', '.ts-slider-thumb'],
   ['components', '分页', '.ts-pages'],
   ['components', '当前页', '.ts-page[aria-current="page"]'],
+  ['components', '当前页选中砖', '.ts-page-indicator'],
+  ['components', '日历选中砖', '.ts-day-indicator'],
   ['components', '步骤', '.ts-step'],
   ['components', '表格外框', '.ts-table-wrap'],
   ['components', '表格单元格', '.ts-table tbody td'],

@@ -16,7 +16,17 @@
 .ts-calendar { width: 300px; user-select: none; -webkit-user-select: none; }
 .ts-calendar-head { display: flex; align-items: center; gap: var(--ts-space-1); margin-bottom: var(--ts-space-2); }
 .ts-calendar-title { flex: 1; padding-inline-start: var(--ts-space-2); font: var(--ts-font-title-3); font-variation-settings: var(--ts-font-serif-axes); }
-.ts-calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.ts-calendar-grid { position: relative; display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+/* 单选的选中砖：独立的一块，换日期时用弹簧滑过去（modules/pickers.js），日期格本身不再换底色 */
+.ts-day-indicator {
+  position: absolute; left: 0; top: 0; z-index: 0; pointer-events: none; border-radius: 12px;
+  background-color: var(--ts-text-primary); background-image: var(--ts-layer-sheen), var(--ts-layer-edge-solid);
+  transition: opacity var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-calendar-grid.has-indicator .ts-day { z-index: 1; transition: background-color var(--ts-duration-instant) var(--ts-ease-standard), color 160ms var(--ts-ease-standard); }
+/* 选中砖滑到一半时文字才变白：数字不会在砖到达前“消失”（浅底白字） */
+.ts-calendar-grid.has-indicator .ts-day[aria-pressed="true"] { transition-delay: 0s, 110ms; }
+.ts-calendar-grid.has-indicator .ts-day[aria-pressed="true"] { background: none; }
 .ts-calendar-dow { height: 28px; display: grid; place-items: center; font: var(--ts-font-caption); color: var(--ts-text-tertiary); }
 .ts-day {
   position: relative; aspect-ratio: 1; display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
@@ -42,8 +52,8 @@
 .ts-day:focus-visible { outline: var(--ts-focus-ring-width) solid var(--ts-focus-ring); outline-offset: 1px; }
 .ts-calendar-grid[data-slide="next"] { animation: ts-cal-next var(--ts-spring-smooth-duration) var(--ts-spring-smooth); }
 .ts-calendar-grid[data-slide="prev"] { animation: ts-cal-prev var(--ts-spring-smooth-duration) var(--ts-spring-smooth); }
-@keyframes ts-cal-next { from { opacity: 0; transform: translateX(16px); } }
-@keyframes ts-cal-prev { from { opacity: 0; transform: translateX(-16px); } }
+@keyframes ts-cal-next { from { opacity: 0.4; transform: translateX(calc(100% + 24px)); } }
+@keyframes ts-cal-prev { from { opacity: 0.4; transform: translateX(calc(-100% - 24px)); } }
 .ts-calendars { display: flex; gap: var(--ts-space-5); }
 @media (max-width: 700px) { .ts-calendars > :nth-child(2) { display: none; } }
 

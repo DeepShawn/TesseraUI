@@ -1,6 +1,6 @@
 // 选择器：Calendar、DatePicker、DateRangePicker、TimePicker、WheelPicker、ColorPicker。
 // 桌面端在弹出面板里选；手机上（触屏且窄屏）改为底部抽屉，日期和时间用滚轮选。
-import { icon, once, clamp, place, follow, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar, Spring, VelocityTracker, rubberBand, uid } from '../core.js';
+import { icon, once, clamp, place, follow, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar, Spring, VelocityTracker, rubberBand, uid, springEasing, prefersReducedMotion } from '../core.js';
 import { haptic } from './flow.js';
 
 // ------------------------------------------------------------------
@@ -27,7 +27,32 @@ export function calendar(root, { mode = 'single', value = null, min = null, max 
   let hoverKey = null;
   const today = toKey(new Date());
 
+  // 选中砖：单选时是一块独立的方块，换选日期时用弹簧滑过去，而不是原地瞬间换色
+  const useIndicator = mode !== 'range' && months === 1;
+  let indicator = null, ix = null, iy = null;
+  const placeIndicator = (animate) => {
+    if (!indicator) return;
+    // 只在选中砖所在的这一格里找：月份切换动画期间，滑出中的旧月份也还在页面上
+    const btn = indicator.parentElement?.querySelector(`.ts-day[data-key="${sel.start}"]:not([data-outside])`);
+    if (!btn) { indicator.style.opacity = '0'; return; }
+    const wasHidden = indicator.style.opacity === '0';
+    indicator.style.width = `${btn.offsetWidth}px`;
+    indicator.style.height = `${btn.offsetHeight}px`;
+    indicator.style.opacity = '1';
+    if (!animate || wasHidden || prefersReducedMotion()) {
+      ix.set(btn.offsetLeft); iy.set(btn.offsetTop);
+      if (animate && wasHidden && !prefersReducedMotion()) { const { easing, duration } = springEasing('bouncy'); indicator.animate([{ scale: 0.6 }, { scale: 1 }], { duration, easing }); }
+      return;
+    }
+    ix.to(btn.offsetLeft); iy.to(btn.offsetTop);
+    // 落下时像砖块压实一下
+    const { easing, duration } = springEasing('bouncy');
+    indicator.animate([{ scale: 0.86 }, { scale: 1 }], { duration, easing });
+  };
+
   const render = (slide) => {
+    // 月份切换：旧的日期格留在原位滑出，新的从另一侧滑入
+    const oldGrids = slide && !prefersReducedMotion() ? [...root.querySelectorAll('.ts-calendar-grid')] : [];
     root.replaceChildren();
     for (let m = 0; m < months; m++) {
       const month = addMonths(view, m);
@@ -93,7 +118,36 @@ export function calendar(root, { mode = 'single', value = null, min = null, max 
       root.append(cal);
       // 第二个月只显示这个月的日期，避免两个月重复出现同一天
       if (months > 1) cal.querySelectorAll('.ts-day[data-outside]').forEach((x) => { x.style.visibility = 'hidden'; x.tabIndex = -1; });
+      if (useIndicator) {
+        grid.classList.add('has-indicator');
+        indicator = document.createElement('span');
+        indicator.className = 'ts-day-indicator';
+        indicator.setAttribute('aria-hidden', 'true');
+        indicator.style.opacity = '0';
+        grid.prepend(indicator);
+        ix = new Spring(0, 'snappy', () => (indicator.style.transform = `translate(${ix.value}px, ${iy.value}px)`));
+        iy = new Spring(0, 'snappy', () => (indicator.style.transform = `translate(${ix.value}px, ${iy.value}px)`));
+        ix.precision = iy.precision = 0.3;
+      }
+      const old = oldGrids[m];
+      if (old) {
+        // 像翻页一样整块推走：旧的一个月滑出，新的从另一侧滑入（新月份的入场在 CSS 的 data-slide 里，两者用同一条弹簧曲线同步）
+        const dir = slide === 'next' ? -1 : 1;
+        cal.style.position = 'relative';
+        cal.style.clipPath = 'inset(-8px 0 -8px 0)'; // 只在动画期间左右裁切，平时不影响焦点框
+        old.style.cssText = `position:absolute;left:${grid.offsetLeft}px;top:${grid.offsetTop}px;width:${grid.offsetWidth || old.offsetWidth}px;pointer-events:none;margin:0`;
+        old.setAttribute('aria-hidden', 'true');
+        old.inert = true;
+        old.classList.add('is-leaving');
+        old.removeAttribute('data-slide');
+        old.querySelectorAll('button').forEach((b) => (b.tabIndex = -1));
+        cal.append(old);
+        const { easing, duration } = springEasing('smooth');
+        old.animate([{ transform: 'none', opacity: 1 }, { transform: `translateX(calc(${dir * 100}% + ${dir * 24}px))`, opacity: 0.4 }], { duration, easing, fill: 'forwards' })
+          .finished.then(() => { old.remove(); cal.style.clipPath = ''; });
+      }
     }
+    if (useIndicator) requestAnimationFrame(() => placeIndicator(false));
   };
   // 范围选择时，第二次点击前用悬停位置预览范围
   const rangeBounds = () => {
@@ -116,11 +170,12 @@ export function calendar(root, { mode = 'single', value = null, min = null, max 
     if (mode === 'range') {
       if (!sel.start || sel.end) sel = { start: k, end: null };
       else { sel = k < sel.start ? { start: k, end: sel.start } : { start: sel.start, end: k }; hoverKey = null; }
-      render();
+      paintRange();
       if (sel.end) onSelect([sel.start, sel.end]);
     } else {
       sel = { start: k, end: null };
-      render();
+      root.querySelectorAll('.ts-calendar-grid:not(.is-leaving) .ts-day').forEach((b) => { b.setAttribute('aria-pressed', b.dataset.key === k); b.tabIndex = b.dataset.key === k && !b.hasAttribute('data-outside') ? 0 : -1; });
+      if (useIndicator) placeIndicator(true);
       onSelect(k);
     }
     root.querySelector(`.ts-day[data-key="${k}"]:not([data-outside])`)?.focus();

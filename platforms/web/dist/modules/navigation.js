@@ -1,6 +1,6 @@
 // TesseraUI v0.3.2 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 导航：Sidebar、Pagination、ContextMenu、CommandPalette、Anchor
-import { Spring, clamp, prefersReducedMotion, icon, once, place, onOutside, animateIn, animateOut, emit, esc, menu as bindMenu, openDialog, closeDialog, onCommittedInput } from '../core.js';
+import { Spring, clamp, prefersReducedMotion, springEasing, icon, once, place, onOutside, animateIn, animateOut, emit, esc, menu as bindMenu, openDialog, closeDialog, onCommittedInput } from '../core.js';
 
 // ------------------------------------------------------------------
 // 侧边栏：可折叠成只显示图标；折叠状态记在 localStorage
@@ -44,32 +44,87 @@ export function pagination(root, { total = Number(root.dataset.total || 1), page
     if (page >= total - 3) return [1, '…', total - 4, total - 3, total - 2, total - 1, total];
     return [1, '…', page - 1, page, page + 1, '…', total];
   };
-  const btn = (label, target, { current, iconName, disabled } = {}) => {
+  // 按钮按“键”复用（上一页、下一页、各页码、两个省略号），翻页时不整体重建：
+  // 按下的动效不会被打断，焦点不丢；页码位置变了的用 FLIP 滑到新位置，当前页底下的深色砖用弹簧滑过去
+  const nodes = new Map();
+  const indicator = document.createElement('span');
+  indicator.className = 'ts-page-indicator';
+  indicator.setAttribute('aria-hidden', 'true');
+  const ix = new Spring(0, 'snappy', () => paintIndicator());
+  const iw = new Spring(36, 'snappy', () => paintIndicator());
+  ix.precision = iw.precision = 0.3;
+  const paintIndicator = () => { indicator.style.transform = `translateX(${ix.value}px)`; indicator.style.width = `${iw.value}px`; };
+  const node = (key, make) => { let n = nodes.get(key); if (!n) { n = make(); n.dataset.key = key; nodes.set(key, n); } return n; };
+  const pageBtn = (p) => node(`p${p}`, () => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'ts-page ts-pressable';
-    if (iconName) { b.append(icon(iconName)); b.setAttribute('aria-label', label); } else b.textContent = label;
-    if (current) b.setAttribute('aria-current', 'page');
-    if (!iconName && !current) b.setAttribute('aria-label', `第 ${label} 页`);
-    b.disabled = !!disabled;
-    b.addEventListener('click', () => go(target));
+    b.textContent = p;
+    b.addEventListener('click', () => go(p));
     return b;
-  };
+  });
+  const arrow = (key, label, iconName, d) => node(key, () => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ts-page ts-pressable';
+    b.append(icon(iconName));
+    b.setAttribute('aria-label', label);
+    b.addEventListener('click', () => go(page + d));
+    return b;
+  });
+  const gap = (key) => node(key, () => { const s = document.createElement('span'); s.className = 'ts-page'; s.dataset.gap = ''; s.textContent = '…'; s.setAttribute('aria-hidden', 'true'); return s; });
+  let first = true;
   const render = () => {
-    pages.replaceChildren(btn('上一页', page - 1, { iconName: 'chevron-left', disabled: page <= 1 }));
-    for (const p of list()) {
-      if (p === '…') { const s = document.createElement('span'); s.className = 'ts-page'; s.dataset.gap = ''; s.textContent = '…'; s.setAttribute('aria-hidden', 'true'); pages.append(s); }
-      else pages.append(btn(String(p), p, { current: p === page }));
+    const animate = !first && !prefersReducedMotion();
+    // FLIP 第一步：记下已有按钮的位置
+    const before = new Map();
+    if (animate) for (const [k, n] of nodes) if (n.isConnected) before.set(k, n.offsetLeft);
+    const list_ = list();
+    let gaps = 0;
+    const order = [arrow('prev', '上一页', 'chevron-left', -1), ...list_.map((p) => (p === '…' ? gap(`gap${gaps++}`) : pageBtn(p))), arrow('next', '下一页', 'chevron-right', 1)];
+    const keep = new Set(order);
+    for (const n of [...pages.children]) if (n !== indicator && !keep.has(n)) n.remove();
+    if (indicator.parentNode !== pages) pages.prepend(indicator);
+    order.forEach((n, i) => { if (pages.children[i + 1] !== n) pages.insertBefore(n, pages.children[i + 1] ?? null); });
+    for (const n of order) {
+      if (n.dataset.gap !== undefined) continue;
+      const k = n.dataset.key;
+      if (k === 'prev') n.disabled = page <= 1;
+      else if (k === 'next') n.disabled = page >= total;
+      else {
+        const p = Number(k.slice(1)), cur = p === page;
+        n.toggleAttribute('aria-current', cur);
+        if (cur) n.setAttribute('aria-current', 'page');
+        if (cur) n.removeAttribute('aria-label'); else n.setAttribute('aria-label', `第 ${p} 页`);
+      }
     }
-    pages.append(btn('下一页', page + 1, { iconName: 'chevron-right', disabled: page >= total }));
     info.textContent = `第 ${page} / ${total} 页`;
+    // FLIP 第二步：位置变了的滑过去，新出现的淡入
+    if (animate) {
+      const { easing, duration } = springEasing('snappy');
+      for (const n of order) {
+        const was = before.get(n.dataset.key);
+        if (was === undefined) n.animate([{ opacity: 0, transform: 'scale(0.85)' }, { opacity: 1, transform: 'none' }], { duration, easing });
+        else if (Math.abs(was - n.offsetLeft) > 0.5) n.animate([{ transform: `translateX(${was - n.offsetLeft}px)` }, { transform: 'none' }], { duration, easing });
+      }
+    }
+    const cur = pages.querySelector('[aria-current="page"]');
+    if (cur) {
+      if (animate) { ix.to(cur.offsetLeft); iw.to(cur.offsetWidth); } else { ix.set(cur.offsetLeft); iw.set(cur.offsetWidth); }
+      // 当前页在可横向滑动的窄屏上滚进可见范围
+      const l = cur.offsetLeft, r = l + cur.offsetWidth;
+      if (l < pages.scrollLeft || r > pages.scrollLeft + pages.clientWidth) pages.scrollTo({ left: l - (pages.clientWidth - cur.offsetWidth) / 2, behavior: animate ? 'smooth' : 'instant' });
+    }
+    first = false;
   };
   const go = (p) => {
     p = Math.max(1, Math.min(total, p));
     if (p === page) return;
+    const hadFocus = pages.contains(document.activeElement);
     page = p;
     render();
-    pages.querySelector('[aria-current]')?.focus();
+    // 焦点留在被点的按钮上（上一页 / 下一页 / 页码），不跳动、不滚动页面
+    if (hadFocus && !pages.contains(document.activeElement)) pages.querySelector('[aria-current]')?.focus({ preventScroll: true });
     onChange?.(page);
     emit(root, 'change', { page });
   };
