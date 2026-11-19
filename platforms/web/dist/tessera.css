@@ -1,4 +1,4 @@
-/* TesseraUI v0.3.2 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 */
+/* TesseraUI v0.4.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 */
 
 /* ---------- 非颜色 token ---------- */
 :root {
@@ -1379,6 +1379,9 @@ dialog.ts-command::backdrop { background: var(--ts-bg-scrim); }
 
 }
 
+/* 右键菜单的触发区：长按时不选中文字、不弹系统菜单（iOS 的放大镜与分享、安卓的选择手柄） */
+.ts-context-target { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+
 /* ===== 40-data.css ===== */
 /* 数据展示：Table、Tree、Accordion、Tooltip、Popover、DescriptionList、Timeline、Stat、
    Carousel、ImageViewer、EmptyState、CodeBlock */
@@ -1862,6 +1865,11 @@ img[data-viewer] { cursor: zoom-in; }
 }
 .ts-index-group { position: sticky; top: 0; z-index: 1; padding: 6px 16px; background: var(--ts-bg-canvas); font: var(--ts-font-overline); letter-spacing: var(--ts-tracking-overline); color: var(--ts-text-secondary); }
 
+}
+
+/* 手势组件统一：拖动、长按时不选中文字、不弹系统长按菜单（iOS 放大镜与分享面板、安卓选择手柄） */
+:is(.ts-swipe-content, .ts-sheet-handle, .ts-indexbar, .ts-slider, .ts-segmented, .ts-wheel, .ts-switch, .ts-viewer img) {
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
 }
 
 /* ===== 80-round.css ===== */

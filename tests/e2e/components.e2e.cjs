@@ -563,6 +563,26 @@ async function check(name, fn) {
     assert.equal(await m.locator('.ts-datepicker').nth(1).locator('input:not([type=hidden])').inputValue(), '2026 年 11 月 20 日');
   });
 
+  await check('手机：长按打开右键菜单只打开一次，不选中文字，手指轻微抖动不取消', async () => {
+    const t = m.locator('[data-context-menu="ctx"]');
+    await t.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' })); await m.waitForTimeout(300);
+    await m.evaluate(() => { window.__opens = 0; const menu = document.getElementById('ctx'); new MutationObserver(() => { if (!menu.hidden) window.__opens++; }).observe(menu, { attributes: true, attributeFilter: ['hidden'] }); });
+    const box = await t.locator('.ts-label').boundingBox();
+    const x = box.x + box.width / 2, y = box.y + box.height / 2;
+    const cdp = await m.context().newCDPSession(m);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+    await m.waitForTimeout(200);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + 3, y: y + 2 }] });
+    await m.waitForTimeout(600);
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await m.waitForTimeout(400);
+    const r = await m.evaluate(() => ({ opens: window.__opens, visible: !document.getElementById('ctx').hidden, sel: String(getSelection()), us: getComputedStyle(document.querySelector('[data-context-menu]')).userSelect }));
+    assert.ok(r.visible, '长按没有打开菜单');
+    assert.equal(r.opens, 1, `菜单打开了 ${r.opens} 次`);
+    assert.equal(r.sel, '', `长按选中了文字：${r.sel}`);
+    assert.equal(r.us, 'none');
+    await m.locator('#ctx .ts-menu-item').first().tap(); await m.waitForTimeout(400);
+  });
   await check('手机：自动补全的下拉列表不盖住输入框，滚动后仍贴着输入框', async () => {
     const input = m.locator('#city');
     await input.evaluate((el) => el.scrollIntoView({ block: 'center', behavior: 'instant' }));

@@ -116,3 +116,6 @@ dialog.ts-command::backdrop { background: var(--ts-bg-scrim); }
 .ts-anchor-indicator { position: absolute; left: 0; top: 0; width: 3px; height: 30px; border-radius: 2px; background: var(--ts-accent-solid); will-change: transform; }
 
 }
+
+/* 右键菜单的触发区：长按时不选中文字、不弹系统菜单（iOS 的放大镜与分享、安卓的选择手柄） */
+.ts-context-target { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }

@@ -1,5 +1,6 @@
 // 导航：Sidebar、Pagination、ContextMenu、CommandPalette、Anchor
 import { Spring, clamp, prefersReducedMotion, springEasing, icon, once, place, onOutside, animateIn, animateOut, emit, esc, menu as bindMenu, openDialog, closeDialog, onCommittedInput } from '../core.js';
+import { haptic } from './flow.js';
 
 // ------------------------------------------------------------------
 // 侧边栏：可折叠成只显示图标；折叠状态记在 localStorage
@@ -138,30 +139,44 @@ export function pagination(root, { total = Number(root.dataset.total || 1), page
 export function contextMenu(target, menuEl) {
   menuEl.hidden = true;
   menuEl.setAttribute('role', 'menu');
+  // 长按时不让系统选中文字、弹出选择手柄或系统菜单（会盖住我们的菜单）
+  target.classList.add('ts-context-target');
   const items = () => [...menuEl.querySelectorAll('.ts-menu-item')];
   items().forEach((i) => { i.setAttribute('role', 'menuitem'); i.tabIndex = -1; });
-  let off = null;
-  const open = (x, y) => {
+  let off = null, openedAt = 0;
+  const open = (x, y, { touch = false } = {}) => {
+    // 触屏长按时，浏览器自己的 contextmenu 事件和我们的长按计时会先后触发：只打开一次
+    if (!menuEl.hidden && performance.now() - openedAt < 800) return;
+    openedAt = performance.now();
+    getSelection()?.removeAllRanges();
     menuEl.hidden = false;
     place({ left: x, right: x, top: y, bottom: y, width: 0, height: 0 }, menuEl, { placement: 'bottom-start', offset: 2 });
     animateIn(menuEl, 'scale(0.96)');
+    if (touch) haptic('light');
     items()[0]?.focus({ preventScroll: true });
+    off?.();
     off = onOutside(menuEl, () => close());
   };
   const close = async () => {
     if (menuEl.hidden) return;
-    off?.();
+    off?.(); off = null;
     await animateOut(menuEl);
     menuEl.hidden = true;
     menuEl.getAnimations().forEach((a) => a.cancel());
   };
-  target.addEventListener('contextmenu', (e) => { e.preventDefault(); open(e.clientX, e.clientY); });
-  let timer;
+  let lastTouch = 0;
+  target.addEventListener('contextmenu', (e) => { e.preventDefault(); open(e.clientX, e.clientY, { touch: performance.now() - lastTouch < 1000 }); });
+  let timer, sx = 0, sy = 0;
   target.addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'touch') return;
-    timer = setTimeout(() => open(e.clientX, e.clientY), 500);
+    lastTouch = performance.now();
+    sx = e.clientX; sy = e.clientY;
+    clearTimeout(timer);
+    timer = setTimeout(() => open(sx, sy, { touch: true }), 500);
   });
-  ['pointerup', 'pointermove', 'pointercancel'].forEach((t) => target.addEventListener(t, () => clearTimeout(timer)));
+  // 手指轻微抖动不算移动；超过 8px 才认为是在滚动页面
+  target.addEventListener('pointermove', (e) => { if (Math.hypot(e.clientX - sx, e.clientY - sy) > 8) clearTimeout(timer); });
+  ['pointerup', 'pointercancel'].forEach((t) => target.addEventListener(t, () => clearTimeout(timer)));
   // 键盘：Shift+F10 或菜单键
   target.addEventListener('keydown', (e) => {
     if ((e.shiftKey && e.key === 'F10') || e.key === 'ContextMenu') { e.preventDefault(); const r = target.getBoundingClientRect(); open(r.left + 16, r.top + 16); }
