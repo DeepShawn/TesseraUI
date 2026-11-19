@@ -201,11 +201,13 @@ public struct TesseraSearchField: View {
 
 // MARK: - 下拉选择
 
-/// 下拉选择：触发框是 TesseraUI 的凹槽样式，弹出的选项列表使用系统菜单（保证读屏与键盘可用）
+/// 下拉选择：触发框是 TesseraUI 的凹槽样式，点开是 TesseraUI 样式的弹层（自绘，不用系统菜单），
+/// 当前项带勾。触发框是普通按钮，读屏读作“排序，最近更新，弹出按钮”。
 public struct TesseraSelect<Value: Hashable>: View {
     let label: String?
     @Binding var selection: Value
     let options: [(value: Value, title: String)]
+    @State private var open = false
     @Environment(\.tesseraShape) private var tesseraShape
 
     public init(_ label: String? = nil, selection: Binding<Value>, options: [(value: Value, title: String)]) {
@@ -219,31 +221,37 @@ public struct TesseraSelect<Value: Hashable>: View {
         let current = options.first { $0.value == selection }?.title ?? "请选择"
         VStack(alignment: .leading, spacing: 6) {
             if let label { TesseraLabel(label, style: .label) }
-            Menu {
-                Picker(label ?? "", selection: $selection) {
-                    ForEach(options.indices, id: \.self) { i in Text(options[i].title).tag(options[i].value) }
+            Button { open = true } label: {
+                HStack {
+                    TesseraLabel(current, style: .bodySm)
+                    Spacer(minLength: 0)
+                    TesseraIcon(.chevronDown, size: 16).foregroundStyle(TesseraColor.textSecondary)
+                        .rotationEffect(.degrees(open ? 180 : 0))
+                        .animation(TesseraMotion.snappy, value: open)
                 }
-                .pickerStyle(.inline)
-            } label: {
-                // 读屏名称取自 Label 的标题（不显示）；可见部分放在 icon 里
-                Label {
-                    Text(label ?? "选择")
-                } icon: {
-                    HStack {
-                        TesseraLabel(current, style: .bodySm)
-                        Spacer(minLength: 0)
-                        TesseraIcon(.chevronDown, size: 16).foregroundStyle(TesseraColor.textSecondary)
-                    }
-                    .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
-                    .frame(height: TesseraSize.md)
-                    .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
-                    .contentShape(shape)
-                }
-                .labelStyle(.iconOnly)
+                .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
+                .frame(height: TesseraSize.md)
+                .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
+                .contentShape(shape)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(label ?? "选择")
             .accessibilityValue(current)
+            .accessibilityAddTraits(.isButton)
+            .tesseraPopover(isPresented: $open) {
+                TesseraMenuPanel {
+                    ForEach(options.indices, id: \.self) { i in
+                        Button { selection = options[i].value } label: {
+                            HStack {
+                                Text(options[i].title)
+                                Spacer(minLength: TesseraSpace.s4)
+                                if options[i].value == selection { TesseraIcon(.check, size: 16).foregroundStyle(TesseraColor.accentText) }
+                            }
+                        }
+                        .accessibilityAddTraits(options[i].value == selection ? .isSelected : [])
+                    }
+                }
+            }
         }
     }
 }

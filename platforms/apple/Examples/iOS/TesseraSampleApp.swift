@@ -12,6 +12,7 @@ struct SampleRoot: View {
     private static let shapes: [TesseraShape] = [.tile, .round, .flow]
     @State private var shapeIndex: Int
     @State private var scheme = 0
+    @State private var gallery = 0
     private let fromTest: Bool
 
     init() {
@@ -20,6 +21,8 @@ struct SampleRoot: View {
         let name = i.flatMap { $0 < args.count ? args[$0] : nil }
         fromTest = name != nil
         _shapeIndex = State(initialValue: ["tile", "round", "flow"].firstIndex(of: name ?? "tile") ?? 0)
+        let g = args.firstIndex(of: "-tesseraGallery").map { args.index(after: $0) }.flatMap { $0 < args.count ? args[$0] : nil }
+        _gallery = State(initialValue: g == "forms" ? 1 : 0)
     }
 
     var body: some View {
@@ -27,10 +30,11 @@ struct SampleRoot: View {
             VStack(spacing: TesseraSpace.s2) {
                 TesseraSegmentedControl(["拼贴", "圆融", "流韵"], selection: $shapeIndex)
                 TesseraSegmentedControl(["跟随系统", "浅色", "深色"], selection: $scheme)
+                TesseraSegmentedControl(["首批组件", "表单与输入"], selection: $gallery)
             }
             .padding(.horizontal, TesseraSpace.s4)
             .padding(.vertical, TesseraSpace.s2)
-            TesseraGallery()
+            if gallery == 0 { TesseraGallery() } else { TesseraFormsGallery() }
         }
         .background(TesseraColor.bgCanvas)
         .tesseraShape(Self.shapes[shapeIndex], requireCapableDevice: !fromTest)

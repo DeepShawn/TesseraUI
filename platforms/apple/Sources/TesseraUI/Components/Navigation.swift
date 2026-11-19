@@ -173,11 +173,15 @@ public struct TesseraTabBar: View {
 
 // MARK: - 菜单
 
-/// 菜单按钮：触发按钮用 TesseraUI 样式，弹出的菜单使用系统菜单（保证读屏、键盘与指针交互）
+/// 菜单按钮：触发按钮与弹出的面板都是 TesseraUI 样式（自绘弹层）。
+/// 用系统 popover 承载（读屏、键盘、点外面关闭都由系统处理），iPhone 上也保持为弹层而不是整屏 sheet。
+/// content 里放 Button；点任意一项后菜单自动关闭，`role: .destructive` 的项显示为红色。
+/// 之前用系统 Menu 时，iOS 读屏读不出触发按钮的名称（v0.4 的已知问题），现在触发按钮是普通 Button，名称正常。
 public struct TesseraMenu<Content: View>: View {
     let icon: TesseraIconName
     let label: String
     let content: Content
+    @State private var open = false
     @Environment(\.tesseraShape) private var tesseraShape
 
     public init(icon: TesseraIconName = .more, label: String = "更多", @ViewBuilder content: () -> Content) {
@@ -187,21 +191,93 @@ public struct TesseraMenu<Content: View>: View {
     }
 
     public var body: some View {
-        Menu { content } label: {
-            // iOS 的 Menu 从 label 里的 Label 标题取读屏名称：标题不显示（iconOnly），只给读屏用
-            Label {
-                Text(label)
-            } icon: {
-                TesseraIcon(icon)
-                    .foregroundStyle(TesseraColor.textPrimary)
-                    .frame(width: TesseraSize.md, height: TesseraSize.md)
-                    .tesseraTile(TesseraColor.fillDefault, style: .soft, shape: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous))
-                    .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
-                    .contentShape(Rectangle())
-            }
-            .labelStyle(.iconOnly)
+        Button { open = true } label: {
+            TesseraIcon(icon)
+                .foregroundStyle(TesseraColor.textPrimary)
+                .frame(width: TesseraSize.md, height: TesseraSize.md)
+                .tesseraTile(TesseraColor.fillDefault, style: .soft, shape: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous))
+                .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(label)
+        .accessibilityHint("打开菜单")
+        .tesseraPopover(isPresented: $open) {
+            TesseraMenuPanel { content }
+        }
+    }
+}
+
+/// 菜单面板：一组菜单项（Button），用于 TesseraMenu、TesseraSplitButton 或自定义弹层
+public struct TesseraMenuPanel<Content: View>: View {
+    let content: Content
+    public init(@ViewBuilder content: () -> Content) { self.content = content() }
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 2) { content }
+            .buttonStyle(TesseraMenuItemStyle())
+            .padding(TesseraSpace.s1)
+            .frame(minWidth: 200)
+    }
+}
+
+/// 菜单项：点击执行操作并关闭所在的弹层；危险操作（role: .destructive）为红色
+public struct TesseraMenuItemStyle: PrimitiveButtonStyle {
+    @Environment(\.tesseraDismissPopover) private var dismiss
+    @Environment(\.tesseraShape) private var tesseraShape
+    public init() {}
+    public func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.trigger()
+            dismiss?()
+        } label: {
+            configuration.label
+                .tesseraText(.bodySm)
+                .foregroundStyle(configuration.role == .destructive ? TesseraColor.dangerText : TesseraColor.textPrimary)
+                .frame(maxWidth: .infinity, minHeight: TesseraSize.touchMin, alignment: .leading)
+                .padding(.horizontal, TesseraSpace.s3)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(MenuRowPress(radius: tesseraShape.radius(tile: TesseraRadius.sm, round: TesseraRound.row)))
+    }
+}
+
+private struct MenuRowPress: ButtonStyle {
+    let radius: CGFloat
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background { RoundedRectangle(cornerRadius: radius, style: .continuous).fill(configuration.isPressed ? TesseraColor.statePressed : .clear) }
+    }
+}
+
+private struct DismissPopoverKey: EnvironmentKey { static let defaultValue: (() -> Void)? = nil }
+public extension EnvironmentValues {
+    /// 关闭当前 TesseraUI 弹层（菜单项点击后调用）
+    var tesseraDismissPopover: (() -> Void)? {
+        get { self[DismissPopoverKey.self] }
+        set { self[DismissPopoverKey.self] = newValue }
+    }
+}
+
+public extension View {
+    /// TesseraUI 弹层：圆角面板、浮起投影；iPhone 上也保持为弹层（不变成整屏 sheet）
+    func tesseraPopover<Content: View>(isPresented: Binding<Bool>, arrowEdge: Edge = .bottom, @ViewBuilder content: @escaping () -> Content) -> some View {
+        modifier(PopoverModifier(isPresented: isPresented, arrowEdge: arrowEdge, panel: content))
+    }
+}
+
+struct PopoverModifier<Panel: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    let arrowEdge: Edge
+    let panel: () -> Panel
+    @Environment(\.tesseraShape) private var tesseraShape
+
+    func body(content: Content) -> some View {
+        content.popover(isPresented: $isPresented, arrowEdge: arrowEdge) {
+            panel()
+                .environment(\.tesseraShape, tesseraShape)
+                .environment(\.tesseraDismissPopover, { isPresented = false })
+                .presentationCompactAdaptation(.popover)
+                .presentationBackground(TesseraColor.bgElevated)
+        }
     }
 }

@@ -20,6 +20,15 @@ final class GallerySnapshotTests: XCTestCase {
     }
 
     func testGallery() throws {
+        try shoot("gallery") { AnyView(TesseraGallery(scrolls: false)) }
+    }
+
+    /// v0.5 表单与输入组件
+    func testFormsGallery() throws {
+        try shoot("forms") { AnyView(TesseraFormsGallery(scrolls: false)) }
+    }
+
+    private func shoot(_ name: String, _ make: () -> AnyView) throws {
         let shapes: [(String, TesseraShape)] = [("tile", .tile), ("round", .round), ("flow", .flow)]
         let themes: [(String, NSAppearance.Name, ColorScheme)] = [
             ("light", .aqua, .light), ("dark", .darkAqua, .dark), ("light-hc", .accessibilityHighContrastAqua, .light),
@@ -27,7 +36,7 @@ final class GallerySnapshotTests: XCTestCase {
         var written = 0
         for (shapeName, shape) in shapes {
             for (themeName, appearanceName, scheme) in themes {
-                let view = TesseraGallery(scrolls: false)
+                let view = make()
                     .tesseraShape(shape, requireCapableDevice: false)
                     .environment(\.colorScheme, scheme)
                     .frame(width: 420)
@@ -35,16 +44,17 @@ final class GallerySnapshotTests: XCTestCase {
                 renderer.scale = 2
                 var image: CGImage?
                 NSAppearance(named: appearanceName)!.performAsCurrentDrawingAppearance { image = renderer.cgImage }
-                let cg = try XCTUnwrap(image, "\(shapeName)-\(themeName) 渲染失败")
-                XCTAssertGreaterThan(cg.height, 1200, "\(shapeName)-\(themeName) 高度不对，内容可能没有排开")
+                let cg = try XCTUnwrap(image, "\(name) \(shapeName)-\(themeName) 渲染失败")
+                XCTAssertGreaterThan(cg.height, 1200, "\(name) \(shapeName)-\(themeName) 高度不对，内容可能没有排开")
                 let rep = NSBitmapImageRep(cgImage: cg)
                 let data = try XCTUnwrap(rep.representation(using: .png, properties: [:]))
-                try data.write(to: outDir.appendingPathComponent("\(shapeName)-\(themeName).png"))
+                let prefix = name == "gallery" ? "" : "\(name)-"
+                try data.write(to: outDir.appendingPathComponent("\(prefix)\(shapeName)-\(themeName).png"))
                 written += 1
             }
         }
         XCTAssertEqual(written, 9)
-        print("截图 \(written) 张：\(outDir.path)")
+        print("截图 \(name) \(written) 张：\(outDir.path)")
     }
 }
 #endif
