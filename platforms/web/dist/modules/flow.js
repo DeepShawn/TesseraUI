@@ -1,4 +1,4 @@
-// TesseraUI v0.4.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 流韵外观（data-shape="flow"）的交互：水波、开关溅起的涟漪、跟随指针的釉光、液面张力、触感反馈。
 // 全部用事件委托挂在 document 上，只在流韵外观下生效；切换外观不需要重新初始化。
 // “减弱动态效果”打开时不产生任何动效，只保留触感反馈。

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TesseraUI v0.4.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
+<!-- TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
 <resources>
     <dimen name="tessera_space_0">0dp</dimen>
     <dimen name="tessera_space_1">4dp</dimen>

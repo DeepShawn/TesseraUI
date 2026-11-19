@@ -1,4 +1,4 @@
-// TesseraUI v0.4.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // TesseraUI Web 入口：汇总核心与各组件模块。
 // 用法：import Tessera from './tessera.js'; Tessera.init();
 // 也可以按需引入单个模块，例如 import { slider } from './modules/forms.js';
