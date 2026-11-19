@@ -39,6 +39,8 @@ namespace TesseraSample
                 {
                     window.Forms = forms;
                     var page = forms ? "forms-" : "";
+                    // 进度：如果进程在原生代码里崩溃（没有托管异常），可以从这里看到停在哪一步
+                    File.AppendAllText(Path.Combine(dir, "progress.txt"), $"{page}{shape} 开始\n");
                     foreach (var (theme, name) in new[] { (1, "light"), (2, "dark") })
                     {
                         window.Apply(shape, theme);

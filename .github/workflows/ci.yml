@@ -159,6 +159,13 @@ jobs:
           Get-ChildItem $out | ForEach-Object { $_.Name }
           if (Test-Path "$out/a11y.txt") { Get-Content "$out/a11y.txt" }
           if (Test-Path "$out/error.txt") { Get-Content "$out/error.txt" }
+          if (Test-Path "$out/progress.txt") { Get-Content "$out/progress.txt" }
+          "退出码 $($p.ExitCode)"
+          if ($p.ExitCode -ne 0) {
+            # 原生崩溃时没有托管异常：从系统事件日志里取崩溃模块与异常代码
+            Get-WinEvent -FilterHashtable @{ LogName = 'Application'; StartTime = (Get-Date).AddMinutes(-5) } -MaxEvents 8 -ErrorAction SilentlyContinue |
+              Where-Object { $_.ProviderName -in 'Application Error', '.NET Runtime', 'Windows Error Reporting' } | Format-List TimeCreated, ProviderName, Message
+          }
           exit $p.ExitCode
       - uses: actions/upload-artifact@v4
         if: always()
