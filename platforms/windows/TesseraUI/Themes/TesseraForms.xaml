@@ -13,7 +13,7 @@
     </Style>
 
     <!-- 链接：釉色文字，悬停浅底；触摸区域不小于 44 高 -->
-    <Style x:Key="TesseraLinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource DefaultHyperlinkButtonStyle}">
+    <Style x:Key="TesseraLinkButtonStyle" TargetType="HyperlinkButton">
         <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Padding" Value="4,0" />
@@ -30,13 +30,13 @@
     </Style>
 
     <!-- 滑块：凹槽轨道、釉色填充（颜色来自 TesseraTheme.xaml） -->
-    <Style x:Key="TesseraSliderStyle" TargetType="Slider" BasedOn="{StaticResource DefaultSliderStyle}">
+    <Style x:Key="TesseraSliderStyle" TargetType="Slider">
         <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
         <Setter Property="MinHeight" Value="44" />
     </Style>
 
     <!-- 日历：砖面面板，选中日期是深色描边砖 -->
-    <Style x:Key="TesseraCalendarViewStyle" TargetType="CalendarView" BasedOn="{StaticResource DefaultCalendarViewStyle}">
+    <Style x:Key="TesseraCalendarViewStyle" TargetType="CalendarView">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusLg}" />
         <Setter Property="FontFamily" Value="{StaticResource TesseraFontFamily}" />
         <Setter Property="FirstDayOfWeek" Value="Monday" />
@@ -44,17 +44,17 @@
     </Style>
 
     <!-- 日期 / 时间选择：输入框外观的触发器，点开是系统滚轮（颜色来自 TesseraTheme.xaml） -->
-    <Style x:Key="TesseraCalendarDatePickerStyle" TargetType="CalendarDatePicker" BasedOn="{StaticResource DefaultCalendarDatePickerStyle}">
+    <Style x:Key="TesseraCalendarDatePickerStyle" TargetType="CalendarDatePicker">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusMd}" />
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="FirstDayOfWeek" Value="Monday" />
         <Setter Property="DateFormat" Value="{}{year.full} 年 {month.integer} 月 {day.integer} 日" />
     </Style>
-    <Style x:Key="TesseraDatePickerStyle" TargetType="DatePicker" BasedOn="{StaticResource DefaultDatePickerStyle}">
+    <Style x:Key="TesseraDatePickerStyle" TargetType="DatePicker">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusMd}" />
         <Setter Property="MinHeight" Value="40" />
     </Style>
-    <Style x:Key="TesseraTimePickerStyle" TargetType="TimePicker" BasedOn="{StaticResource DefaultTimePickerStyle}">
+    <Style x:Key="TesseraTimePickerStyle" TargetType="TimePicker">
         <Setter Property="CornerRadius" Value="{ThemeResource TesseraRadiusMd}" />
         <Setter Property="MinHeight" Value="40" />
         <Setter Property="ClockIdentifier" Value="24HourClock" />
