@@ -198,7 +198,7 @@
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-range-end] { border-radius: 0 var(--ts-round-pill) var(--ts-round-pill) 0; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-range-start][data-range-end] { border-radius: 50%; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-wheel::before { border-radius: var(--ts-round-pill); }
-:root:is([data-shape="round"], [data-shape="flow"]) .ts-wheel:focus-within::before { box-shadow: 0 0 0 2px var(--ts-focus-ring); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-wheel:has(.ts-wheel-col:focus-visible)::before { box-shadow: 0 0 0 2px var(--ts-focus-ring); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-color-area { border-radius: var(--ts-round-row); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-color-hue { border-radius: var(--ts-round-pill); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-color-handle { border-radius: 50%; }

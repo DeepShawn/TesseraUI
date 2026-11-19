@@ -220,6 +220,45 @@ async function check(name, fn) {
     await p.waitForTimeout(300);
     assert.equal(await p.locator('.ts-timepicker input').inputValue(), '11:30');
   });
+  await check('滚轮选择器：拖动跟手，松手带惯性继续走，弹簧落定在整行', async () => {
+    const col = p.locator('#wheel .ts-wheel-col').first();
+    await col.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await col.focus(); await p.keyboard.press('Home'); await p.waitForTimeout(700);
+    const box = await col.boundingBox();
+    const x = box.x + box.width / 2, y = box.y + box.height / 2;
+    // 逐帧记录位置（单位：行），由选中项的圆柱位移反推
+    await p.evaluate(() => {
+      window.__wheel = []; const c = document.querySelector('#wheel .ts-wheel-col'); const items = [...c.querySelectorAll('.ts-wheel-item')];
+      const row = items[0].offsetHeight, STEP = 18 * Math.PI / 180, R = row / STEP;
+      const loop = () => { const i = items.findIndex((n) => n.getAttribute('aria-selected') === 'true'); const ty = parseFloat(items[i].style.transform.match(/translateY\(([-\d.]+)px/)[1]);
+        window.__wheel.push(i - Math.asin(Math.max(-1, Math.min(1, ty / R))) / STEP); if (window.__wheel.length < 200) requestAnimationFrame(loop); };
+      requestAnimationFrame(loop);
+    });
+    await p.mouse.move(x, y); await p.mouse.down();
+    for (let i = 1; i <= 5; i++) { await p.mouse.move(x, y - i * 18); await p.waitForTimeout(16); }
+    const atRelease = await p.evaluate(() => window.__wheel[window.__wheel.length - 1]);
+    await p.mouse.up();
+    await p.waitForTimeout(1500);
+    const t = await p.evaluate(() => window.__wheel);
+    const end = t[t.length - 1];
+    assert.ok(Math.abs(atRelease - 2.5) < 0.3, `拖动没有跟手：松手时在第 ${atRelease.toFixed(2)} 行，应为 2.5`);
+    assert.ok(Math.abs(end - Math.round(end)) < 0.01, `没有落在整行上：${end}`);
+    assert.ok(end >= 3.5, `松手后没有惯性：只走到第 ${end.toFixed(2)} 行`);
+    // 落定前有一点回弹（略过目标再回来），而不是硬停
+    assert.ok(Math.max(...t) > end + 0.005, '落定时没有弹簧回弹');
+    // 松手后每帧的位移不能突变（硬停或跳跃）：相邻两帧差不超过 0.6 行
+    const after = t.slice(t.findIndex((v) => v > atRelease + 0.01));
+    for (let i = 1; i < after.length; i++) assert.ok(Math.abs(after[i] - after[i - 1]) < 0.6, `第 ${i} 帧跳了 ${(after[i] - after[i - 1]).toFixed(2)} 行`);
+    assert.match(await p.textContent('#wheel-v'), /已选/);
+  });
+  await check('滚轮选择器：鼠标滚轮一格一行', async () => {
+    const col = p.locator('#wheel .ts-wheel-col').first();
+    await col.focus(); await p.keyboard.press('Home'); await p.waitForTimeout(700);
+    const box = await col.boundingBox();
+    await p.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await p.mouse.wheel(0, 100); await p.waitForTimeout(250); await p.mouse.wheel(0, 100); await p.waitForTimeout(800);
+    assert.equal(await col.locator('[aria-selected="true"]').textContent(), '广东');
+  });
   await check('颜色选择器：HEX 输入同步', async () => {
     const hex = p.locator('.ts-colorpicker-inline input');
     await hex.fill('#2F4E9E');
@@ -231,6 +270,20 @@ async function check(name, fn) {
     await p.click('[data-sidebar-toggle]');
     assert.ok(await p.getAttribute('.ts-sidebar', 'data-collapsed') !== null);
     await p.click('[data-sidebar-toggle]');
+  });
+  await check('目录锚点：点击后页面用弹簧平滑滚到目标区块', async () => {
+    const link = p.locator('.ts-anchor a[href="#data"]');
+    await link.evaluate((e) => e.scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await p.waitForTimeout(300);
+    await p.evaluate(() => { window.__sy = []; const loop = () => { window.__sy.push(scrollY); if (window.__sy.length < 120) requestAnimationFrame(loop); }; requestAnimationFrame(loop); });
+    await link.click();
+    await p.waitForTimeout(2000);
+    const ys = await p.evaluate(() => window.__sy);
+    const top = await p.evaluate(() => document.getElementById('data').getBoundingClientRect().top);
+    assert.ok(Math.abs(top - 40) < 6, `没有停在目标区块：区块顶部离视口顶部 ${top.toFixed(1)}px，应约为 40`);
+    const moving = new Set(ys.map((v) => Math.round(v))).size;
+    assert.ok(moving > 15, `只有 ${moving} 个不同位置，像是直接跳过去的`);
+    assert.equal(await link.getAttribute('aria-current'), 'true');
   });
   await check('分页：点击与折叠省略号', async () => {
     const pg = p.locator('.ts-pagination').first();

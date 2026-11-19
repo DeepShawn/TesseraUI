@@ -1199,7 +1199,7 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
 .ts-calendars { display: flex; gap: var(--ts-space-5); }
 @media (max-width: 700px) { .ts-calendars > :nth-child(2) { display: none; } }
 
-/* ---------- 滚轮选择器 WheelPicker：原生滚动 + 吸附，惯性由系统提供 ---------- */
+/* ---------- 滚轮选择器 WheelPicker：自绘拖动、惯性与弹簧吸附（modules/pickers.js），选项沿圆柱排开 ---------- */
 .ts-wheel { --_row: 36px; --_rows: 5; position: relative; display: flex; gap: var(--ts-space-1); height: calc(var(--_row) * var(--_rows)); user-select: none; -webkit-user-select: none; }
 /* 选中带：一块凹槽砖 */
 .ts-wheel::before {
@@ -1207,20 +1207,26 @@ dialog.ts-dialog::backdrop { background: var(--ts-bg-scrim); }
   border-radius: 12px; background: var(--ts-fill-default); box-shadow: var(--ts-recess); pointer-events: none;
 }
 .ts-wheel-col {
-  position: relative; flex: 1; min-width: 56px; overflow-y: auto; scroll-snap-type: y mandatory; overscroll-behavior: contain;
-  scrollbar-width: none; padding: calc(var(--_row) * (var(--_rows) - 1) / 2) 0;
-  mask-image: linear-gradient(transparent, #000 35%, #000 65%, transparent);
-  -webkit-mask-image: linear-gradient(transparent, #000 35%, #000 65%, transparent);
+  position: relative; flex: 1; min-width: 56px; overflow: hidden; cursor: grab;
+  /* 手势全部自己处理：竖向拖动不让页面跟着滚 */
+  touch-action: none; overscroll-behavior: contain;
+  perspective: 520px; perspective-origin: 50% 50%;
+  /* 上下边缘淡出：被裁到的远端行不会露出半截 */
+  mask-image: linear-gradient(transparent, #000 28%, #000 72%, transparent);
+  -webkit-mask-image: linear-gradient(transparent, #000 28%, #000 72%, transparent);
 }
-.ts-wheel-col::-webkit-scrollbar { display: none; }
+.ts-wheel-col.is-dragging { cursor: grabbing; }
 .ts-wheel-col:focus-visible { outline: none; }
-.ts-wheel-col:focus-visible ~ .ts-wheel-focus, .ts-wheel:focus-within::before { box-shadow: var(--ts-recess), 0 0 0 2px var(--ts-focus-ring); }
+/* 焦点框只在键盘操作时出现，手指点按不显示 */
+.ts-wheel:has(.ts-wheel-col:focus-visible)::before { box-shadow: var(--ts-recess), 0 0 0 2px var(--ts-focus-ring); }
+.ts-wheel-track { position: absolute; inset: 0; transform-style: preserve-3d; }
 .ts-wheel-item {
-  height: var(--_row); display: grid; place-items: center; scroll-snap-align: center;
-  font: 400 17px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums; color: var(--ts-text-secondary); cursor: pointer;
-  transition: color var(--ts-duration-fast) var(--ts-ease-standard), transform var(--ts-duration-fast) var(--ts-ease-standard);
+  position: absolute; left: 0; right: 0; top: 50%; height: var(--_row); margin-top: calc(var(--_row) / -2);
+  display: grid; place-items: center; backface-visibility: hidden; will-change: transform, opacity;
+  font: 400 17px/1 var(--ts-font-sans); font-variant-numeric: tabular-nums; color: var(--ts-text-secondary);
+  transition: color var(--ts-duration-fast) var(--ts-ease-standard);
 }
-.ts-wheel-item[aria-selected="true"] { color: var(--ts-text-primary); font-weight: 600; transform: scale(1.06); }
+.ts-wheel-item[aria-selected="true"] { color: var(--ts-text-primary); font-weight: 600; }
 .ts-wheel-sep { align-self: center; font: 600 17px/1 var(--ts-font-sans); color: var(--ts-text-tertiary); }
 
 /* ---------- 颜色选择器 ColorPicker ---------- */
@@ -2043,7 +2049,7 @@ img[data-viewer] { cursor: zoom-in; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-range-end] { border-radius: 0 var(--ts-round-pill) var(--ts-round-pill) 0; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-day[data-range-start][data-range-end] { border-radius: 50%; }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-wheel::before { border-radius: var(--ts-round-pill); }
-:root:is([data-shape="round"], [data-shape="flow"]) .ts-wheel:focus-within::before { box-shadow: 0 0 0 2px var(--ts-focus-ring); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-wheel:has(.ts-wheel-col:focus-visible)::before { box-shadow: 0 0 0 2px var(--ts-focus-ring); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-color-area { border-radius: var(--ts-round-row); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-color-hue { border-radius: var(--ts-round-pill); }
 :root:is([data-shape="round"], [data-shape="flow"]) .ts-color-handle { border-radius: 50%; }

@@ -1,7 +1,8 @@
 // TesseraUI v0.3.2 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 选择器：Calendar、DatePicker、DateRangePicker、TimePicker、WheelPicker、ColorPicker。
 // 桌面端在弹出面板里选；手机上（触屏且窄屏）改为底部抽屉，日期和时间用滚轮选。
-import { icon, once, clamp, place, follow, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar } from '../core.js';
+import { icon, once, clamp, place, follow, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar, Spring, VelocityTracker, rubberBand, uid } from '../core.js';
+import { haptic } from './flow.js';
 
 // ------------------------------------------------------------------
 // 日期工具（本地时区，字符串格式 YYYY-MM-DD）
@@ -160,51 +161,183 @@ export function wheel(root, { columns, onChange = () => {} } = {}) {
   root.replaceChildren();
   const cols = columns.map((col, ci) => {
     if (col.separator) { const s = document.createElement('span'); s.className = 'ts-wheel-sep'; s.textContent = col.separator; root.append(s); return null; }
-    const el = document.createElement('div');
-    el.className = 'ts-wheel-col';
-    el.tabIndex = 0;
-    el.setAttribute('role', 'listbox');
-    el.setAttribute('aria-label', col.label || `第 ${ci + 1} 列`);
-    col.items.forEach((it, i) => {
-      const item = document.createElement('div');
-      item.className = 'ts-wheel-item';
-      item.setAttribute('role', 'option');
-      item.textContent = it.label;
-      item.addEventListener('click', () => scrollTo(i, true));
-      el.append(item);
-    });
-    root.append(el);
-    const row = () => el.firstElementChild?.offsetHeight || 36;
-    let index = Math.max(0, col.items.findIndex((x) => x.value === col.value));
-    const mark = (i) => [...el.children].forEach((c, k) => c.setAttribute('aria-selected', k === i));
-    const scrollTo = (i, smooth) => { i = clamp(i, 0, col.items.length - 1); el.scrollTo({ top: i * row(), behavior: smooth ? 'smooth' : 'instant' }); if (!smooth) settle(); };
-    const current = () => clamp(Math.round(el.scrollTop / row()), 0, col.items.length - 1);
-    let raf = 0, timer = 0, pending = null;
-    const settle = () => {
-      pending = null;
-      const i = current();
-      mark(i);
-      if (i !== index) { index = i; onChange(values()); }
-    };
-    el.addEventListener('scroll', () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => mark(current())); // 滚动中实时更新高亮
-      clearTimeout(timer);
-      timer = setTimeout(settle, 120); // 不支持 scrollend 的浏览器兜底
-    }, { passive: true });
-    el.addEventListener('scrollend', settle);
-    el.addEventListener('keydown', (e) => {
-      const d = { ArrowUp: -1, ArrowDown: 1, PageUp: -5, PageDown: 5 }[e.key];
-      // 平滑滚动还没停时连按，以上一次的目标为基准累加
-      if (d) { e.preventDefault(); pending = clamp((pending ?? current()) + d, 0, col.items.length - 1); scrollTo(pending, true); }
-      if (e.key === 'Home') { e.preventDefault(); scrollTo(0, true); }
-      if (e.key === 'End') { e.preventDefault(); scrollTo(col.items.length - 1, true); }
-    });
-    requestAnimationFrame(() => scrollTo(index, false));
-    return { col, get index() { return index; }, scrollTo };
+    const c = wheelColumn(col, ci, () => onChange(values()));
+    root.append(c.el);
+    return c;
   }).filter(Boolean);
-  const values = () => cols.map((c) => c.col.items[c.index].value);
-  return { get value() { return values(); }, set(i, valueIndex) { cols[i].scrollTo(valueIndex, true); } };
+  const values = () => cols.map((c) => c.value);
+  return {
+    get value() { return values(); },
+    /** 滚到第 i 列的第 valueIndex 项（弹簧动画） */
+    set(i, valueIndex) { cols[i].scrollTo(valueIndex, true); },
+    /** 替换第 i 列的选项（例如月份变了，“日”的天数跟着变），尽量保持原来的值 */
+    setItems(i, items, value) { cols[i].setItems(items, value); },
+  };
+}
+
+// 滚轮的一列：自己处理拖动、惯性和吸附，不用浏览器的滚动吸附（那是硬停，没有弹簧）。
+// 位置 pos 以像素计，第 i 项在 pos = i * row 时居中。松手时带着手指的速度进入一个略欠阻尼的弹簧，
+// 弹簧的目标是按速度投射后最近的一行：投射距离取 2ζv/ω，这样松手瞬间加速度为零，接手处没有顿挫，最后轻轻回弹落定。
+// 选项沿圆柱排开：离中心越远，倾斜越大、越淡、越小，像真实的滚筒。
+const WHEEL_SPRING = { omega: 13, zeta: 0.7 };
+function wheelColumn(col, ci, changed) {
+  const el = document.createElement('div');
+  el.className = 'ts-wheel-col';
+  el.tabIndex = 0;
+  el.setAttribute('role', 'listbox');
+  el.setAttribute('aria-label', col.label || `第 ${ci + 1} 列`);
+  const track = document.createElement('div');
+  track.className = 'ts-wheel-track';
+  el.append(track);
+
+  let items = [], nodes = [], index = 0;
+  const row = () => parseFloat(getComputedStyle(el).getPropertyValue('--_row')) || 36;
+  const maxPos = () => Math.max(0, (items.length - 1) * row());
+  const { omega, zeta } = WHEEL_SPRING;
+  const spring = new Spring(0, { stiffness: omega * omega, damping: 2 * zeta * omega }, (v) => render(v));
+  spring.precision = 0.3;
+  let pos = 0, shown = new Set(), lastMark = -1;
+  let dragging = false, startY = 0, startPos = 0, moved = false, pid = null;
+
+  // 圆柱：每行对应 18°，半径由行高决定，可见范围 ±4 行
+  const STEP = 18 * Math.PI / 180;
+  function render(p) {
+    pos = p;
+    const r = row(), radius = r / STEP, now = new Set();
+    const center = pos / r;
+    const from = Math.max(0, Math.floor(center - 4.5)), to = Math.min(items.length - 1, Math.ceil(center + 4.5));
+    for (let i = from; i <= to; i++) {
+      const a = clamp((i - center) * STEP, -Math.PI / 2, Math.PI / 2);
+      const n = nodes[i];
+      n.style.transform = `translateY(${(radius * Math.sin(a)).toFixed(2)}px) rotateX(${(-a * 180 / Math.PI).toFixed(2)}deg)`;
+      n.style.opacity = Math.max(0, Math.cos(a) ** 1.6).toFixed(3);
+      n.style.visibility = 'visible';
+      now.add(i);
+    }
+    for (const i of shown) if (!now.has(i) && nodes[i]) nodes[i].style.visibility = 'hidden';
+    shown = now;
+    // 经过一行就更新高亮；流韵外观下每经过一行轻触一下
+    const i = clamp(Math.round(center), 0, items.length - 1);
+    if (i !== lastMark) {
+      if (lastMark !== -1 && dragging && document.documentElement.dataset.shape === 'flow') haptic('selection');
+      nodes[lastMark]?.setAttribute('aria-selected', 'false');
+      nodes[i]?.setAttribute('aria-selected', 'true');
+      if (nodes[i]) el.setAttribute('aria-activedescendant', nodes[i].id);
+      lastMark = i;
+    }
+  }
+  const settle = () => {
+    const i = clamp(Math.round(pos / row()), 0, items.length - 1);
+    if (i !== index) { index = i; changed(); }
+  };
+  const scrollTo = (i, animate, velocity) => {
+    i = clamp(i, 0, items.length - 1);
+    if (!animate) { spring.set(i * row()); settle(); return; }
+    spring.to(i * row(), velocity === undefined ? {} : { velocity }).then(settle);
+  };
+
+  function setItems(list, value) {
+    items = list;
+    track.replaceChildren();
+    nodes = list.map((it, i) => {
+      const n = document.createElement('div');
+      n.className = 'ts-wheel-item';
+      n.id = uid('wheel');
+      n.setAttribute('role', 'option');
+      n.setAttribute('aria-selected', 'false');
+      n.style.visibility = 'hidden';
+      n.textContent = it.label;
+      track.append(n);
+      return n;
+    });
+    shown = new Set(); lastMark = -1;
+    const k = list.findIndex((x) => x.value === value);
+    index = k >= 0 ? k : clamp(index, 0, list.length - 1);
+    spring.set(index * row());
+  }
+
+  // ---------- 拖动 ----------
+  const tracker = new VelocityTracker();
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    spring.stop();
+    dragging = true; moved = false; pid = e.pointerId;
+    startY = e.clientY; startPos = pos;
+    tracker.points = []; tracker.add(pos);
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!dragging || e.pointerId !== pid) return;
+    const dy = startY - e.clientY;
+    if (!moved && Math.abs(dy) < 4) return;
+    if (!moved) { moved = true; el.setPointerCapture(pid); el.classList.add('is-dragging'); }
+    const raw = startPos + dy, max = maxPos(), h = el.clientHeight;
+    // 拉出两端有橡皮筋阻力
+    const p = raw < 0 ? rubberBand(raw, h) : raw > max ? max + rubberBand(raw - max, h) : raw;
+    render(p); spring.value = p;
+    tracker.add(p);
+  });
+  const release = (e) => {
+    if (!dragging || e.pointerId !== pid) return;
+    dragging = false; el.classList.remove('is-dragging');
+    if (!moved) {
+      // 轻点：选中点到的那一行
+      const rect = el.getBoundingClientRect();
+      const i = Math.round((pos + e.clientY - (rect.top + rect.height / 2)) / row());
+      scrollTo(i, true);
+      return;
+    }
+    const v = e.type === 'pointercancel' ? 0 : tracker.get();
+    const projected = pos + v * (2 * zeta / omega);
+    scrollTo(Math.round(projected / row()), true, v);
+  };
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', release);
+
+  // ---------- 鼠标滚轮与触控板 ----------
+  let wheelTarget = null, wheelTimer = 0;
+  el.addEventListener('wheel', (e) => {
+    const r = row();
+    const d = e.deltaMode === 1 ? e.deltaY * r : e.deltaMode === 2 ? e.deltaY * el.clientHeight : e.deltaY;
+    const base = wheelTarget ?? spring.target;
+    // 已在一端还往外滚：交给页面滚动
+    if ((base <= 0 && d < 0) || (base >= maxPos() && d > 0)) return;
+    e.preventDefault();
+    const notch = e.deltaMode === 1 || (Math.abs(d) >= 50 && Number.isInteger(e.deltaY));
+    if (notch) {
+      // 鼠标滚轮：一格一行，弹簧过去
+      wheelTarget = clamp(Math.round(base / r) + Math.sign(d), 0, items.length - 1) * r;
+      spring.to(wheelTarget).then(() => { wheelTarget = null; settle(); });
+    } else {
+      // 触控板：跟着手指走，停下后吸附到最近一行
+      wheelTarget = clamp(base + d, -r * 0.6, maxPos() + r * 0.6);
+      spring.to(wheelTarget, { preset: { stiffness: 400, damping: 40 } });
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => {
+        spring.setPreset({ stiffness: omega * omega, damping: 2 * zeta * omega });
+        const t = wheelTarget; wheelTarget = null;
+        scrollTo(Math.round(t / r), true);
+      }, 120);
+    }
+  }, { passive: false });
+
+  // ---------- 键盘 ----------
+  el.addEventListener('keydown', (e) => {
+    const d = { ArrowUp: -1, ArrowDown: 1, PageUp: -5, PageDown: 5 }[e.key];
+    // 动画还没停时连按，以上一次的目标为基准累加
+    const target = Math.round(spring.target / row());
+    if (d) { e.preventDefault(); scrollTo(target + d, true); }
+    if (e.key === 'Home') { e.preventDefault(); scrollTo(0, true); }
+    if (e.key === 'End') { e.preventDefault(); scrollTo(items.length - 1, true); }
+  });
+
+  setItems(col.items, col.value);
+  // 加入页面、量出行高之后再摆一次
+  requestAnimationFrame(() => spring.set(index * row()));
+  return {
+    el, col, scrollTo, setItems,
+    get index() { return index; },
+    get value() { return items[index]?.value; },
+  };
 }
 
 // ------------------------------------------------------------------
@@ -296,20 +429,21 @@ export function datePicker(root) {
       const years = Array.from({ length: 101 }, (_, i) => d.getFullYear() - 50 + i);
       const w = document.createElement('div');
       let y = d.getFullYear(), mo = d.getMonth() + 1, da = d.getDate();
-      const build = () => wheel(w, {
+      const daysOf = (yy, mm) => Array.from({ length: new Date(yy, mm, 0).getDate() }, (_, i) => ({ label: `${i + 1} 日`, value: i + 1 }));
+      const wp = wheel(w, {
         columns: [
           { label: '年', value: y, items: years.map((v) => ({ label: `${v} 年`, value: v })) },
           { label: '月', value: mo, items: Array.from({ length: 12 }, (_, i) => ({ label: `${i + 1} 月`, value: i + 1 })) },
-          { label: '日', value: Math.min(da, new Date(y, mo, 0).getDate()), items: Array.from({ length: new Date(y, mo, 0).getDate() }, (_, i) => ({ label: `${i + 1} 日`, value: i + 1 })) },
+          { label: '日', value: Math.min(da, new Date(y, mo, 0).getDate()), items: daysOf(y, mo) },
         ],
         onChange: ([ny, nm, nd]) => {
           const days = new Date(ny, nm, 0).getDate();
           const rebuild = days !== new Date(y, mo, 0).getDate();
           [y, mo, da] = [ny, nm, Math.min(nd, days)];
-          if (rebuild) build(); // 月份天数变了，重建“日”这一列
+          // 月份天数变了，只替换“日”这一列，其他两列不动
+          if (rebuild) wp.setItems(2, daysOf(y, mo), da);
         },
       });
-      build();
       surface.body.append(w, footer([['取消', '', () => surface.close()], ['确定', 'ts-primary', () => commit(`${y}-${pad(mo)}-${pad(da)}`)]]));
     } else {
       const cal = document.createElement('div');

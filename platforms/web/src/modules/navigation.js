@@ -1,5 +1,5 @@
 // 导航：Sidebar、Pagination、ContextMenu、CommandPalette、Anchor
-import { Spring, icon, once, place, onOutside, animateIn, animateOut, emit, esc, menu as bindMenu, openDialog, closeDialog, onCommittedInput } from '../core.js';
+import { Spring, clamp, prefersReducedMotion, icon, once, place, onOutside, animateIn, animateOut, emit, esc, menu as bindMenu, openDialog, closeDialog, onCommittedInput } from '../core.js';
 
 // ------------------------------------------------------------------
 // 侧边栏：可折叠成只显示图标；折叠状态记在 localStorage
@@ -205,6 +205,22 @@ export function commandPalette({ commands = [], placeholder = '搜索命令、�
 // ------------------------------------------------------------------
 // 目录锚点：滚动时高亮当前区块，指示条用弹簧跟过去
 // ------------------------------------------------------------------
+// 页面滚动用弹簧（浏览器自带的 smooth 是固定曲线，起停生硬）；用户一碰滚轮、触屏或按键就停下，交还给原生滚动
+let pageSpring = null;
+function springScroll(top) {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  top = clamp(top, 0, Math.max(0, max));
+  if (prefersReducedMotion()) { scrollTo({ top, behavior: 'instant' }); return; }
+  if (!pageSpring) {
+    pageSpring = new Spring(scrollY, 'smooth', (v) => scrollTo({ top: v, behavior: 'instant' }));
+    pageSpring.precision = 0.5;
+    const stop = () => pageSpring.stop();
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, stop, { passive: true }));
+  }
+  pageSpring.set(scrollY);
+  pageSpring.to(top);
+}
+
 export function anchor(root, { offset = 80 } = {}) {
   const links = [...root.querySelectorAll('a[href^="#"]')];
   const targets = links.map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1)))).filter(Boolean);
@@ -234,7 +250,7 @@ export function anchor(root, { offset = 80 } = {}) {
     const t = targets[i];
     if (!t) return;
     e.preventDefault();
-    scrollTo({ top: t.getBoundingClientRect().top + scrollY - offset + 2, behavior: 'smooth' });
+    springScroll(t.getBoundingClientRect().top + scrollY - offset + 2);
     history.replaceState(null, '', a.hash);
     set(i);
   }));
