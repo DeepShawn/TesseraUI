@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Windows 示例 App：可切换外观与浅色 / 深色，查看首批 22 个组件。
        不打包（WindowsPackageType=None），Windows App SDK 随应用自带，解压即可运行，不需要安装运行时。
-       TesseraSample.exe --snapshot <目录>：依次切换三种外观 × 浅色 / 深色，截图并做无障碍检查后退出（持续集成用） -->
+       TesseraSample.exe 加参数 snapshot 模式（见 Snapshot.cs）：依次切换三种外观 × 浅色 / 深色，截图并做无障碍检查后退出（持续集成用） -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
