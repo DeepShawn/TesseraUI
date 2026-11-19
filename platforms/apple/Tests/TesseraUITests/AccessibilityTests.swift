@@ -26,18 +26,21 @@ final class AccessibilityTests: XCTestCase {
 
             var seen = Set<ObjectIdentifier>()
             func visit(_ element: Any, depth: Int) {
-                guard depth < 60, let el = element as? NSObject, seen.insert(ObjectIdentifier(el)).inserted else { return }
-                if let role = el.accessibilityRole(), interactiveRoles.contains(role), !el.isAccessibilityHidden() {
+                // SwiftUI 的辅助功能节点与 NSView 都实现 NSAccessibilityProtocol；大部分方法是可选的
+                guard depth < 60, let el = element as? (NSObject & NSAccessibilityProtocol),
+                      seen.insert(ObjectIdentifier(el)).inserted else { return }
+                let hidden = el.isAccessibilityHidden?() ?? false
+                if let role = el.accessibilityRole?() ?? nil, interactiveRoles.contains(role), !hidden {
                     checked += 1
-                    let label = [el.accessibilityLabel(), el.accessibilityTitle(), el.accessibilityPlaceholderValue()]
-                        .compactMap { $0 }.first { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+                    let candidates: [String?] = [el.accessibilityLabel?() ?? nil, el.accessibilityTitle?() ?? nil, el.accessibilityPlaceholderValue?() ?? nil]
+                    let label = candidates.compactMap { $0 }.first { !$0.trimmingCharacters(in: CharacterSet.whitespaces).isEmpty }
                     let frame = el.accessibilityFrame()
                     if label == nil { problems.append("\(name)：\(role.rawValue) 没有读屏名称（\(frame)）") }
                     if frame.width < 40 || frame.height < 40 {
                         problems.append("\(name)：\(role.rawValue)“\(label ?? "?")”尺寸只有 \(Int(frame.width))×\(Int(frame.height))")
                     }
                 }
-                for child in el.accessibilityChildren() ?? [] { visit(child, depth: depth + 1) }
+                for child in (el.accessibilityChildren?() ?? nil) ?? [] { visit(child, depth: depth + 1) }
             }
             visit(host, depth: 0)
             window.orderOut(nil)
