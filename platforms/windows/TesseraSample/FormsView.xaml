@@ -1,0 +1,71 @@
+<UserControl
+    x:Class="TesseraSample.FormsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tessera="using:TesseraUI">
+    <!-- v0.5 表单与输入组件，顺序与 Web / Android / Apple 一致 -->
+    <StackPanel Spacing="20" Padding="20,4,20,32" MaxWidth="520" HorizontalAlignment="Left">
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="按钮组 · 分割按钮 · 悬浮按钮 · 链接" TextWrapping="Wrap" />
+        <tessera:TesseraButtonGroup x:Name="Range" AutomationProperties.Name="时间范围" />
+        <tessera:TesseraButtonGroup x:Name="Format" Multiple="True" AutomationProperties.Name="文字格式" />
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <tessera:TesseraSplitButton Text="保存">
+                <tessera:TesseraSplitButton.Flyout>
+                    <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource TesseraMenuFlyoutPresenterStyle}">
+                        <MenuFlyoutItem Style="{StaticResource TesseraMenuFlyoutItemStyle}" Text="另存为…" />
+                        <MenuFlyoutItem Style="{StaticResource TesseraMenuFlyoutItemStyle}" Text="导出 PDF" />
+                    </MenuFlyout>
+                </tessera:TesseraSplitButton.Flyout>
+            </tessera:TesseraSplitButton>
+            <tessera:TesseraSplitButton Text="合并" IsPrimary="False" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="16">
+            <Button Style="{StaticResource TesseraFabButtonStyle}" AutomationProperties.Name="新建"><tessera:TesseraIcon Icon="plus" Size="24" /></Button>
+            <Button Style="{StaticResource TesseraFabButtonStyle}" Padding="20,0">
+                <StackPanel Orientation="Horizontal" Spacing="8"><tessera:TesseraIcon Icon="edit" Size="24" /><TextBlock Text="写评论" VerticalAlignment="Center" /></StackPanel>
+            </Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="16">
+            <HyperlinkButton Style="{StaticResource TesseraLinkButtonStyle}" Content="查看使用条款" />
+            <HyperlinkButton Style="{StaticResource TesseraLinkButtonStyle}" Content="TesseraUI 文档 ↗" AutomationProperties.Name="TesseraUI 文档，在新窗口打开" />
+        </StackPanel>
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="多行文本 · 密码 · 数字 · 验证码 · 自动补全 · 标签" TextWrapping="Wrap" />
+        <TextBox Style="{StaticResource TesseraTextAreaStyle}" Header="留言" Text="一块块砖，拼出整面墙。" />
+        <PasswordBox Style="{StaticResource TesseraPasswordBoxStyle}" Header="密码" Password="tessera2026" PasswordRevealMode="Peek" tessera:TesseraPassword.CapsLockWarning="True" />
+        <tessera:TesseraNumberInput x:Name="Quantity" Header="数量" Minimum="1" Maximum="99" Value="3" />
+        <tessera:TesseraOtpInput x:Name="Otp" />
+        <tessera:TesseraAutocomplete x:Name="City" />
+        <tessera:TesseraTagInput x:Name="Tags" AutomationProperties.Name="标签" />
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="滑块 · 评分 · 上传" />
+        <Slider Style="{StaticResource TesseraSliderStyle}" Header="音量" Value="60" Maximum="100" />
+        <tessera:TesseraRangeSlider x:Name="Price" Label="价格" Maximum="1000" Step="100" />
+        <RatingControl Value="4" AutomationProperties.Name="评分" HorizontalAlignment="Left" Height="44" />
+        <tessera:TesseraFileUpload x:Name="Upload" />
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="日历 · 日期时间 · 颜色" />
+        <CalendarView x:Name="Calendar" Style="{StaticResource TesseraCalendarViewStyle}" AutomationProperties.Name="日历" HorizontalAlignment="Left" />
+        <tessera:TesseraDateRangeCalendar x:Name="RangeCal" HorizontalAlignment="Left" />
+        <CalendarDatePicker Style="{StaticResource TesseraCalendarDatePickerStyle}" Header="出发日期" PlaceholderText="选择日期" />
+        <TimePicker Style="{StaticResource TesseraTimePickerStyle}" Header="提醒时间" MinuteIncrement="5" />
+        <ColorPicker Style="{StaticResource TesseraColorPickerStyle}" Color="#FF0F6B63" AutomationProperties.Name="颜色" />
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="表单" />
+        <Border Style="{StaticResource TesseraCardStyle}">
+            <StackPanel Spacing="16">
+                <TextBlock Style="{StaticResource TesseraTitle3TextStyle}" Text="联系方式" />
+                <tessera:TesseraFormField x:Name="NameField" Label="姓名" Required="True">
+                    <tessera:TesseraFormField.Field><TextBox x:Name="NameBox" Style="{StaticResource TesseraTextBoxStyle}" AutomationProperties.Name="姓名" /></tessera:TesseraFormField.Field>
+                </tessera:TesseraFormField>
+                <tessera:TesseraFormField x:Name="PhoneField" Label="手机号">
+                    <tessera:TesseraFormField.Field><TextBox x:Name="PhoneBox" Style="{StaticResource TesseraTextBoxStyle}" Text="138 0013 8000" AutomationProperties.Name="手机号" /></tessera:TesseraFormField.Field>
+                </tessera:TesseraFormField>
+                <tessera:TesseraFormField x:Name="MailField" Label="邮箱">
+                    <tessera:TesseraFormField.Field><TextBox x:Name="MailBox" Style="{StaticResource TesseraTextBoxStyle}" Text="hello@" AutomationProperties.Name="邮箱" /></tessera:TesseraFormField.Field>
+                </tessera:TesseraFormField>
+            </StackPanel>
+        </Border>
+        <Button x:Name="Submit" Style="{StaticResource TesseraPrimaryButtonStyle}" Content="提交" HorizontalAlignment="Stretch" />
+    </StackPanel>
+</UserControl>

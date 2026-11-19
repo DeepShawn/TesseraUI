@@ -303,17 +303,18 @@ public struct TesseraOtpInput: View {
                 #endif
                 .foregroundStyle(.clear)
                 .tint(.clear)
-                .frame(width: 1, height: 1)
+                // 透明的输入框盖住整排格子：点哪里都能聚焦，读屏的范围就是整个验证码区域
+                .frame(maxWidth: .infinity, minHeight: 56)
                 .opacity(0.02)
                 .accessibilityLabel("验证码，共 \(length) 位")
                 .accessibilityValue("已输入 \(code.count) 位")
                 HStack(spacing: TesseraSpace.s2) {
                     ForEach(0..<length, id: \.self) { i in cell(i) }
                 }
-                .contentShape(Rectangle())
-                .onTapGesture { focused = true }
+                .allowsHitTesting(false)
                 .accessibilityHidden(true)
             }
+            .fixedSize(horizontal: true, vertical: false)
             .offset(x: shake)
             if let error { TesseraLabel(error, style: .caption, color: TesseraColor.dangerText) }
         }
@@ -463,9 +464,11 @@ public struct TesseraTagInput: View {
             TesseraLabel(t, style: TesseraTextStyle(size: 12, lineHeight: 16, weight: .semibold, family: .text, tracking: 0, relativeTo: .caption), color: TesseraColor.accentText)
                 .padding(.leading, 10)
             Button { tags.removeAll { $0 == t } } label: {
+                // 看得见的 28，可点范围 40×40（负边距伸出去，不改变标签的大小）
                 TesseraIcon(.close, size: 14).foregroundStyle(TesseraColor.accentText)
-                    .frame(width: 28, height: 28).contentShape(Rectangle())
+                    .frame(width: 40, height: 40).contentShape(Rectangle())
             }
+            .padding(-6)
             .buttonStyle(.plain)
             .accessibilityLabel("删除标签 \(t)")
         }

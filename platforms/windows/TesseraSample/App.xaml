@@ -10,6 +10,7 @@
                 <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraTheme.xaml" />
                 <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraButton.xaml" />
                 <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraControls.xaml" />
+                <ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraForms.xaml" />
                 <!-- 外观字典（圆融 / 流韵）由 App.SetShape 在运行时加在最后；不加即为拼贴 -->
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

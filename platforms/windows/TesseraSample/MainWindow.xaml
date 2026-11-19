@@ -9,9 +9,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Spacing="16" Padding="20,16">
+        <StackPanel Orientation="Horizontal" Spacing="16" Padding="20,16" HorizontalAlignment="Left">
             <tessera:TesseraSegmentedControl x:Name="ShapePicker" AutomationProperties.Name="外观" />
             <tessera:TesseraSegmentedControl x:Name="ThemePicker" AutomationProperties.Name="主题" />
+            <tessera:TesseraSegmentedControl x:Name="GalleryPicker" AutomationProperties.Name="组件页" />
         </StackPanel>
         <ScrollViewer x:Name="Scroller" Grid.Row="1" VerticalScrollBarVisibility="Hidden">
             <ContentPresenter x:Name="Host" />

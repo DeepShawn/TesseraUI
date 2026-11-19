@@ -13,12 +13,16 @@ namespace TesseraSample
             AppWindow.Resize(new Windows.Graphics.SizeInt32(560, 1000));
             ShapePicker.Items = new List<string> { "拼贴", "圆融", "流韵" };
             ThemePicker.Items = new List<string> { "跟随系统", "浅色", "深色" };
+            GalleryPicker.Items = new List<string> { "首批组件", "表单与输入" };
             ShapePicker.SelectionChanged += (_, i) => Apply(Shapes[i], ThemePicker.SelectedIndex);
             ThemePicker.SelectionChanged += (_, i) => Apply(Shapes[ShapePicker.SelectedIndex], i);
+            GalleryPicker.SelectionChanged += (_, i) => { Forms = i == 1; Apply(Shapes[ShapePicker.SelectedIndex], ThemePicker.SelectedIndex); };
             Apply("tile", 0);
         }
 
         public FrameworkElement GalleryRoot => (FrameworkElement)Host.Content;
+        /// <summary>显示 v0.5 表单与输入组件页</summary>
+        public bool Forms { get; set; }
         public FrameworkElement Scroll => Scroller;
 
         /// <summary>切换外观与主题。外观字典里的值由样式在加载时读取，所以切换后重新创建组件总览</summary>
@@ -31,7 +35,7 @@ namespace TesseraSample
             // 先切到另一个主题再切回来，让窗口上已有元素的 ThemeResource 重新取值（外观字典变了）
             Root.RequestedTheme = target == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
             Root.RequestedTheme = target;
-            Host.Content = new GalleryView(Toasts);
+            Host.Content = Forms ? new FormsView() : new GalleryView(Toasts);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TesseraSample
 {
     /// <summary>
     /// 持续集成用：TesseraSample.exe --snapshot &lt;目录&gt;
-    /// 三种外观 × 浅色 / 深色，每种截一张组件总览，并做无障碍检查：
+    /// 首批组件与表单两页 × 三种外观 × 浅色 / 深色，每种截一张，并做无障碍检查：
     /// 每个可聚焦的元素都要有读屏名称，尺寸不小于 40×40（Windows 触控目标的最小建议值）。
     /// 结果写到 a11y.txt；有问题时退出码为 1，出错为 2。
     /// 高对比度主题由系统设置决定，应用无法强制切换，这里不截。
@@ -34,14 +34,17 @@ namespace TesseraSample
                 Directory.CreateDirectory(dir);
                 var report = new List<string>();
                 var checkedCount = 0;
+                foreach (var forms in new[] { false, true })
                 foreach (var shape in new[] { "tile", "round", "flow" })
                 {
+                    window.Forms = forms;
+                    var page = forms ? "forms-" : "";
                     foreach (var (theme, name) in new[] { (1, "light"), (2, "dark") })
                     {
                         window.Apply(shape, theme);
                         await Task.Delay(1200); // 等待布局与入场动效结束
                         var root = window.GalleryRoot;
-                        await SavePng(root, Path.Combine(dir, $"{shape}-{name}.png"));
+                        await SavePng(root, Path.Combine(dir, $"{page}{shape}-{name}.png"));
                         if (theme != 1) continue; // 无障碍只与结构有关，每种外观检查一次
                         foreach (var el in Descendants(root))
                         {
@@ -51,9 +54,9 @@ namespace TesseraSample
                             checkedCount++;
                             var label = peer.GetName();
                             var type = el.GetType().Name;
-                            if (string.IsNullOrWhiteSpace(label)) report.Add($"{shape}：{type} 没有读屏名称");
+                            if (string.IsNullOrWhiteSpace(label)) report.Add($"{page}{shape}：{type} 没有读屏名称");
                             if (el.ActualWidth < MinTarget || el.ActualHeight < MinTarget)
-                                report.Add($"{shape}：{type}“{label}”尺寸只有 {el.ActualWidth:0}×{el.ActualHeight:0}");
+                                report.Add($"{page}{shape}：{type}“{label}”尺寸只有 {el.ActualWidth:0}×{el.ActualHeight:0}");
                         }
                     }
                 }
