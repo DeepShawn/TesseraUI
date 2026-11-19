@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation.Peers;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Graphics.Imaging;
+
+namespace TesseraSample
+{
+    /// <summary>
+    /// 持续集成用：TesseraSample.exe --snapshot &lt;目录&gt;
+    /// 三种外观 × 浅色 / 深色，每种截一张组件总览，并做无障碍检查：
+    /// 每个可聚焦的元素都要有读屏名称，尺寸不小于 40×40（Windows 触控目标的最小建议值）。
+    /// 结果写到 a11y.txt；有问题时退出码为 1，出错为 2。
+    /// 高对比度主题由系统设置决定，应用无法强制切换，这里不截。
+    /// </summary>
+    public static class Snapshot
+    {
+        public static bool Running { get; private set; }
+        private const double MinTarget = 40;
+
+        public static async Task RunAsync(MainWindow window, string dir)
+        {
+            Running = true;
+            var code = 0;
+            try
+            {
+                Directory.CreateDirectory(dir);
+                var report = new List<string>();
+                var checkedCount = 0;
+                foreach (var shape in new[] { "tile", "round", "flow" })
+                {
+                    foreach (var (theme, name) in new[] { (1, "light"), (2, "dark") })
+                    {
+                        window.Apply(shape, theme);
+                        await Task.Delay(1200); // 等待布局与入场动效结束
+                        var root = window.GalleryRoot;
+                        await SavePng(root, Path.Combine(dir, $"{shape}-{name}.png"));
+                        if (theme != 1) continue; // 无障碍只与结构有关，每种外观检查一次
+                        foreach (var el in Descendants(root))
+                        {
+                            if (el.Visibility != Visibility.Visible || el.ActualWidth <= 0) continue;
+                            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(el);
+                            if (peer is null || !peer.IsKeyboardFocusable() || !peer.IsEnabled()) continue;
+                            checkedCount++;
+                            var label = peer.GetName();
+                            var type = el.GetType().Name;
+                            if (string.IsNullOrWhiteSpace(label)) report.Add($"{shape}：{type} 没有读屏名称");
+                            if (el.ActualWidth < MinTarget || el.ActualHeight < MinTarget)
+                                report.Add($"{shape}：{type}“{label}”尺寸只有 {el.ActualWidth:0}×{el.ActualHeight:0}");
+                        }
+                    }
+                }
+                if (checkedCount < 30) report.Add($"只找到 {checkedCount} 个可聚焦元素，检查本身可能失效");
+                var lines = new List<string> { $"无障碍检查：共检查 {checkedCount} 个可聚焦元素，问题 {report.Count} 个" };
+                lines.AddRange(report);
+                File.WriteAllLines(Path.Combine(dir, "a11y.txt"), lines);
+                code = report.Count == 0 ? 0 : 1;
+            }
+            catch (Exception e)
+            {
+                File.WriteAllText(Path.Combine(dir, "error.txt"), e.ToString());
+                code = 2;
+            }
+            Environment.Exit(code);
+        }
+
+        private static IEnumerable<FrameworkElement> Descendants(DependencyObject root)
+        {
+            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is FrameworkElement fe) yield return fe;
+                foreach (var d in Descendants(child)) yield return d;
+            }
+        }
+
+        private static async Task SavePng(UIElement el, string path)
+        {
+            var rtb = new RenderTargetBitmap();
+            await rtb.RenderAsync(el);
+            var pixels = (await rtb.GetPixelsAsync()).ToArray();
+            using var file = File.Create(path);
+            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, file.AsRandomAccessStream());
+            encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied, (uint)rtb.PixelWidth, (uint)rtb.PixelHeight, 96, 96, pixels);
+            await encoder.FlushAsync();
+        }
+    }
+}

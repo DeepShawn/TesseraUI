@@ -1,0 +1,101 @@
+<UserControl
+    x:Class="TesseraSample.GalleryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tessera="using:TesseraUI">
+    <!-- 首批 22 个组件，顺序与 Web / Android / Apple 的组件总览一致 -->
+    <StackPanel Spacing="20" Padding="20,4,20,32" MaxWidth="520" HorizontalAlignment="Left">
+        <Grid Style="{StaticResource TesseraNavBarStyle}">
+            <Button Style="{StaticResource TesseraIconButtonStyle}" AutomationProperties.Name="返回" HorizontalAlignment="Left">
+                <tessera:TesseraIcon Icon="chevron-left" Size="20" />
+            </Button>
+            <TextBlock Style="{StaticResource TesseraTitle3TextStyle}" Text="组件" HorizontalAlignment="Center" VerticalAlignment="Center" />
+            <Button Style="{StaticResource TesseraIconButtonStyle}" AutomationProperties.Name="更多" HorizontalAlignment="Right">
+                <tessera:TesseraIcon Icon="more" Size="20" />
+            </Button>
+        </Grid>
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="操作" />
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button x:Name="PrimaryButton" Style="{StaticResource TesseraPrimaryButtonStyle}" Content="主要按钮" />
+            <Button x:Name="DialogButton" Style="{StaticResource TesseraSecondaryButtonStyle}" Content="次要按钮" />
+            <Button Style="{StaticResource TesseraTextButtonStyle}" Content="文字按钮" />
+            <Button Style="{StaticResource TesseraDangerButtonStyle}" Content="删除" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <Button Style="{StaticResource TesseraIconButtonStyle}" AutomationProperties.Name="搜索"><tessera:TesseraIcon Icon="search" Size="20" /></Button>
+            <Button Style="{StaticResource TesseraFilledIconButtonStyle}" AutomationProperties.Name="分享"><tessera:TesseraIcon Icon="share" Size="20" /></Button>
+            <Button x:Name="MenuButton" Style="{StaticResource TesseraFilledIconButtonStyle}" AutomationProperties.Name="更多操作">
+                <tessera:TesseraIcon Icon="more" Size="20" />
+                <Button.Flyout>
+                    <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource TesseraMenuFlyoutPresenterStyle}">
+                        <MenuFlyoutItem Style="{StaticResource TesseraMenuFlyoutItemStyle}" Text="编辑" />
+                        <MenuFlyoutItem Style="{StaticResource TesseraMenuFlyoutItemStyle}" Text="复制" />
+                        <MenuFlyoutItem Style="{StaticResource TesseraMenuFlyoutItemStyle}" Text="删除" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="输入" />
+        <TextBox Style="{StaticResource TesseraTextBoxStyle}" Header="昵称" PlaceholderText="输入昵称" />
+        <PasswordBox Style="{StaticResource TesseraPasswordBoxStyle}" Header="密码" PlaceholderText="至少 8 位" />
+        <AutoSuggestBox Style="{StaticResource TesseraSearchBoxStyle}" PlaceholderText="搜索" QueryIcon="Find" AutomationProperties.Name="搜索" />
+        <ComboBox Style="{StaticResource TesseraComboBoxStyle}" Header="排序" SelectedIndex="0" HorizontalAlignment="Stretch">
+            <x:String>最近更新</x:String>
+            <x:String>名称</x:String>
+            <x:String>大小</x:String>
+        </ComboBox>
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="选择" />
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <CheckBox Style="{StaticResource TesseraCheckBoxStyle}" Content="接收通知" IsChecked="True" />
+            <CheckBox Style="{StaticResource TesseraCheckBoxStyle}" Content="自动更新" />
+        </StackPanel>
+        <RadioButtons AutomationProperties.Name="清晰度" SelectedIndex="0" MaxColumns="3">
+            <RadioButton Style="{StaticResource TesseraRadioButtonStyle}" Content="标清" />
+            <RadioButton Style="{StaticResource TesseraRadioButtonStyle}" Content="高清" />
+            <RadioButton Style="{StaticResource TesseraRadioButtonStyle}" Content="原画" />
+        </RadioButtons>
+        <StackPanel Orientation="Horizontal" Spacing="20">
+            <ToggleSwitch Style="{StaticResource TesseraToggleSwitchStyle}" Header="Wi-Fi" IsOn="True" />
+            <ToggleSwitch Style="{StaticResource TesseraToggleSwitchStyle}" Header="蓝牙" />
+        </StackPanel>
+        <tessera:TesseraSegmentedControl x:Name="Segments" AutomationProperties.Name="时间范围" />
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="数据展示" />
+        <StackPanel Orientation="Horizontal" Spacing="6">
+            <Border Style="{StaticResource TesseraTagStyle}"><TextBlock Style="{StaticResource TesseraTagTextStyle}" Text="默认" /></Border>
+            <Border Style="{StaticResource TesseraAccentTagStyle}"><TextBlock Style="{StaticResource TesseraTagTextStyle}" Text="进行中" /></Border>
+            <Border Style="{StaticResource TesseraSuccessTagStyle}"><TextBlock Style="{StaticResource TesseraTagTextStyle}" Text="已完成" /></Border>
+            <Border Style="{StaticResource TesseraWarningTagStyle}"><TextBlock Style="{StaticResource TesseraTagTextStyle}" Text="即将到期" /></Border>
+            <Border Style="{StaticResource TesseraDangerTagStyle}"><TextBlock Style="{StaticResource TesseraTagTextStyle}" Text="已逾期" /></Border>
+            <Border Style="{StaticResource TesseraBadgeStyle}" VerticalAlignment="Center"><TextBlock Style="{StaticResource TesseraBadgeTextStyle}" Text="8" /></Border>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <Border Style="{StaticResource TesseraAvatarStyle}"><TextBlock Style="{StaticResource TesseraAvatarTextStyle}" Text="林" /></Border>
+            <Border Style="{StaticResource TesseraAvatarStyle}"><TextBlock Style="{StaticResource TesseraAvatarTextStyle}" Text="朱" /></Border>
+            <Border Style="{StaticResource TesseraAvatarStyle}"><TextBlock Style="{StaticResource TesseraAvatarTextStyle}" Text="赭" /></Border>
+        </StackPanel>
+        <Border Style="{StaticResource TesseraListContainerStyle}">
+            <ListView x:Name="List" ItemContainerStyle="{StaticResource TesseraListViewItemStyle}" SelectionMode="None" IsItemClickEnabled="True" AutomationProperties.Name="日程">
+                <x:String>设计评审 · 今天 14:00</x:String>
+                <x:String>v0.4 发布检查 · 三端测试通过</x:String>
+                <x:String>首批图标 · 157 / 150</x:String>
+            </ListView>
+        </Border>
+        <Border Style="{StaticResource TesseraCardStyle}">
+            <StackPanel Spacing="8">
+                <TextBlock Style="{StaticResource TesseraLabelTextStyle}" Text="卡片" />
+                <TextBlock Style="{StaticResource TesseraBodySmTextStyle}" Text="一块块砖，拼出整面墙。" TextWrapping="Wrap" />
+                <Border Style="{StaticResource TesseraSkeletonStyle}" Width="160" />
+            </StackPanel>
+        </Border>
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="反馈" />
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <Button x:Name="ToastButton" Style="{StaticResource TesseraSecondaryButtonStyle}" Content="提示消息" />
+            <Button x:Name="SheetButton" Style="{StaticResource TesseraSecondaryButtonStyle}" Content="底部抽屉" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,21 @@
+<Window
+    x:Class="TesseraSample.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tessera="using:TesseraUI"
+    Title="TesseraUI 示例">
+    <Grid x:Name="Root" Background="{ThemeResource TesseraBgCanvasBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Spacing="16" Padding="20,16">
+            <tessera:TesseraSegmentedControl x:Name="ShapePicker" AutomationProperties.Name="外观" />
+            <tessera:TesseraSegmentedControl x:Name="ThemePicker" AutomationProperties.Name="主题" />
+        </StackPanel>
+        <ScrollViewer x:Name="Scroller" Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+            <ContentPresenter x:Name="Host" />
+        </ScrollViewer>
+        <tessera:TesseraToastHost x:Name="Toasts" Grid.RowSpan="2" />
+    </Grid>
+</Window>
