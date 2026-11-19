@@ -18,7 +18,7 @@ import com.tesseraui.foundation.tilePosition
 import com.tesseraui.icons.TesseraIcon
 import com.tesseraui.icons.TesseraIcons
 
-enum class GallerySection { Actions, Inputs, Selection, Navigation, Display, Feedback }
+enum class GallerySection { Actions, Inputs, Selection, Navigation, Display, Feedback, MoreActions, MoreInputs, Range, Pickers, PickerFields, Color, Forms }
 
 /** 组件总览：开发时预览、截图测试共用 */
 @OptIn(ExperimentalLayoutApi::class)
@@ -73,6 +73,7 @@ fun TesseraGallery(section: GallerySection) {
                 }
                 TesseraCard(Modifier.fillMaxWidth()) { TesseraSkeletonRow() }
             }
+            GallerySection.MoreActions, GallerySection.MoreInputs, GallerySection.Range, GallerySection.Pickers, GallerySection.PickerFields, GallerySection.Color, GallerySection.Forms -> GalleryForms(section)
             else -> GalleryMore(section)
         }
     }
@@ -85,4 +86,11 @@ private val GallerySection.title get() = when (this) {
     GallerySection.Navigation -> "导航"
     GallerySection.Display -> "数据展示"
     GallerySection.Feedback -> "反馈"
+    GallerySection.MoreActions -> "按钮组 · 分割按钮 · 悬浮按钮 · 链接"
+    GallerySection.MoreInputs -> "多行文本 · 密码 · 数字 · 验证码 · 自动补全 · 标签"
+    GallerySection.Range -> "滑块 · 评分 · 上传"
+    GallerySection.Pickers -> "日历"
+    GallerySection.PickerFields -> "滚轮 · 日期时间"
+    GallerySection.Color -> "颜色"
+    GallerySection.Forms -> "表单"
 }

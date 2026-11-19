@@ -231,6 +231,8 @@ fun TesseraListItem(
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable RowScope.() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
+    /** 文字下方的附加内容（例如上传进度条） */
+    below: (@Composable () -> Unit)? = null,
 ) {
     val c = Tessera.colors
     val interaction = remember { MutableInteractionSource() }
@@ -252,6 +254,7 @@ fun TesseraListItem(
         Column(Modifier.weight(1f)) {
             TesseraText(headline, style = Tessera.type.label, maxLines = 1)
             if (supporting != null) TesseraText(supporting, style = Tessera.type.caption, color = c.textSecondary, maxLines = 2)
+            if (below != null) below()
         }
         if (trailing != null) CompositionLocalProvider(LocalContentColor provides c.textTertiary) { trailing() }
     }

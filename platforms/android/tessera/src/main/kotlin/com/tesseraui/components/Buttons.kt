@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Column
@@ -123,7 +124,8 @@ fun TesseraButton(
             modifier = Modifier
                 .pressSink(interaction, enabled)
                 .alpha(if (enabled) 1f else TesseraOpacity.DISABLED)
-                .height(size.height)
+                // 外层的触摸区域至少 44 高；看得见的砖必须是自己的高度（32 / 40 / 48），不能被撑到 44
+                .requiredHeight(size.height)
                 .clip(s)
                 .background(bg)
                 .then(

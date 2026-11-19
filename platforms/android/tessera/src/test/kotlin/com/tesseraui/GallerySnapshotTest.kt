@@ -41,4 +41,12 @@ class GallerySnapshotTest {
     @Test fun navigation() = shoot(GallerySection.Navigation)
     @Test fun display() = shoot(GallerySection.Display)
     @Test fun feedback() = shoot(GallerySection.Feedback)
+    // v0.5：表单与输入
+    @Test fun moreActions() = shoot(GallerySection.MoreActions)
+    @Test fun moreInputs() = shoot(GallerySection.MoreInputs)
+    @Test fun range() = shoot(GallerySection.Range)
+    @Test fun pickers() = shoot(GallerySection.Pickers)
+    @Test fun pickerFields() = shoot(GallerySection.PickerFields)
+    @Test fun color() = shoot(GallerySection.Color)
+    @Test fun forms() = shoot(GallerySection.Forms)
 }
