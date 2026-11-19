@@ -188,7 +188,7 @@ namespace TesseraUI
         private void Paint()
         {
             var key = IsPrimary ? "TesseraPrimaryButtonStyle" : "TesseraSecondaryButtonStyle";
-            if (Application.Current.Resources.TryGetValue(key, out var s) && s is Style style) { _main.Style = style; _arrow.Style = style; }
+            if (Application.Current.Resources.TryGetValue(key, out var s) && s is Style style && !ReferenceEquals(_main.Style, style)) { _main.Style = style; _arrow.Style = style; }
             ((StackPanel)Content).Spacing = FormUtil.GroupGap;
             _main.CornerRadius = FormUtil.Group(0, 2, 14);
             _arrow.CornerRadius = FormUtil.Group(1, 2, 14);
@@ -293,7 +293,7 @@ namespace TesseraUI
                 b.BorderThickness = new Thickness(0);
                 b.Padding = new Thickness(0);
             }
-            if (Application.Current.Resources.TryGetValue("TesseraTextBoxStyle", out var s) && s is Style style) _box.Style = style;
+            if (Application.Current.Resources.TryGetValue("TesseraTextBoxStyle", out var s) && s is Style style && !ReferenceEquals(_box.Style, style)) _box.Style = style;
             _box.CornerRadius = FormUtil.Group(1, 3, 14);
             _box.FontWeight = Microsoft.UI.Text.FontWeights.SemiBold;
         }

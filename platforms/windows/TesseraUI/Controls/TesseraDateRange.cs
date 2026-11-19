@@ -22,10 +22,8 @@ namespace TesseraUI
             IsTabStop = false;
             Content = Calendar;
             AutomationProperties.SetName(Calendar, "选择日期范围");
-            Calendar.Loaded += (_, _) =>
-            {
-                if (Application.Current.Resources.TryGetValue("TesseraCalendarViewStyle", out var s) && s is Style style) Calendar.Style = style;
-            };
+            // 样式要在构造时设：Loaded 之后再换 CalendarView 的 Style 会让 WinUI 原生层访问冲突崩溃
+            if (Application.Current.Resources.TryGetValue("TesseraCalendarViewStyle", out var s) && s is Style style) Calendar.Style = style;
             Calendar.SelectedDatesChanged += (_, e) =>
             {
                 if (_updating || e.AddedDates.Count == 0) return;

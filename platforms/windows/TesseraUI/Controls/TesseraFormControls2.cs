@@ -134,9 +134,10 @@ namespace TesseraUI
         {
             IsTabStop = false;
             Content = Box;
+            // 样式要在构造时设：控件模板应用后再换 Style 会让 WinUI 原生层崩溃
+            if (Application.Current.Resources.TryGetValue("TesseraSearchBoxStyle", out var s) && s is Style style) Box.Style = style;
             Box.Loaded += (_, _) =>
             {
-                if (Application.Current.Resources.TryGetValue("TesseraSearchBoxStyle", out var s) && s is Style style) Box.Style = style;
                 // AutoSuggestBox 里面的 TextBox：监听输入法组合
                 if (FindChild<TextBox>(Box) is { } inner)
                 {
