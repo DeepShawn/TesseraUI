@@ -70,11 +70,16 @@ public struct TesseraTextField: View {
                 if let icon { TesseraIcon(icon, size: 18).foregroundStyle(TesseraColor.textSecondary) }
                 field
                 if clearable && !text.isEmpty {
-                    Button { text = ""; onCommittedChange?("") } label: { TesseraIcon(.close, size: 16) }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(TesseraColor.textSecondary)
-                        .frame(width: 28, height: 28)
-                        .accessibilityLabel("清除")
+                    // 图标 16，可点按范围 40×40（与输入框同高），向右伸进内边距，不改变外观
+                    Button { text = ""; onCommittedChange?("") } label: {
+                        TesseraIcon(.close, size: 16)
+                            .frame(width: TesseraSize.md, height: TesseraSize.md)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(TesseraColor.textSecondary)
+                    .padding(.horizontal, -12)
+                    .accessibilityLabel("清除")
                 }
             }
             .padding(.horizontal, tesseraShape.isRound ? TesseraSpace.s4 : TesseraSpace.s3)
@@ -94,7 +99,8 @@ public struct TesseraTextField: View {
         CommittedTextField(text: $text, focused: $focused, placeholder: placeholder, isSecure: isSecure,
                            returnKey: submitKey.returnKey,
                            onCommitted: onCommittedChange, onSubmit: onSubmit)
-            .frame(minHeight: 22)
+            // 撑满整个输入框高度：读屏与点按的范围就是整个框，而不只是一行文字
+            .frame(minHeight: TesseraSize.md)
             .accessibilityLabel(label ?? placeholder)
         #else
         Group {
@@ -228,10 +234,12 @@ public struct TesseraSelect<Value: Hashable>: View {
                 .frame(height: TesseraSize.md)
                 .tesseraTile(TesseraColor.fillDefault, style: .sunken, shape: shape)
                 .contentShape(shape)
+                // iOS 的 Menu 按钮从 label 里取读屏名称，所以写在 label 上
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(label ?? "选择")
+                .accessibilityValue(current)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(label ?? "选择")
-            .accessibilityValue(current)
         }
     }
 }

@@ -113,8 +113,12 @@ jobs:
           UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; print(next(x['udid'] for k,v in d.items() if 'iOS' in k for x in v if x['name'].startswith('iPhone')))")
           echo "模拟器 $UDID"
           xcodebuild test -project TesseraSampleiOS.xcodeproj -scheme TesseraSampleiOS -destination "id=$UDID" \
-            -skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO TEST_RUNNER_TESSERA_SNAPSHOT_DIR=$PWD/../ios-snapshots 2>&1 \
+            -resultBundlePath TestResults.xcresult -skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO 2>&1 \
             | tee test.log | grep -E "error:|无障碍检查|✖|Test Case .* (passed|failed)|\*\* TEST" || true
+          # 截图作为测试附件保存在结果包里，导出成图片
+          mkdir -p ../ios-snapshots
+          xcrun xcresulttool export attachments --path TestResults.xcresult --output-path ../ios-snapshots || true
+          ls ../ios-snapshots
           grep -q "\*\* TEST SUCCEEDED \*\*" test.log
       - uses: actions/upload-artifact@v4
         if: always()

@@ -71,13 +71,15 @@ public struct TesseraTabs: View {
         HStack(spacing: TesseraSpace.s6) {
             ForEach(titles.indices, id: \.self) { i in
                 Button { selection = i } label: {
+                    // 指示条按文字宽度量；可点按范围至少 44 宽（两个字的标签只有 28 宽）
                     TesseraLabel(titles[i], style: .label, color: i == selection ? TesseraColor.textPrimary : TesseraColor.textSecondary)
+                        .background { GeometryReader { g in Color.clear.preference(key: TabFrameKey.self, value: [i: g.frame(in: .named("tabs"))]) } }
                         .padding(.top, 12).padding(.bottom, 14)
+                        .frame(minWidth: TesseraSize.touchMin)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(i == selection ? [.isSelected] : [])
-                .background { GeometryReader { g in Color.clear.preference(key: TabFrameKey.self, value: [i: g.frame(in: .named("tabs"))]) } }
             }
             Spacer(minLength: 0)
         }
@@ -192,8 +194,9 @@ public struct TesseraMenu<Content: View>: View {
                 .tesseraTile(TesseraColor.fillDefault, style: .soft, shape: RoundedRectangle(cornerRadius: tesseraShape.radius(tile: TesseraRadius.md), style: .continuous))
                 .frame(width: TesseraSize.touchMin, height: TesseraSize.touchMin)
                 .contentShape(Rectangle())
+                // iOS 的 Menu 按钮从 label 里取读屏名称
+                .accessibilityLabel(label)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(label)
     }
 }

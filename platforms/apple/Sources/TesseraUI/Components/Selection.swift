@@ -115,7 +115,9 @@ public struct TesseraSwitchStyle: ToggleStyle {
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: TesseraSpace.s3) {
             SwitchTrack(isOn: configuration.$isOn, glass: glass)
+            // 读屏元素的范围是各子元素的并集，所以把 44 的高度放在文字上，而不只是外层
             configuration.label.tesseraText(.bodySm).foregroundStyle(TesseraColor.textPrimary)
+                .frame(minHeight: TesseraSize.touchMin)
         }
         .frame(minHeight: TesseraSize.touchMin)
         .opacity(isEnabled ? 1 : TesseraOpacity.disabled)

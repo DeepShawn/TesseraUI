@@ -2,7 +2,7 @@ import XCTest
 
 /// iOS 无障碍检查（XCUITest，读取的就是 VoiceOver 看到的辅助功能树）：
 /// 三种外观下，每个按钮、开关、文本框、分段控制都要有读屏名称，尺寸不小于 40×40；
-/// 每种外观截一张图，写到环境变量 TESSERA_SNAPSHOT_DIR（CI 里通过 TEST_RUNNER_TESSERA_SNAPSHOT_DIR 传入）。
+/// 每种外观截一张图，作为测试附件保存在结果包里（CI 用 xcresulttool 导出为 ios-snapshots）。
 /// 40 是首批控件的标准高度（TesseraSize.md）；人机界面指南建议 44，组件高度不足 44 时由使用方留出间距。
 final class AccessibilityUITests: XCTestCase {
     override func setUp() { continueAfterFailure = true }
@@ -16,10 +16,6 @@ final class AccessibilityUITests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["主要按钮"].waitForExistence(timeout: 10), "\(shape)：组件总览没有出现")
 
-            if let dir = ProcessInfo.processInfo.environment["TESSERA_SNAPSHOT_DIR"] {
-                try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-                try? XCUIScreen.main.screenshot().pngRepresentation.write(to: URL(fileURLWithPath: dir).appendingPathComponent("ios-\(shape).png"))
-            }
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
             shot.name = "ios-\(shape)"; shot.lifetime = .keepAlways; add(shot)
 
