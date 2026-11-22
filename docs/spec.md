@@ -432,6 +432,8 @@ Token 分三层：
 **数据展示**
 卡片 Card ★、列表 List ★、表格 Table（排序、筛选、固定列）、树 Tree、折叠面板 Accordion、头像 Avatar ★、头像组 AvatarGroup、徽标 Badge ★、标签 Tag ★、工具提示 Tooltip、气泡卡片 Popover、描述列表 DescriptionList、时间线 Timeline、统计数字 Stat、轮播 Carousel、图片预览 ImageViewer、空状态 EmptyState、代码块 CodeBlock、快捷键提示 Kbd
 
+**开发者（v0.6.1 新增）**：代码编辑器 CodeEditor（语法高亮、行号、自动缩进、诊断提示）、十六进制查看 HexView（偏移 / 字节 / ASCII 三栏、区段着色、虚拟滚动）
+
 **反馈**
 提示消息 Toast ★、横幅警告 Banner、对话框 Dialog ★、确认框 ConfirmDialog、底部抽屉 BottomSheet ★、侧边抽屉 Drawer、操作面板 ActionSheet、进度条 Progress（线形/环形）、加载指示 Spinner（只用在按钮和小区域里）、骨架屏 Skeleton ★、结果页 Result（成功/失败/404）
 

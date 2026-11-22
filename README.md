@@ -147,7 +147,7 @@ TesseraTheme {
 
 ## 组件
 
-Web 端提供设计规范所列的全部 84 个组件：
+Web 端提供设计规范所列的全部 86 个组件：
 
 | 类别 | 组件 |
 |---|---|
@@ -160,10 +160,18 @@ Web 端提供设计规范所列的全部 84 个组件：
 | 反馈 | Toast、Banner、Dialog、ConfirmDialog、BottomSheet、Drawer、ActionSheet、Progress、Spinner、Skeleton、Result |
 | 布局 | Container、Grid、Stack、Divider、ScrollArea、SplitPane、AspectRatio、SafeArea |
 | 移动端手势 | SwipeAction、PullToRefresh、InfiniteScroll、IndexBar |
+| 开发者 | CodeEditor（代码编辑器）、HexView（十六进制查看） |
 
 全部组件的示例见 `demo/components.html`，接口说明见 [Web 端文档](platforms/web/README.md)。
 
-Apple、Android、Windows 三端提供首批 22 个组件：Button、IconButton、TextField、SearchField、Select、Checkbox、Radio、Switch、SegmentedControl、NavBar、TabBar、Tabs、Menu、Card、List、Avatar、Badge、Tag、Toast、Dialog、BottomSheet、Skeleton。各端的接口与平台差异见对应目录下的 README，其余组件的实施计划见[设计规范第 8 节](docs/spec.md#8-实施计划)。
+Apple、Android、Windows 三端目前提供 63 个组件：
+
+- 首批 22 个（v0.3）：Button、IconButton、TextField、SearchField、Select、Checkbox、Radio、Switch、SegmentedControl、NavBar、TabBar、Tabs、Menu、Card、List、Avatar、Badge、Tag、Toast、Dialog、BottomSheet、Skeleton
+- 表单与输入 22 个（v0.5）
+- 数据展示 17 个（v0.6）
+- 开发者组件 2 个（v0.6.1）：CodeEditor、HexView
+
+各端的接口与平台差异见对应目录下的 README；其余导航、布局与手势组件在 v0.7.0 补齐，见[计划](plan/v0.5-0.7.md)。
 
 ## 目录结构
 

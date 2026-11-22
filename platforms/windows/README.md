@@ -112,6 +112,13 @@ WheelPicker 在 Windows 上没有单独的控件：日期、时间的滚轮使�
 
 轮播在 Windows 上不支持露出两侧（`FlipView` 每次只显示一页）。
 
+## 组件（v0.6.1：开发者）
+
+| 组件 | 用法 |
+|---|---|
+| CodeEditor | `<tessera:TesseraCodeEditor CodeLanguage="csharp" />`，代码里设置 `Text`、`SetDiagnostics(…)`，`TextChanged` 事件；RichEditBox 着色、行号、当前行；Tab / Shift+Tab 缩进，Esc 后 Tab 移出焦点；回车自动缩进。着色会写进 RichEditBox 的撤销记录，所以 Ctrl+Z / Ctrl+Y 由编辑器自己管理（右键菜单里的系统“撤销”不可靠） |
+| HexView | `<tessera:TesseraHexView />`，代码里设置 `Data`、`Highlights`、`Columns`、`Label`；点击选中（Shift 扩展），方向键 / PageUp / PageDown / Home / End，Ctrl+C 复制；`Select(i, extend)`、`SelectionHex` |
+
 ## 交互与动效
 
 - **分段控件**：点选或从任意一格按下后左右拖动，滑块跟手，松手吸附到最近的一格（snappy 弹簧）；左右方向键、Home、End 切换。读屏报告为“分段控件”，值为当前选中项。

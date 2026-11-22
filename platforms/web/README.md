@@ -71,6 +71,8 @@ import { slider, datePicker } from './dist/modules/forms.js';
 | Carousel | `.ts-carousel > .ts-carousel-track > 幻灯片`，`data-peek` 露出两侧，`data-autoplay="毫秒"` 自动播放 |
 | ImageViewer | `<img data-viewer="组名">` |
 | CodeBlock | `.ts-code[data-lang][data-lines] > pre` |
+| CodeEditor | `.ts-code-editor[data-lang][data-label][data-indent][data-readonly] > textarea`；`el._tsEditor.setDiagnostics([{ line, message }])`，`change` 事件。Tab / Shift+Tab 缩进，Esc 后 Tab 离开 |
+| HexView | `hexView(el, { data: Uint8Array, highlights: [{ from, to, tone, label }], columns })`；`select` 事件，`selectionHex` 取选中的十六进制 |
 | Banner | `.ts-banner[data-tone][data-dismissible]` |
 | Drawer | `aside.ts-drawer`，触发按钮加 `data-drawer="抽屉 id"`，关闭按钮加 `data-close` |
 | Progress | `.ts-progress[data-value]`、`.ts-progress[data-indeterminate]`、`.ts-ring[data-value]` |

@@ -72,6 +72,15 @@ v0.5 起 `TesseraMenu` 与 `TesseraSelect` 改为自绘弹层（系统 popover �
 
 组件总览 `TesseraDataGallery` 展示全部 v0.6 组件。
 
+## 组件（v0.6.1：开发者）
+
+| 组件 | 用法 |
+|---|---|
+| CodeEditor | `TesseraCodeEditor(text: $code, language: "swift", diagnostics: [TesseraDiagnostic(line: 8, message: "…")])`：iOS 用 UITextView、macOS 用 NSTextView，着色直接改文本存储（保留撤销）；Tab / Shift+Tab 缩进，Esc 后 Tab 结束编辑；回车自动缩进（`TesseraCodeEdit` 可单独使用）；输入法组合（marked text）中不处理 |
+| HexView | `TesseraHexView(bytes, highlights: [TesseraHexRange(0, 8, label: "PNG 签名")])`：点按选中、长按扩展，方向键（`onKeyPress`）/ Shift；复制按钮；读屏按行朗读 |
+
+截图测试里代码编辑器换成排版相同的静态视图（ImageRenderer 画不出系统文本视图）。
+
 在 Xcode 中打开 `Components/Gallery.swift` 的预览，可以查看全部组件。
 
 ## 与其他平台的差异
