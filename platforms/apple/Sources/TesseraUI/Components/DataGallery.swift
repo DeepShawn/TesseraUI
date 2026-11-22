@@ -66,6 +66,22 @@ func tesseraMosaic(_ base: Color, _ accent: Color) -> Image {
     }
 }
 
+let sampleCode = "// 每块砖之间留 3px 砖缝\nfunc layout(_ tiles: [Tile], gap: Int = 3) -> Int {\n  var x = 0\n  for t in tiles {\n    t.x = x\n    x += t.width + gap\n  }\n  return x - gap\n}"
+
+/// 示例字节：PNG 文件头 + 一段文字 + 填充（与 Web、Android 相同，共 489 字节）
+let sampleBytes: [UInt8] = {
+    let head: [UInt8] = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 0x40, 0, 0, 0, 0x40, 8, 6, 0, 0, 0]
+    let text = Array(" TesseraUI: tile by tile, a whole wall. ".utf8)
+    let body = (0..<420).map { UInt8(($0 * 37 + 11) % 256) }
+    return head + text + body
+}()
+
+let sampleHexRanges = [
+    TesseraHexRange(0, 8, label: "PNG 签名", tone: .accent),
+    TesseraHexRange(8, 29, label: "IHDR 文件头", tone: .lapis),
+    TesseraHexRange(29, 69, label: "文字", tone: .ochre),
+]
+
 /// v0.6 数据展示组件总览：Xcode 预览、截图测试、iOS UI 测试与示例 App 共用
 public struct TesseraDataGallery: View {
     private let scrolls: Bool
@@ -75,6 +91,7 @@ public struct TesseraDataGallery: View {
     @State private var treeSelection: String? = "table"
     @State private var popover = false
     @State private var viewer = false
+    @State private var code = sampleCode
 
     /// - Parameter scrolls: 截图测试传 false（ImageRenderer 画不出系统滚动视图）
     public init(scrolls: Bool = true) { self.scrolls = scrolls }
@@ -102,6 +119,7 @@ public struct TesseraDataGallery: View {
             overlays
             media
             status
+            devTools
         }
         .padding(TesseraSpace.s5)
     }
@@ -220,6 +238,14 @@ public struct TesseraDataGallery: View {
         TesseraEmptyState("还没有收藏", text: "看到喜欢的商品，点一下心形就能收藏在这里。") {
             Button("去逛逛") {}.buttonStyle(.tessera(.secondary))
         }
+    }
+}
+
+extension TesseraDataGallery {
+    @ViewBuilder var devTools: some View {
+        section("代码编辑器 · 十六进制")
+        TesseraCodeEditor(text: $code, language: "swift", label: "布局脚本", diagnostics: [TesseraDiagnostic(line: 8, message: "tiles 为空时返回 -3")])
+        TesseraHexView(sampleBytes, highlights: sampleHexRanges, columns: 8, height: 234, label: "tile.png 的字节", selection: 3...5)
     }
 }
 
