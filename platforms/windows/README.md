@@ -92,6 +92,26 @@ Windows App SDK 1.6，.NET 8，最低 Windows 10 1809。
 
 WheelPicker 在 Windows 上没有单独的控件：日期、时间的滚轮使用系统 `DatePicker` / `TimePicker` 的弹出层。
 
+## 组件（v0.6：数据展示）
+
+在 `App.xaml` 里再合并一个字典（放在 `TesseraForms.xaml` 之后、外观字典之前）：`<ResourceDictionary Source="ms-appx:///TesseraUI/Themes/TesseraData.xaml" />`。
+
+| 组件 | 用法 |
+|---|---|
+| Table | `<tessera:TesseraTable />`，代码里添加 `Columns`（`TesseraTableColumn`：`Header`、`Width`、`Sortable`、`Numeric`、`Text`、`Cell`）并设置 `Rows`、`Key`；`Selectable`、`PageSize`、`Filter`、`Loading`、`Layout`（`Automatic` 时宽度小于 560 每行一张卡片）。排序：数字按数值、中文按拼音（`TesseraTable.Sort` 可单独使用） |
+| Tree | 系统 `TreeView` + `ItemContainerStyle="{StaticResource TesseraTreeViewItemStyle}"`（每行至少 44 高） |
+| Accordion | `<tessera:TesseraAccordion Single="True" />`，`Add(标题, 内容, expanded)`；每项是系统 `Expander` |
+| Tooltip | `ToolTipService.ToolTip` + `TesseraToolTipStyle`（反色小砖）；静态展示用 `TesseraTooltipBubble` |
+| Popover | `Flyout` + `FlyoutPresenterStyle="{StaticResource TesseraFlyoutPresenterStyle}"`；静态面板 `TesseraPopoverPanel` |
+| DescriptionList / Timeline / Stats | `TesseraDescriptionList.Add(标签, 值)`、`TesseraTimeline.Add(标题, 时间, 正文, tone)`、`TesseraStats.Add(标签, 值, 单位, 涨跌, trend)` |
+| Kbd / CodeBlock | `<tessera:TesseraKbd Keys="Ctrl+K" />`、`<tessera:TesseraCodeBlock Language="csharp" LineNumbers="True" />`（复制到剪贴板，图标变勾） |
+| Carousel | `<tessera:TesseraCarousel />`，`Add(内容)`；系统 `FlipView` 加上前后按钮和圆点，`AutoplaySeconds` 自动播放（悬停、聚焦时暂停） |
+| ImageViewer | `TesseraImageViewer.Show(XamlRoot, 图片, 说明)` 全屏打开：滚轮 / 双指 / 双击缩放，放大后拖动平移，未放大时下滑关闭、左右滑切换；Esc 关闭，← → 切换，+ − 缩放 |
+| Progress / Spinner | `TesseraProgress`（`Value = null` 为不确定进度）、`TesseraProgressRing`、`TesseraSpinner`（四块小砖轮流亮） |
+| Banner / Result / EmptyState | `TesseraBanner`（`Tone`、`Dismissible`、`Actions`）、`TesseraResult`（`Status`：success / error / info / notfound，图标弹簧落下）、`TesseraEmptyState` |
+
+轮播在 Windows 上不支持露出两侧（`FlipView` 每次只显示一页）。
+
 ## 交互与动效
 
 - **分段控件**：点选或从任意一格按下后左右拖动，滑块跟手，松手吸附到最近的一格（snappy 弹簧）；左右方向键、Home、End 切换。读屏报告为“分段控件”，值为当前选中项。
@@ -123,11 +143,11 @@ WheelPicker 在 Windows 上没有单独的控件：日期、时间的滚轮使�
 
 ## 示例 App 与截图
 
-`platforms/windows/TesseraSample` 是一个不打包的 WinUI 3 应用（Windows App SDK 随应用自带，解压即可运行）：可切换三种外观和浅色 / 深色，查看首批 22 个组件。流韵在设备不满足要求时显示为圆融。
+`platforms/windows/TesseraSample` 是一个不打包的 WinUI 3 应用（Windows App SDK 随应用自带，解压即可运行）：可切换三种外观和浅色 / 深色，查看首批组件、表单与输入、数据展示三页。流韵在设备不满足要求时显示为圆融。
 
 ```powershell
 msbuild TesseraSample.csproj -restore -p:Configuration=Release -p:Platform=x64 -p:RuntimeIdentifier=win-x64
 TesseraSample.exe --snapshot snapshots   # 截图与无障碍检查，完成后自动退出
 ```
 
-`--snapshot` 依次切换首批组件与表单两页 × 三种外观 × 浅色 / 深色，每种截一张（共 12 张），并检查每个可聚焦元素都有读屏名称、尺寸不小于 40×40（Windows 触控目标的最小建议值），结果写到 `a11y.txt`，有问题时退出码为 1。持续集成每次都会运行，截图上传为 `windows-snapshots`，示例 App 上传为 `tessera-sample-windows`。高对比度主题只能由系统设置打开，应用无法强制切换，所以不截图，需在真机上检查。
+`--snapshot` 依次切换首批组件、表单、数据展示三页 × 三种外观 × 浅色 / 深色，每种截一张（共 18 张），并检查每个可聚焦元素都有读屏名称、尺寸不小于 40×40（Windows 触控目标的最小建议值），结果写到 `a11y.txt`，有问题时退出码为 1。持续集成每次都会运行，截图上传为 `windows-snapshots`，示例 App 上传为 `tessera-sample-windows`。高对比度主题只能由系统设置打开，应用无法强制切换，所以不截图，需在真机上检查。
