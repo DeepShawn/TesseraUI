@@ -48,7 +48,7 @@
             </Button.Flyout>
         </Button>
         <tessera:TesseraPopoverPanel x:Name="Popover" Title="配送说明" />
-        <tessera:TesseraCodeBlock x:Name="Code" Language="csharp" LineNumbers="True" />
+        <tessera:TesseraCodeBlock x:Name="Code" CodeLanguage="csharp" LineNumbers="True" />
 
         <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="轮播 · 图片预览" />
         <tessera:TesseraCarousel x:Name="Banners" PageHeight="180" />

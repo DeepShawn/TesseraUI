@@ -649,7 +649,7 @@ namespace TesseraUI
     public sealed partial class TesseraCodeBlock : ContentControl
     {
         public string Code { get; set; } = "";
-        public string? Language { get; set; }
+        public string? CodeLanguage { get; set; }
         public bool LineNumbers { get; set; }
         private DispatcherTimer? _reset;
 
@@ -671,7 +671,7 @@ namespace TesseraUI
             root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             var head = new Grid { Padding = new Thickness(round ? 18 : 16, 0, 0, 0), BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush"), BorderThickness = new Thickness(0, 0, 0, round ? 0 : 1) };
             var mono = Application.Current?.Resources.TryGetValue("TesseraMonoFontFamily", out var f) == true && f is FontFamily ff ? ff : new FontFamily("Consolas");
-            head.Children.Add(new TextBlock { Text = Language ?? "", FontFamily = mono, FontSize = 12, FontWeight = Microsoft.UI.Text.FontWeights.Medium, Foreground = DataUtil.Res("TesseraTextSecondaryBrush"), VerticalAlignment = VerticalAlignment.Center });
+            head.Children.Add(new TextBlock { Text = CodeLanguage ?? "", FontFamily = mono, FontSize = 12, FontWeight = Microsoft.UI.Text.FontWeights.Medium, Foreground = DataUtil.Res("TesseraTextSecondaryBrush"), VerticalAlignment = VerticalAlignment.Center });
             var copy = DataUtil.IconButton("copy", "复制代码");
             copy.HorizontalAlignment = HorizontalAlignment.Right;
             copy.Click += (_, _) =>
@@ -700,7 +700,7 @@ namespace TesseraUI
             }
             body.Children.Add(new TextBlock { Text = Trimmed, FontFamily = mono, FontSize = 13, LineHeight = 21, LineStackingStrategy = LineStackingStrategy.BlockLineHeight, Foreground = DataUtil.Res("TesseraTextPrimaryBrush"), IsTextSelectionEnabled = true });
             var scroller = new ScrollViewer { HorizontalScrollMode = ScrollMode.Enabled, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto, VerticalScrollMode = ScrollMode.Disabled, VerticalScrollBarVisibility = ScrollBarVisibility.Disabled, Content = body };
-            AutomationProperties.SetName(scroller, $"{Language} 代码".Trim());
+            AutomationProperties.SetName(scroller, $"{CodeLanguage} 代码".Trim());
             Grid.SetRow(scroller, 1);
             root.Children.Add(scroller);
             Content = root;

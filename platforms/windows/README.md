@@ -98,13 +98,13 @@ WheelPicker 在 Windows 上没有单独的控件：日期、时间的滚轮使�
 
 | 组件 | 用法 |
 |---|---|
-| Table | `<tessera:TesseraTable />`，代码里添加 `Columns`（`TesseraTableColumn`：`Header`、`Width`、`Sortable`、`Numeric`、`Text`、`Cell`）并设置 `Rows`、`Key`；`Selectable`、`PageSize`、`Filter`、`Loading`、`Layout`（`Automatic` 时宽度小于 560 每行一张卡片）。排序：数字按数值、中文按拼音（`TesseraTable.Sort` 可单独使用） |
+| Table | `<tessera:TesseraTable />`，代码里添加 `Columns`（`TesseraTableColumn`：`Header`、`Width`、`Sortable`、`Numeric`、`Text`、`Cell`）并设置 `Rows`、`Key`；`Selectable`、`PageSize`、`Filter`、`IsLoading`、`Layout`（`Automatic` 时宽度小于 560 每行一张卡片）。排序：数字按数值、中文按拼音（`TesseraTable.Sort` 可单独使用） |
 | Tree | 系统 `TreeView` + `ItemContainerStyle="{StaticResource TesseraTreeViewItemStyle}"`（每行至少 44 高） |
 | Accordion | `<tessera:TesseraAccordion Single="True" />`，`Add(标题, 内容, expanded)`；每项是系统 `Expander` |
 | Tooltip | `ToolTipService.ToolTip` + `TesseraToolTipStyle`（反色小砖）；静态展示用 `TesseraTooltipBubble` |
 | Popover | `Flyout` + `FlyoutPresenterStyle="{StaticResource TesseraFlyoutPresenterStyle}"`；静态面板 `TesseraPopoverPanel` |
 | DescriptionList / Timeline / Stats | `TesseraDescriptionList.Add(标签, 值)`、`TesseraTimeline.Add(标题, 时间, 正文, tone)`、`TesseraStats.Add(标签, 值, 单位, 涨跌, trend)` |
-| Kbd / CodeBlock | `<tessera:TesseraKbd Keys="Ctrl+K" />`、`<tessera:TesseraCodeBlock Language="csharp" LineNumbers="True" />`（复制到剪贴板，图标变勾） |
+| Kbd / CodeBlock | `<tessera:TesseraKbd Keys="Ctrl+K" />`、`<tessera:TesseraCodeBlock CodeLanguage="csharp" LineNumbers="True" />`（复制到剪贴板，图标变勾） |
 | Carousel | `<tessera:TesseraCarousel />`，`Add(内容)`；系统 `FlipView` 加上前后按钮和圆点，`AutoplaySeconds` 自动播放（悬停、聚焦时暂停） |
 | ImageViewer | `TesseraImageViewer.Show(XamlRoot, 图片, 说明)` 全屏打开：滚轮 / 双指 / 双击缩放，放大后拖动平移，未放大时下滑关闭、左右滑切换；Esc 关闭，← → 切换，+ − 缩放 |
 | Progress / Spinner | `TesseraProgress`（`Value = null` 为不确定进度）、`TesseraProgressRing`、`TesseraSpinner`（四块小砖轮流亮） |

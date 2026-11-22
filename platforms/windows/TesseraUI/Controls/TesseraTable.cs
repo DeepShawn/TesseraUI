@@ -106,7 +106,7 @@ namespace TesseraUI
         public bool StickyFirst { get; set; } = true;
         public int PageSize { get; set; }
         private bool _loading;
-        public bool Loading { get => _loading; set { _loading = value; Rebuild(); } }
+        public bool IsLoading { get => _loading; set { _loading = value; Rebuild(); } }
         private string _filter = "";
         public string Filter { get => _filter; set { _filter = value ?? ""; _page = 1; Rebuild(); } }
         public TesseraTableLayout Layout { get; set; } = TesseraTableLayout.Automatic;
@@ -184,9 +184,9 @@ namespace TesseraUI
             _cards = Layout == TesseraTableLayout.Cards || (Layout == TesseraTableLayout.Automatic && ActualWidth > 0 && ActualWidth < CardBreakpoint);
 
             var root = new StackPanel { Spacing = 12 };
-            if (!Loading && shown.Count == 0) root.Children.Add(Empty());
+            if (!IsLoading && shown.Count == 0) root.Children.Add(Empty());
             else root.Children.Add(_cards ? BuildCards(shown) : BuildGrid(shown, all));
-            if (PageSize > 0 && !Loading) root.Children.Add(Footer(all.Count, pages, shown.Count));
+            if (PageSize > 0 && !IsLoading) root.Children.Add(Footer(all.Count, pages, shown.Count));
             Content = root;
         }
 
@@ -208,7 +208,7 @@ namespace TesseraUI
         private FrameworkElement BuildGrid(List<object> rows, IList<object> all)
         {
             var fixedCols = StickyFirst ? 1 : 0;
-            var count = Loading ? (PageSize > 0 ? PageSize : 5) : rows.Count;
+            var count = IsLoading ? (PageSize > 0 ? PageSize : 5) : rows.Count;
             var hasFixed = Selectable || fixedCols > 0;
             var gap = DataUtil.Grout;
 
@@ -226,7 +226,7 @@ namespace TesseraUI
 
             for (var r = 0; r < count; r++)
             {
-                var row = Loading ? null : rows[r];
+                var row = IsLoading ? null : rows[r];
                 var key = row == null ? null : Key(row);
                 var sel = key != null && Selected.Contains(key);
                 if (hasFixed)
@@ -322,7 +322,7 @@ namespace TesseraUI
             FrameworkElement content;
             if (row == null)
             {
-                content = new Grid { Height = 12, Width = col.Width * (0.3 + ((i * 23) % 40) / 100.0) - 32, CornerRadius = new CornerRadius(TesseraResources.IsRound ? 6 : 6), Background = DataUtil.Res("TesseraFillDefaultBrush"), HorizontalAlignment = HorizontalAlignment.Left };
+                content = new Grid { Height = 12, Width = Math.Max(16, (col.Width - 32) * (0.4 + ((i * 23) % 40) / 100.0)), CornerRadius = new CornerRadius(TesseraResources.IsRound ? 6 : 6), Background = DataUtil.Res("TesseraFillDefaultBrush"), HorizontalAlignment = HorizontalAlignment.Left };
             }
             else if (col.Cell != null) content = col.Cell(row);
             else
@@ -378,12 +378,12 @@ namespace TesseraUI
         {
             var round = TesseraResources.IsRound;
             var panel = new StackPanel { Spacing = round ? 8 : 3 };
-            var count = Loading ? (PageSize > 0 ? PageSize : 3) : rows.Count;
+            var count = IsLoading ? (PageSize > 0 ? PageSize : 3) : rows.Count;
             for (var r = 0; r < count; r++)
             {
                 var radius = round ? DataUtil.Row(0, 1, true, true) : DataUtil.Row(r, count, true, true);
                 var card = new StackPanel { Padding = new Thickness(16, 6, 16, 6), CornerRadius = radius };
-                if (Loading)
+                if (IsLoading)
                 {
                     card.Background = DataUtil.Res("TesseraBgSurfaceBrush");
                     card.Spacing = 10; card.Padding = new Thickness(16);

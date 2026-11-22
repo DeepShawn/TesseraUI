@@ -31,11 +31,11 @@ namespace TesseraSample
             new TesseraTableColumn { Header = "客户", Width = 96, Sortable = true, Text = o => ((SampleOrder)o).Customer },
             new TesseraTableColumn { Header = "金额", Width = 100, Sortable = true, Numeric = true, Text = o => ((SampleOrder)o).Amount },
             new TesseraTableColumn { Header = "城市", Width = 84, Sortable = true, Text = o => ((SampleOrder)o).City },
-            new TesseraTableColumn { Header = "状态", Width = 100, Text = o => ((SampleOrder)o).Status, Cell = o => Tag(((SampleOrder)o).Status) },
+            new TesseraTableColumn { Header = "状态", Width = 100, Text = o => ((SampleOrder)o).Status, Cell = o => StatusTag(((SampleOrder)o).Status) },
             new TesseraTableColumn { Header = "订单号", Width = 100, Text = o => ((SampleOrder)o).Id },
         };
 
-        private static FrameworkElement Tag(string s)
+        private static FrameworkElement StatusTag(string s)
         {
             var key = Tone(s) switch { "success" => "TesseraSuccessTagStyle", "warning" => "TesseraWarningTagStyle", "neutral" => "TesseraTagStyle", _ => "TesseraAccentTagStyle" };
             var b = new Border { Style = (Style)Application.Current.Resources[key], HorizontalAlignment = HorizontalAlignment.Left };
@@ -62,7 +62,7 @@ namespace TesseraSample
             Cards.Selectable = true; Cards.Layout = TesseraTableLayout.Cards;
             Cards.Selected.Add("A-1024");
             Setup(Skeleton, Columns().Take(3), rows);
-            Skeleton.PageSize = 2; Skeleton.Layout = TesseraTableLayout.Grid; Skeleton.Loading = true;
+            Skeleton.PageSize = 2; Skeleton.Layout = TesseraTableLayout.Grid; Skeleton.IsLoading = true;
             Setup(Empty, Columns(), rows);
             Empty.Layout = TesseraTableLayout.Grid; Empty.Filter = "深圳";
 
