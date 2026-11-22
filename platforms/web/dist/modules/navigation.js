@@ -1,4 +1,4 @@
-// TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 导航：Sidebar、Pagination、ContextMenu、CommandPalette、Anchor
 import { Spring, clamp, prefersReducedMotion, springEasing, icon, once, place, onOutside, animateIn, animateOut, emit, esc, menu as bindMenu, openDialog, closeDialog, onCommittedInput } from '../core.js';
 import { haptic } from './flow.js';

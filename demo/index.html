@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>TesseraUI v0.5 预览</title>
+<title>TesseraUI v0.6 预览</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..600,0..100,0..1&family=Instrument+Sans:wght@400;600&family=Noto+Serif+SC:wght@600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -526,8 +526,8 @@
 </div>
 
 <dialog class="ts-dialog" id="dialog" aria-labelledby="dlg-title">
-  <h2 class="ts-dialog-title" id="dlg-title">发布 v0.5？</h2>
-  <p class="ts-dialog-body">发布后会生成 0.5.0 标签和更新日志，四端产物同步打包。这一步可以随时回滚。</p>
+  <h2 class="ts-dialog-title" id="dlg-title">发布 v0.6？</h2>
+  <p class="ts-dialog-body">发布后会生成 0.6.0 标签和更新日志，四端产物同步打包。这一步可以随时回滚。</p>
   <div class="ts-dialog-actions ts-tiles">
     <button class="ts-button ts-pressable ts-state" data-close>再想想</button>
     <button class="ts-button ts-primary ts-pressable ts-state" data-close="ok">发布</button>
@@ -671,7 +671,7 @@ T.onCommittedInput(document.getElementById('f-name'), (v) => (document.getElemen
 T.menu(document.getElementById('menu-trigger'), document.getElementById('menu'));
 const dlg = document.getElementById('dialog');
 document.getElementById('open-dialog').onclick = () => T.openDialog(dlg);
-dlg.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => { T.closeDialog(dlg, b.dataset.close); if (b.dataset.close === 'ok') setTimeout(() => T.toast('已发布 v0.5.0', { type: 'success' }), 160); }));
+dlg.querySelectorAll('[data-close]').forEach((b) => (b.onclick = () => { T.closeDialog(dlg, b.dataset.close); if (b.dataset.close === 'ok') setTimeout(() => T.toast('已发布 v0.6.0', { type: 'success' }), 160); }));
 document.getElementById('open-toast').onclick = () => T.toast('已保存到相册', { type: 'success' });
 document.getElementById('open-toast-action').onclick = () => T.toast('已删除 3 个文件', { iconName: 'trash', action: { label: '撤销', onClick: () => T.toast('已恢复') } });
 const sheet = T.bottomSheet(document.getElementById('sheet'));

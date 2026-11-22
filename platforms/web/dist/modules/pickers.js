@@ -1,4 +1,4 @@
-// TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 选择器：Calendar、DatePicker、DateRangePicker、TimePicker、WheelPicker、ColorPicker。
 // 桌面端在弹出面板里选；手机上（触屏且窄屏）改为底部抽屉，日期和时间用滚轮选。
 import { icon, once, clamp, place, follow, onOutside, animateIn, animateOut, emit, isCompact, bottomSheet, cssVar, Spring, VelocityTracker, rubberBand, uid, springEasing, prefersReducedMotion } from '../core.js';

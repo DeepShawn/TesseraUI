@@ -430,15 +430,21 @@ public struct TesseraTooltipBubble: View {
     public init(_ text: String) { self.text = text }
 
     public var body: some View {
-        Text(text)
+        // 短提示贴合文字宽度；放不下一行时最宽 260 再换行
+        ViewThatFits(in: .horizontal) {
+            bubble(Text(text).fixedSize())
+            bubble(Text(text).frame(width: 260 - (tesseraShape.isRound ? 24 : 20), alignment: .leading).fixedSize(horizontal: false, vertical: true))
+        }
+    }
+
+    private func bubble(_ label: some View) -> some View {
+        label
             .font(.system(size: 12.5, weight: .medium))
             .foregroundStyle(TesseraColor.textInverse)
             .padding(.horizontal, tesseraShape.isRound ? 12 : 10)
             .padding(.vertical, 6)
-            .frame(maxWidth: 260)
             .background(TesseraColor.bgInverse, in: RoundedRectangle(cornerRadius: tesseraShape.isRound ? 14 : TesseraRadius.sm, style: .continuous))
             .tesseraShadow(.level2)
-            .fixedSize(horizontal: false, vertical: true)
     }
 }
 

@@ -841,10 +841,10 @@ private struct TimelineRow: View {
             }
             .frame(width: 28)
             .frame(maxHeight: .infinity, alignment: .top)
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 2) {
                 if let time = item.time { TesseraLabel(time, style: .caption, color: TesseraColor.textTertiary) }
                 TesseraLabel(item.title, style: .label)
-                if let body = item.body { TesseraLabel(body, style: .bodySm, color: TesseraColor.textSecondary).padding(.top, 2) }
+                if let body = item.body { TesseraLabel(body, style: .bodySm, color: TesseraColor.textSecondary) }
             }
             .padding(.top, 1)
             .padding(.bottom, last ? 0 : TesseraSpace.s5)

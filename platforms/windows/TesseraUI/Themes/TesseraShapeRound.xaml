@@ -1,4 +1,4 @@
-<!-- TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
+<!-- TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
 <!-- 圆融外观：胶囊与大圆角，成组控件合成一整块，没有砖缝和分割线。
      用法：在 App.xaml 中紧跟 TesseraTokens.xaml、TesseraTheme.xaml 之后合并本文件；不合并即为默认的“拼贴”外观。
      WinUI 会把超过半高的圆角自动收成半圆，所以 9999 就是胶囊。 -->

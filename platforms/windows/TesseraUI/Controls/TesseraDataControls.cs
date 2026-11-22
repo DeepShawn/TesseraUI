@@ -309,6 +309,10 @@ namespace TesseraUI
             s.Children.Add(head);
             s.Children.Add(Bar);
             Content = s;
+            // 轨道与进度条的高度要在模板加载之前设置（加载后再改资源不会生效）
+            Bar.Resources["ProgressBarTrackHeight"] = 8.0;
+            Bar.Resources["ProgressBarMinHeight"] = 8.0;
+            Bar.Resources["ProgressBarTrackCornerRadius"] = new CornerRadius(4);
             Loaded += (_, _) => Paint();
             ActualThemeChanged += (_, _) => Paint();
         }
@@ -335,8 +339,6 @@ namespace TesseraUI
             Bar.CornerRadius = new CornerRadius(4);
             Bar.Foreground = Tone == "accent" ? DataUtil.Res("TesseraAccentControlBrush") : DataUtil.Tone(Tone);
             Bar.Background = DataUtil.Res("TesseraFillControlOffBrush");
-            Bar.Resources["ProgressBarTrackHeight"] = 8.0;
-            Bar.Resources["ProgressBarMinHeight"] = 8.0;
         }
     }
 

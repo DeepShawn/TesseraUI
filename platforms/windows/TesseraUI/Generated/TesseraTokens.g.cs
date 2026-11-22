@@ -1,4 +1,4 @@
-// TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 using System;
 using System.Numerics;
 

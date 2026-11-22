@@ -76,6 +76,7 @@ namespace TesseraSample
             Files.RootNodes.Add(Node("src", Node("components", Node("Button.cs"), Node("Table.cs")), Node("Theme.cs")));
             Files.RootNodes.Add(Node("docs", Node("spec.md")));
             Files.RootNodes.Add(Node("README.md"));
+            Files.Loaded += (_, _) => Files.SelectedNode = Files.RootNodes[0].Children[0].Children[1];
 
             Faq.Add("如何退换货？", new TextBlock { Text = "收货 7 天内可申请无理由退货，商品需保持完好。" }, expanded: true);
             Faq.Add("多久发货？", new TextBlock { Text = "付款后 48 小时内发货。" });

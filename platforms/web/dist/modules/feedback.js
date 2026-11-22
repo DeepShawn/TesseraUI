@@ -1,4 +1,4 @@
-// TesseraUI v0.5.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 // 反馈：Banner、ConfirmDialog、Drawer、ActionSheet、Progress
 import { Spring, VelocityTracker, motion as M, icon, once, html, esc, rubberBand, openDialog, closeDialog, prefersReducedMotion } from '../core.js';
 
