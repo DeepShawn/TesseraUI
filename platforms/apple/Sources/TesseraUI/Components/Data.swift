@@ -12,6 +12,20 @@ extension EnvironmentValues {
     }
 }
 
+/// 静态渲染时代替横向 ScrollView：子视图按自己的理想宽度排开（靠左），本身只占父视图给的宽度，超出部分裁掉
+struct LeadingClipLayout: Layout {
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let s = subviews.first?.sizeThatFits(.unspecified) ?? .zero
+        return CGSize(width: proposal.width ?? s.width, height: s.height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard let v = subviews.first else { return }
+        let s = v.sizeThatFits(.unspecified)
+        v.place(at: bounds.origin, anchor: .topLeading, proposal: ProposedViewSize(width: max(s.width, bounds.width), height: s.height))
+    }
+}
+
 // MARK: - 表格 Table
 
 public enum TesseraSortDirection: Sendable { case none, ascending, descending }
@@ -195,7 +209,8 @@ private struct TableGrid<Row, ID: Hashable>: View {
     var body: some View {
         if !loading && rows.isEmpty {
             VStack(spacing: gap) {
-                header(range: 0..<columns.count, withSelect: selection != nil)
+                // 没有数据时表头不滚动，超出宽度的列直接裁掉（不能把整页撑宽）
+                LeadingClipLayout { header(range: 0..<columns.count, withSelect: selection != nil) }.clipped()
                 TesseraLabel(emptyText, style: .bodySm, color: TesseraColor.textTertiary)
                     .frame(maxWidth: .infinity).padding(TesseraSpace.s10)
                     .background(TesseraColor.bgSurface, in: tableRowShape(0, 1, leading: true, trailing: true, shape: tesseraShape))
@@ -257,7 +272,7 @@ private struct TableGrid<Row, ID: Hashable>: View {
             }
         }
         if staticRender {
-            content.frame(maxWidth: .infinity, alignment: .leading).clipped()
+            LeadingClipLayout { content }.clipped()
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
                 content

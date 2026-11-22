@@ -383,7 +383,7 @@ public struct TesseraCodeBlock: View {
         .padding(.horizontal, tesseraShape.isRound ? 18 : 16)
         .padding(.vertical, 14)
         if staticRender {
-            text.frame(maxWidth: .infinity, alignment: .leading).clipped()
+            LeadingClipLayout { text }.clipped()
         } else {
             ScrollView(.horizontal, showsIndicators: false) { text }
                 .frame(maxWidth: .infinity, alignment: .leading)
