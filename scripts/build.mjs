@@ -672,6 +672,14 @@ ${Object.entries(F.radius).map(([k, v]) => `    <CornerRadius x:Key="TesseraRadi
     HyperlinkButtonBackgroundPointerOver: 'state.hover', HyperlinkButtonBackgroundPressed: 'state.pressed',
     TeachingTipBackgroundBrush: 'bg.elevated', InfoBarInformationalSeverityBackgroundBrush: 'accent.subtle',
     InfoBarSuccessSeverityBackgroundBrush: 'success.subtle', InfoBarWarningSeverityBackgroundBrush: 'warning.subtle', InfoBarErrorSeverityBackgroundBrush: 'danger.subtle',
+    // v0.6 数据展示：工具提示、树、折叠面板、轮播
+    ToolTipBackground: 'bg.inverse', ToolTipForeground: 'text.inverse', ToolTipBorderBrush: 'bg.inverse',
+    TreeViewItemBackgroundPointerOver: 'state.hover', TreeViewItemBackgroundPressed: 'state.pressed',
+    TreeViewItemBackgroundSelected: 'accent.subtle', TreeViewItemBackgroundSelectedPointerOver: 'accent.subtle', TreeViewItemBackgroundSelectedPressed: 'accent.subtle',
+    TreeViewItemForeground: 'text.primary', TreeViewItemForegroundSelected: 'accent.text', TreeViewItemForegroundSelectedPointerOver: 'accent.text',
+    ExpanderHeaderBackground: 'bg.surface', ExpanderContentBackground: 'bg.surface', ExpanderHeaderForeground: 'text.primary',
+    ExpanderHeaderBorderBrush: 'border.surface', ExpanderContentBorderBrush: 'border.surface',
+    FlipViewBackground: 'bg.surface', FlipViewNextPreviousButtonBackground: 'bg.elevated', FlipViewNextPreviousArrowForeground: 'text.primary',
   };
   const themeOverrides = (theme) => Object.entries(WINUI_BRUSHES)
     .map(([k, t]) => `            <SolidColorBrush x:Key="${k}" Color="${toARGB(colors[t][theme])}" />`).join('\n');

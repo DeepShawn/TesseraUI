@@ -139,6 +139,25 @@
             <SolidColorBrush x:Key="InfoBarSuccessSeverityBackgroundBrush" Color="#1A3D6B1C" />
             <SolidColorBrush x:Key="InfoBarWarningSeverityBackgroundBrush" Color="#1A8A5600" />
             <SolidColorBrush x:Key="InfoBarErrorSeverityBackgroundBrush" Color="#1AB42318" />
+            <SolidColorBrush x:Key="ToolTipBackground" Color="#FF1F1B16" />
+            <SolidColorBrush x:Key="ToolTipForeground" Color="#FFF0ECE4" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#FF1F1B16" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundPointerOver" Color="#0D1F1B16" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundPressed" Color="#171F1B16" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundSelected" Color="#1A0F6B63" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedPointerOver" Color="#1A0F6B63" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedPressed" Color="#1A0F6B63" />
+            <SolidColorBrush x:Key="TreeViewItemForeground" Color="#FF1F1B16" />
+            <SolidColorBrush x:Key="TreeViewItemForegroundSelected" Color="#FF0F6B63" />
+            <SolidColorBrush x:Key="TreeViewItemForegroundSelectedPointerOver" Color="#FF0F6B63" />
+            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#FFFBF9F5" />
+            <SolidColorBrush x:Key="ExpanderContentBackground" Color="#FFFBF9F5" />
+            <SolidColorBrush x:Key="ExpanderHeaderForeground" Color="#FF1F1B16" />
+            <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="#00000000" />
+            <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="#00000000" />
+            <SolidColorBrush x:Key="FlipViewBackground" Color="#FFFBF9F5" />
+            <SolidColorBrush x:Key="FlipViewNextPreviousButtonBackground" Color="#FFFFFFFF" />
+            <SolidColorBrush x:Key="FlipViewNextPreviousArrowForeground" Color="#FF1F1B16" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
             <SolidColorBrush x:Key="ApplicationPageBackgroundThemeBrush" Color="#FF151310" />
@@ -274,6 +293,25 @@
             <SolidColorBrush x:Key="InfoBarSuccessSeverityBackgroundBrush" Color="#383D6B1C" />
             <SolidColorBrush x:Key="InfoBarWarningSeverityBackgroundBrush" Color="#388A5600" />
             <SolidColorBrush x:Key="InfoBarErrorSeverityBackgroundBrush" Color="#38B42318" />
+            <SolidColorBrush x:Key="ToolTipBackground" Color="#FFF0ECE4" />
+            <SolidColorBrush x:Key="ToolTipForeground" Color="#FF1F1B16" />
+            <SolidColorBrush x:Key="ToolTipBorderBrush" Color="#FFF0ECE4" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundPointerOver" Color="#0FF0ECE4" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundPressed" Color="#1AF0ECE4" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundSelected" Color="#331F8A7E" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedPointerOver" Color="#331F8A7E" />
+            <SolidColorBrush x:Key="TreeViewItemBackgroundSelectedPressed" Color="#331F8A7E" />
+            <SolidColorBrush x:Key="TreeViewItemForeground" Color="#FFF0ECE4" />
+            <SolidColorBrush x:Key="TreeViewItemForegroundSelected" Color="#FF6CBDB1" />
+            <SolidColorBrush x:Key="TreeViewItemForegroundSelectedPointerOver" Color="#FF6CBDB1" />
+            <SolidColorBrush x:Key="ExpanderHeaderBackground" Color="#FF1E1C18" />
+            <SolidColorBrush x:Key="ExpanderContentBackground" Color="#FF1E1C18" />
+            <SolidColorBrush x:Key="ExpanderHeaderForeground" Color="#FFF0ECE4" />
+            <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="#0FF0ECE4" />
+            <SolidColorBrush x:Key="ExpanderContentBorderBrush" Color="#0FF0ECE4" />
+            <SolidColorBrush x:Key="FlipViewBackground" Color="#FF1E1C18" />
+            <SolidColorBrush x:Key="FlipViewNextPreviousButtonBackground" Color="#FF282521" />
+            <SolidColorBrush x:Key="FlipViewNextPreviousArrowForeground" Color="#FFF0ECE4" />
         </ResourceDictionary>
         <!-- 高对比度：不覆盖，使用用户选择的系统配色 -->
         <ResourceDictionary x:Key="HighContrast" />

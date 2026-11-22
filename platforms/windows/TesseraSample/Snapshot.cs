@@ -15,7 +15,7 @@ namespace TesseraSample
 {
     /// <summary>
     /// 持续集成用：TesseraSample.exe --snapshot &lt;目录&gt;
-    /// 首批组件与表单两页 × 三种外观 × 浅色 / 深色，每种截一张，并做无障碍检查：
+    /// 首批组件、表单、数据展示三页 × 三种外观 × 浅色 / 深色，每种截一张，并做无障碍检查：
     /// 每个可聚焦的元素都要有读屏名称，尺寸不小于 40×40（Windows 触控目标的最小建议值）。
     /// 结果写到 a11y.txt；有问题时退出码为 1，出错为 2。
     /// 高对比度主题由系统设置决定，应用无法强制切换，这里不截。
@@ -34,11 +34,11 @@ namespace TesseraSample
                 Directory.CreateDirectory(dir);
                 var report = new List<string>();
                 var checkedCount = 0;
-                foreach (var forms in new[] { false, true })
+                foreach (var pageIndex in new[] { 0, 1, 2 })
                 foreach (var shape in new[] { "tile", "round", "flow" })
                 {
-                    window.Forms = forms;
-                    var page = forms ? "forms-" : "";
+                    window.Page = pageIndex;
+                    var page = pageIndex switch { 1 => "forms-", 2 => "data-", _ => "" };
                     // 进度：如果进程在原生代码里崩溃（没有托管异常），可以从这里看到停在哪一步
                     File.AppendAllText(Path.Combine(dir, "progress.txt"), $"{page}{shape} 开始\n");
                     foreach (var (theme, name) in new[] { (1, "light"), (2, "dark") })
