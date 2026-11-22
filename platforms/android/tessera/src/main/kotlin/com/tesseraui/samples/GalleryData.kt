@@ -34,6 +34,10 @@ import com.tesseraui.components.TesseraButtonSize
 import com.tesseraui.components.TesseraButtonVariant
 import com.tesseraui.components.TesseraCarousel
 import com.tesseraui.components.TesseraCodeBlock
+import com.tesseraui.components.TesseraCodeEditor
+import com.tesseraui.components.TesseraDiagnostic
+import com.tesseraui.components.TesseraHexRange
+import com.tesseraui.components.TesseraHexView
 import com.tesseraui.components.TesseraColumn
 import com.tesseraui.components.TesseraDescriptionList
 import com.tesseraui.components.TesseraEmptyState
@@ -116,6 +120,23 @@ class MosaicPainter(private val base: Color, private val accent: Color) : Painte
         }
     }
 }
+
+/** 示例代码（代码编辑器） */
+const val sampleCode = "// 每块砖之间留 3px 砖缝\nfun layout(tiles: List<Tile>, gap: Int = 3): Int {\n  var x = 0\n  for (t in tiles) {\n    t.x = x\n    x += t.width + gap\n  }\n  return x - gap\n}"
+
+/** 示例字节（十六进制查看）：PNG 文件头 + 一段文字 + 填充 */
+val sampleBytes: ByteArray = run {
+    val head = intArrayOf(0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 0x40, 0, 0, 0, 0x40, 8, 6, 0, 0, 0)
+    val text = " TesseraUI: tile by tile, a whole wall. ".toByteArray()
+    val body = IntArray(420) { (it * 37 + 11) % 256 }
+    (head.map { it.toByte() } + text.toList() + body.map { it.toByte() }).toByteArray()
+}
+
+val sampleHexRanges = listOf(
+    TesseraHexRange(0, 8, "PNG 签名", TesseraTone.Accent),
+    TesseraHexRange(8, 29, "IHDR 文件头", TesseraTone.Lapis),
+    TesseraHexRange(29, 69, "文字", TesseraTone.Ochre),
+)
 
 /** v0.6 数据展示组件的总览：开发预览、截图测试、无障碍检查与示例 App 共用 */
 @Composable
@@ -237,6 +258,11 @@ internal fun GalleryData(section: GallerySection) {
         GallerySection.ResultsMore -> Column(Modifier.fillMaxWidth()) {
             TesseraResult(TesseraResultStatus.Error, "提交失败", text = "网络中断，填写的内容已保存，请稍后重试。", actions = { TesseraButton("重试", {}) })
             TesseraResult(TesseraResultStatus.NotFound, "页面不存在", text = "链接可能已失效。", actions = { TesseraButton("返回首页", {}, variant = TesseraButtonVariant.Secondary) })
+        }
+        GallerySection.DevTools -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            var code by remember { mutableStateOf(androidx.compose.ui.text.input.TextFieldValue(sampleCode, androidx.compose.ui.text.TextRange(sampleCode.indexOf("return")))) }
+            TesseraCodeEditor(code, { code = it }, language = "kotlin", label = "布局脚本", diagnostics = listOf(TesseraDiagnostic(8, "tiles 为空时返回 -3")))
+            TesseraHexView(sampleBytes, highlights = sampleHexRanges, height = 234.dp, label = "tile.png 的字节", initialSelection = 3..5)
         }
         else -> Unit
     }

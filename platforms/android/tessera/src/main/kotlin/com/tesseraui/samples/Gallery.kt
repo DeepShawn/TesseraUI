@@ -19,7 +19,8 @@ import com.tesseraui.icons.TesseraIcon
 import com.tesseraui.icons.TesseraIcons
 
 enum class GallerySection { Actions, Inputs, Selection, Navigation, Display, Feedback, MoreActions, MoreInputs, Range, Pickers, PickerFields, Color, Forms,
-    Table, TableCards, Tree, Details, Timeline, Overlays, Media, Progress, Results, ResultsMore }
+    Table, TableCards, Tree, Details, Timeline, Overlays, Media, Progress, Results, ResultsMore,
+    DevTools }
 
 /** 组件总览：开发时预览、截图测试共用 */
 @OptIn(ExperimentalLayoutApi::class)
@@ -76,7 +77,7 @@ fun TesseraGallery(section: GallerySection) {
             }
             GallerySection.MoreActions, GallerySection.MoreInputs, GallerySection.Range, GallerySection.Pickers, GallerySection.PickerFields, GallerySection.Color, GallerySection.Forms -> GalleryForms(section)
             GallerySection.Table, GallerySection.TableCards, GallerySection.Tree, GallerySection.Details, GallerySection.Timeline,
-            GallerySection.Overlays, GallerySection.Media, GallerySection.Progress, GallerySection.Results, GallerySection.ResultsMore -> GalleryData(section)
+            GallerySection.Overlays, GallerySection.Media, GallerySection.Progress, GallerySection.Results, GallerySection.ResultsMore, GallerySection.DevTools -> GalleryData(section)
             else -> GalleryMore(section)
         }
     }
@@ -106,4 +107,5 @@ private val GallerySection.title get() = when (this) {
     GallerySection.Progress -> "进度 · 加载 · 横幅"
     GallerySection.Results -> "结果 · 空状态"
     GallerySection.ResultsMore -> "结果页"
+    GallerySection.DevTools -> "代码编辑器 · 十六进制"
 }

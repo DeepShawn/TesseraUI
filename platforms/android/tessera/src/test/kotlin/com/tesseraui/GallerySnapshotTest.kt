@@ -65,4 +65,6 @@ class GallerySnapshotTest {
     @Test fun progress() = shoot(GallerySection.Progress)
     @Test fun results() = shoot(GallerySection.Results)
     @Test fun resultsMore() = shoot(GallerySection.ResultsMore)
+    // v0.6.1：开发者组件
+    @Test fun devTools() = shoot(GallerySection.DevTools)
 }
