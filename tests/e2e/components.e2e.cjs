@@ -461,6 +461,80 @@ async function check(name, fn) {
     assert.ok(!/^\d/.test(text));
   });
 
+  console.log('开发者组件');
+  const ta = p.locator('#editor textarea');
+  const val = () => ta.inputValue();
+  await check('代码编辑器：Tab 缩进、Shift+Tab 反缩进，多行选中整块缩进', async () => {
+    await ta.evaluate((t) => { t.scrollIntoView({ block: 'center' }); t.focus(); t.setSelectionRange(t.value.indexOf('let x'), t.value.indexOf('let x')); });
+    await p.keyboard.press('Tab');
+    assert.ok((await val()).includes('\n    let x = 0;'), '没有缩进');
+    await p.keyboard.press('Shift+Tab');
+    assert.ok((await val()).includes('\n  let x = 0;'), '没有反缩进');
+    // 选中第 5、6 行整块缩进，再整块反缩进
+    await ta.evaluate((t) => { const s = t.value.indexOf('    t.x'); const e = t.value.indexOf('\n  }'); t.setSelectionRange(s, e); });
+    await p.keyboard.press('Tab');
+    assert.ok((await val()).includes('\n      t.x = x;\n      x += t.width'), '多行没有一起缩进');
+    await p.keyboard.press('Shift+Tab');
+    assert.ok((await val()).includes('\n    t.x = x;\n    x += t.width'), '多行没有一起反缩进');
+  });
+  await check('代码编辑器：回车保持缩进，{ 之后多缩一级，括号中间回车把右括号放到下一行', async () => {
+    await ta.evaluate((t) => { const i = t.value.indexOf('let x = 0;') + 'let x = 0;'.length; t.setSelectionRange(i, i); });
+    await p.keyboard.press('Enter');
+    await p.keyboard.type('if (x) {}');
+    await p.keyboard.press('ArrowLeft');
+    await p.keyboard.press('Enter');
+    assert.ok((await val()).includes('\n  if (x) {\n    \n  }\n'), JSON.stringify((await val()).slice(60, 140)));
+    await p.keyboard.press('Control+z'); await p.keyboard.press('Control+z'); await p.keyboard.press('Control+z');
+  });
+  await check('代码编辑器：行号、当前行与诊断提示同步', async () => {
+    const n = (await val()).split('\n').length;
+    assert.equal(await p.locator('#editor .ts-ce-gutter span').count(), n);
+    assert.equal(await p.locator('#editor .ts-ce-gutter span[data-error]').count(), 1);
+    assert.equal(await ta.getAttribute('aria-invalid'), 'true');
+    await ta.evaluate((t) => { t.setSelectionRange(0, 0); t.focus(); });
+    await p.keyboard.press('ArrowDown'); await p.waitForTimeout(50);
+    assert.match(await p.textContent('#editor .ts-ce-pos'), /^第 2 行/);
+    assert.equal(await p.locator('#editor .ts-ce-gutter span[data-current]').textContent(), '2');
+  });
+  await check('代码编辑器：输入法组合中 Tab 不缩进；Esc 之后 Tab 离开编辑器', async () => {
+    const before = await val();
+    await ta.evaluate((t) => {
+      t.dispatchEvent(new CompositionEvent('compositionstart'));
+      t.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', isComposing: true, bubbles: true, cancelable: true }));
+      t.dispatchEvent(new CompositionEvent('compositionend'));
+    });
+    assert.equal(await val(), before);
+    await ta.focus();
+    await p.keyboard.press('Escape');
+    await p.keyboard.press('Tab');
+    assert.notEqual(await p.evaluate(() => document.activeElement?.classList.contains('ts-ce-input')), true, '焦点仍在编辑器里');
+  });
+  await check('十六进制查看：点击选中、方向键移动、Shift 扩展、复制为十六进制', async () => {
+    await p.locator('#hex').scrollIntoViewIfNeeded();
+    await p.click('#hex .ts-hex-bytes [data-i="1"]');
+    assert.match(await p.textContent('#hex .ts-hex-status'), /^偏移 0x1（1）：0x50 = 80 = 0b01010000，字符“P”，PNG 签名/);
+    await p.keyboard.press('ArrowRight');
+    await p.keyboard.press('Shift+ArrowRight');
+    assert.match(await p.textContent('#hex .ts-hex-status'), /已选 2 个字节（2–3）/);
+    // 十六进制与 ASCII 两栏同时选中
+    assert.equal(await p.locator('#hex .ts-hex-ascii [data-selected]').count(), 2);
+    await p.keyboard.press('Control+c');
+    assert.equal(await p.evaluate(() => navigator.clipboard.readText()), '4E 47');
+    await p.keyboard.press('ArrowDown');
+    const cols = Number(await p.locator('#hex').evaluate((e) => getComputedStyle(e).getPropertyValue('--_cols')));
+    assert.match(await p.textContent('#hex .ts-hex-status'), new RegExp(`偏移 0x${(3 + cols).toString(16).toUpperCase()}（${3 + cols}）`));
+  });
+  await check('十六进制查看：只渲染可见的行；Ctrl+End 跳到最后一个字节', async () => {
+    const total = Math.ceil(await p.locator('#hex').evaluate((e) => e.querySelectorAll('.ts-hex-row').length));
+    await p.keyboard.press('Control+End');
+    await p.waitForTimeout(100);
+    const status = await p.textContent('#hex .ts-hex-status');
+    // 演示数据：29 字节 PNG 文件头 + 40 字节文字 + 420 字节，共 489 字节
+    assert.match(status, /偏移 0x1E8（488）/, status);
+    assert.ok(await p.locator('#hex [data-focus]').count() >= 1, '最后一个字节没有渲染出来');
+    assert.ok(total < 489 / 16, `渲染了 ${total} 行`);
+  });
+
   console.log('反馈');
   await check('横幅关闭', async () => {
     const n = await p.locator('.ts-banner').count();

@@ -53,7 +53,7 @@
     <a class="ts-sidebar-item" href="#forms"><i data-icon="edit"></i><span class="ts-sidebar-label">操作与输入</span><span class="ts-badge" style="background:var(--ts-accent-solid)">16</span></a>
     <a class="ts-sidebar-item" href="#pickers"><i data-icon="calendar"></i><span class="ts-sidebar-label">选择器</span><span class="ts-badge" style="background:var(--ts-accent-solid)">6</span></a>
     <a class="ts-sidebar-item" href="#navigation"><i data-icon="compass"></i><span class="ts-sidebar-label">导航</span><span class="ts-badge" style="background:var(--ts-accent-solid)">7</span></a>
-    <a class="ts-sidebar-item" href="#data"><i data-icon="grid"></i><span class="ts-sidebar-label">数据展示</span><span class="ts-badge" style="background:var(--ts-accent-solid)">14</span></a>
+    <a class="ts-sidebar-item" href="#data"><i data-icon="grid"></i><span class="ts-sidebar-label">数据展示</span><span class="ts-badge" style="background:var(--ts-accent-solid)">16</span></a>
     <a class="ts-sidebar-item" href="#feedback"><i data-icon="bell"></i><span class="ts-sidebar-label">反馈</span><span class="ts-badge" style="background:var(--ts-accent-solid)">7</span></a>
     <a class="ts-sidebar-item" href="#layout"><i data-icon="layers"></i><span class="ts-sidebar-label">布局</span><span class="ts-badge" style="background:var(--ts-accent-solid)">8</span></a>
     <a class="ts-sidebar-item" href="#gestures"><i data-icon="sparkle"></i><span class="ts-sidebar-label">移动端手势</span><span class="ts-badge" style="background:var(--ts-accent-solid)">4</span></a>
@@ -337,6 +337,24 @@
 Tessera.init();
 const ok = await Tessera.confirm({ title: '删除文件？', danger: true });</code></pre></div>
         </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">代码编辑器</h3><code>CodeEditor</code></div>
+          <div class="ts-code-editor" id="editor" data-lang="js" data-label="脚本"><textarea>// 每块砖之间留 3px 砖缝
+function layout(tiles, gap = 3) {
+  let x = 0;
+  for (const t of tiles) {
+    t.x = x;
+    x += t.width + gap;
+  }
+  return x - gap;
+}</textarea></div>
+          <p class="ts-caption ts-secondary" style="margin:0">Tab 缩进、Shift+Tab 反缩进，回车自动缩进；输入法组合中不处理快捷键。</p>
+        </div>
+        <div class="demo">
+          <div class="demo-name"><h3 class="ts-title-3">十六进制查看</h3><code>HexView</code></div>
+          <div class="ts-hex" id="hex" data-label="tile.png 的字节"></div>
+          <p class="ts-caption ts-secondary" style="margin:0">点击或用方向键选中字节，Shift 扩展选区，Ctrl+C 复制。</p>
+        </div>
       </div>
     </section>
 
@@ -481,6 +499,19 @@ document.getElementById('tbl-body').innerHTML = projects.map((name, i) => {
 }).join('');
 
 T.init();
+// 代码编辑器：演示诊断提示；十六进制查看：一段 PNG 文件头 + 文字
+document.getElementById('editor')._tsEditor?.setDiagnostics([{ line: 8, message: '返回值可能为负数：tiles 为空时 x - gap 等于 -3' }]);
+{
+  const head = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 0x40, 0, 0, 0, 0x40, 8, 6, 0, 0, 0];
+  const text = new TextEncoder().encode(' TesseraUI: tile by tile, a whole wall. ');
+  const body = Array.from({ length: 420 }, (_, i) => (i * 37 + 11) % 256);
+  const bytes = new Uint8Array([...head, ...text, ...body]);
+  T.hexView(document.getElementById('hex'), { data: bytes, highlights: [
+    { from: 0, to: 8, tone: 'accent', label: 'PNG 签名' },
+    { from: 8, to: 29, tone: 'lapis', label: 'IHDR 文件头' },
+    { from: 29, to: 29 + text.length, tone: 'ochre', label: '文字' },
+  ] });
+}
 
 // 表格：密度、刷新、批量操作、行删除
 const tbl = document.getElementById('tbl'), tblApi = tbl._tsTable;

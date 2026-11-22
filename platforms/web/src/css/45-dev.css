@@ -1,0 +1,104 @@
+/* 开发者组件：CodeEditor（代码编辑器）、HexView（十六进制查看） */
+
+@layer tessera {
+
+/* ---------- 语法高亮：颜料色只用于区分类别；注释用二级文字色（凹槽底色上三级文字对比度不够） ---------- */
+.ts-tok-kw { color: var(--ts-pigment-lapis-text); font-weight: 600; }
+.ts-tok-str { color: var(--ts-pigment-olive-text); }
+.ts-tok-num { color: var(--ts-pigment-ochre-text); }
+.ts-tok-fn { color: var(--ts-pigment-amethyst-text); }
+.ts-tok-com { color: var(--ts-text-secondary); font-style: italic; }
+
+/* ---------- 代码编辑器 CodeEditor：凹槽底色的输入框，左侧行号栏 ---------- */
+.ts-code-editor {
+  --_py: 12px; --_px: 14px; --_lh: 21px;
+  display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; max-width: 100%;
+  border-radius: var(--ts-radius-md); background: var(--ts-fill-default);
+  box-shadow: var(--ts-recess), 0 0 0 var(--ts-border-width) var(--ts-border-field);
+  transition: box-shadow var(--ts-duration-fast) var(--ts-ease-standard);
+}
+.ts-code-editor:focus-within { box-shadow: 0 0 0 1px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow); }
+.ts-ce-head { display: flex; align-items: center; justify-content: space-between; gap: var(--ts-space-3); padding: 8px var(--_px) 8px 16px; font: 500 12px/1 var(--ts-font-mono); color: var(--ts-text-secondary); box-shadow: inset 0 -1px 0 var(--ts-border-subtle); font-variant-numeric: tabular-nums; }
+.ts-ce-body { display: grid; grid-template-columns: auto minmax(0, 1fr); max-height: var(--max-height, 360px); overflow: auto; overscroll-behavior: contain; }
+.ts-ce-gutter { position: sticky; left: 0; z-index: 2; display: flex; flex-direction: column; padding: var(--_py) 10px var(--_py) 12px; background: var(--ts-fill-default); font: 13px/var(--_lh) var(--ts-font-mono); color: var(--ts-text-secondary); text-align: end; user-select: none; box-shadow: 1px 0 0 var(--ts-border-subtle); }
+.ts-ce-gutter span { min-width: 2ch; height: var(--_lh); }
+.ts-ce-gutter span[data-current] { color: var(--ts-text-primary); font-weight: 600; }
+.ts-ce-gutter span[data-error] { color: var(--ts-danger-text); font-weight: 600; }
+.ts-ce-stage { position: relative; display: grid; min-width: max-content; }
+/* 高亮层与输入框叠在同一格：同样的字体、行高、内边距，逐字对齐 */
+.ts-ce-highlight, .ts-ce-input {
+  grid-area: 1 / 1; margin: 0; padding: var(--_py) var(--_px); border: 0;
+  font: 13px/var(--_lh) var(--ts-font-mono); tab-size: 2; letter-spacing: 0; white-space: pre; word-wrap: normal; overflow: hidden;
+}
+.ts-ce-highlight { position: relative; z-index: 1; color: var(--ts-text-primary); pointer-events: none; }
+.ts-ce-input {
+  position: relative; z-index: 1; width: 100%; min-height: calc(var(--_lh) * 3 + var(--_py) * 2); resize: none; outline: none;
+  background: transparent; color: transparent; caret-color: var(--ts-text-primary); -webkit-text-fill-color: transparent;
+}
+/* 焦点由外框的光晕表示，输入框本身不再画轮廓 */
+.ts-code-editor .ts-ce-input:focus-visible { outline: none; }
+.ts-ce-input::selection { background: var(--ts-selection); -webkit-text-fill-color: transparent; }
+.ts-ce-line, .ts-ce-error-line { position: absolute; left: 0; right: 0; height: var(--_lh); pointer-events: none; }
+.ts-ce-line { background: color-mix(in srgb, var(--ts-text-primary) 5%, transparent); opacity: 0; transition: top var(--ts-duration-instant) var(--ts-ease-standard); }
+.ts-code-editor:focus-within .ts-ce-line { opacity: 1; }
+.ts-ce-error-line { background: color-mix(in srgb, var(--ts-danger-solid) 12%, transparent); }
+.ts-ce-hint { margin: 0; padding: 6px 16px 8px; font: var(--ts-font-caption); color: var(--ts-text-secondary); box-shadow: inset 0 1px 0 var(--ts-border-subtle); }
+.ts-code-editor[data-readonly] .ts-ce-hint { display: none; }
+.ts-ce-diagnostics { margin: 0; padding: 0; list-style: none; }
+.ts-ce-diagnostics:empty { display: none; }
+.ts-ce-diagnostics li { display: flex; gap: 8px; padding: 6px 16px; font: var(--ts-font-body-sm); color: var(--ts-text-primary); background: var(--ts-danger-subtle); }
+.ts-ce-diagnostics li:last-child { border-radius: 0 0 var(--ts-radius-md) var(--ts-radius-md); }
+.ts-ce-diag-line { font-weight: 600; font-variant-numeric: tabular-nums; flex: none; }
+
+/* ---------- 十六进制查看 HexView ---------- */
+.ts-hex {
+  --_row: 26px; --_cols: 16; --_cell: 2.6ch;
+  display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; max-width: 100%;
+  border-radius: var(--ts-radius-md); background: var(--ts-fill-default); box-shadow: var(--ts-recess);
+  font: 13px/var(--_row) var(--ts-font-mono); font-variant-numeric: tabular-nums;
+}
+.ts-hex-head, .ts-hex-row { display: grid; grid-template-columns: 9ch calc(var(--_cols) * var(--_cell) + 1ch) calc(var(--_cols) * 1.15ch); column-gap: 16px; padding: 0 14px; white-space: nowrap; }
+.ts-hex[data-narrow] :is(.ts-hex-head, .ts-hex-row) { column-gap: 10px; padding: 0 10px; }
+.ts-hex-head, .ts-hex[data-narrow] .ts-hex-head { padding-top: 6px; padding-bottom: 6px; color: var(--ts-text-secondary); font-size: 12px; box-shadow: inset 0 -1px 0 var(--ts-border-subtle); overflow: hidden; }
+.ts-hex-head .ts-hex-bytes span { display: inline-block; width: var(--_cell); text-align: center; }
+.ts-hex-head .ts-hex-bytes span:nth-child(9) { margin-inline-start: 1ch; }
+.ts-hex-scroll { position: relative; height: var(--height, 312px); overflow: auto; outline: none; overscroll-behavior: contain; border-radius: 0 0 var(--ts-radius-md) var(--ts-radius-md); }
+.ts-hex .ts-hex-scroll:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--ts-focus-ring); }
+.ts-hex-space { position: relative; min-width: max-content; }
+.ts-hex-row { position: absolute; left: 0; right: 0; height: var(--_row); }
+.ts-hex-off { color: var(--ts-text-secondary); user-select: none; }
+.ts-hex-bytes span { display: inline-block; width: var(--_cell); text-align: center; border-radius: 4px; color: var(--ts-text-primary); cursor: pointer; }
+.ts-hex-bytes span[data-mid] { margin-inline-start: 1ch; }
+.ts-hex-ascii span { display: inline-block; width: 1.15ch; text-align: center; border-radius: 3px; color: var(--ts-text-secondary); cursor: pointer; }
+.ts-hex-pad { cursor: default !important; }
+/* 着色区段：颜料色浅底 */
+.ts-hex [data-tone="accent"] { background: var(--ts-accent-subtle); }
+.ts-hex [data-tone="lapis"] { background: var(--ts-pigment-lapis-subtle); }
+.ts-hex [data-tone="ochre"] { background: var(--ts-pigment-ochre-subtle); }
+.ts-hex [data-tone="olive"] { background: var(--ts-pigment-olive-subtle); }
+.ts-hex [data-tone="amethyst"] { background: var(--ts-pigment-amethyst-subtle); }
+.ts-hex [data-tone="cinnabar"] { background: var(--ts-pigment-cinnabar-subtle); }
+.ts-hex [data-hover] { box-shadow: inset 0 0 0 1.5px var(--ts-border-strong); }
+.ts-hex [data-selected] { background: var(--ts-text-primary); color: var(--ts-bg-surface); }
+.ts-hex [data-focus] { background: var(--ts-accent-solid); color: var(--ts-text-on-solid); }
+.ts-hex-status { padding: 6px 14px; font: var(--ts-font-caption); font-family: var(--ts-font-mono); color: var(--ts-text-secondary); box-shadow: inset 0 1px 0 var(--ts-border-subtle); min-height: 18px; }
+.ts-hex-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; padding: 0 14px 10px; font: var(--ts-font-caption); color: var(--ts-text-secondary); }
+.ts-hex-legend:empty { display: none; }
+.ts-hex-legend i { display: inline-block; width: 10px; height: 10px; margin-inline-end: 6px; border-radius: 3px; vertical-align: -1px; }
+.ts-hex-legend i[data-tone="accent"] { background: var(--ts-accent-control); }
+.ts-hex-legend i[data-tone="lapis"] { background: var(--ts-pigment-lapis); }
+.ts-hex-legend i[data-tone="ochre"] { background: var(--ts-pigment-ochre); }
+.ts-hex-legend i[data-tone="olive"] { background: var(--ts-pigment-olive); }
+.ts-hex-legend i[data-tone="amethyst"] { background: var(--ts-pigment-amethyst); }
+.ts-hex-legend i[data-tone="cinnabar"] { background: var(--ts-pigment-cinnabar); }
+.ts-hex-legend code { color: var(--ts-text-secondary); }
+
+/* 圆融 / 流韵：大圆角、没有内阴影 */
+:root:is([data-shape="round"], [data-shape="flow"]) :is(.ts-code-editor, .ts-hex) { border-radius: var(--ts-round-row); box-shadow: none; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-code-editor:focus-within { box-shadow: 0 0 0 1.5px var(--ts-focus-ring), 0 0 0 var(--ts-focus-glow-width) var(--ts-focus-glow); }
+:root:is([data-shape="round"], [data-shape="flow"]) :is(.ts-ce-head, .ts-ce-hint, .ts-hex-head, .ts-hex-status) { box-shadow: none; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-ce-head { padding-inline-start: 18px; }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-hex-scroll { border-radius: 0 0 var(--ts-round-row) var(--ts-round-row); }
+:root:is([data-shape="round"], [data-shape="flow"]) .ts-hex-bytes span { border-radius: 6px; }
+
+}

@@ -10,6 +10,7 @@ import * as feedback from './modules/feedback.js';
 import * as layout from './modules/layout.js';
 import * as gestures from './modules/gestures.js';
 import * as flow from './modules/flow.js';
+import * as dev from './modules/dev.js';
 
 export * from './core.js';
 export * from './modules/forms.js';
@@ -31,7 +32,8 @@ export function init(root = document) {
   feedback.initFeedback(root);
   layout.initLayout(root);
   gestures.initGestures(root);
+  dev.initDev(root);
   flow.initFlow();
 }
 
-export default { ...core, ...forms, ...pickers, ...navigation, ...data, ...feedback, ...layout, ...gestures, ...flow, init };
+export default { ...core, ...forms, ...pickers, ...navigation, ...data, ...feedback, ...layout, ...gestures, ...flow, ...dev, init };
