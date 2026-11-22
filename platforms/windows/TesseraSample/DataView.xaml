@@ -74,5 +74,9 @@
         <tessera:TesseraResult x:Name="Failed" Status="error" Title="提交失败" Text="网络中断，填写的内容已保存，请稍后重试。" />
         <tessera:TesseraResult Status="notfound" Title="页面不存在" Text="链接可能已失效。" />
         <tessera:TesseraEmptyState x:Name="NoFavorites" Title="还没有收藏" Text="看到喜欢的商品，点一下心形就能收藏在这里。" />
+
+        <TextBlock Style="{StaticResource TesseraTitle2TextStyle}" Text="代码编辑器 · 十六进制" />
+        <tessera:TesseraCodeEditor x:Name="Editor" CodeLanguage="csharp" />
+        <tessera:TesseraHexView x:Name="Hex" ViewHeight="234" />
     </StackPanel>
 </UserControl>

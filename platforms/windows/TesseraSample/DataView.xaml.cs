@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -137,6 +138,21 @@ namespace TesseraSample
             Paid.Actions = paidActions;
             Failed.Actions = new Button { Content = "重试", Style = (Style)Application.Current.Resources["TesseraPrimaryButtonStyle"] };
             NoFavorites.Action = new Button { Content = "去逛逛", Style = (Style)Application.Current.Resources["TesseraSecondaryButtonStyle"] };
+
+            // 代码编辑器 · 十六进制（示例数据与 Web、Android、Apple 相同）
+            AutomationProperties.SetName(Editor.Box, "布局脚本");
+            Editor.Text = "// 每块砖之间留 3px 砖缝\nint Layout(List<Tile> tiles, int gap = 3) {\n  var x = 0;\n  foreach (var t in tiles) {\n    t.X = x;\n    x += t.Width + gap;\n  }\n  return x - gap;\n}";
+            Editor.SetDiagnostics(new[] { new TesseraDiagnostic { Line = 8, Message = "tiles 为空时返回 -3" } });
+            var head = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0x0D, 0x49, 0x48, 0x44, 0x52, 0, 0, 0, 0x40, 0, 0, 0, 0x40, 8, 6, 0, 0, 0 };
+            var text = System.Text.Encoding.ASCII.GetBytes(" TesseraUI: tile by tile, a whole wall. ");
+            var body = Enumerable.Range(0, 420).Select(i => (byte)((i * 37 + 11) % 256));
+            Hex.Highlights.Add(new TesseraHexRange { From = 0, To = 8, Label = "PNG 签名", Tone = "accent" });
+            Hex.Highlights.Add(new TesseraHexRange { From = 8, To = 29, Label = "IHDR 文件头", Tone = "lapis" });
+            Hex.Highlights.Add(new TesseraHexRange { From = 29, To = 69, Label = "文字", Tone = "ochre" });
+            Hex.Label = "tile.png 的字节";
+            Hex.Columns = 8;
+            Hex.Data = head.Concat(text).Concat(body).ToArray();
+            Hex.Loaded += (_, _) => { Hex.Select(3); Hex.Select(5, extend: true); };
         }
 
         /// <summary>示例图片：一片釉色马赛克（不依赖图片资源）</summary>
