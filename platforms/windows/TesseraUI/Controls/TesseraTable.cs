@@ -117,7 +117,7 @@ namespace TesseraUI
         private TesseraSortDirection _sortDirection = TesseraSortDirection.None;
         private int _page = 1;
         private bool _cards;
-        private readonly Rectangle _stickyShadow = new() { Width = 10, IsHitTestVisible = false, Opacity = 0, HorizontalAlignment = HorizontalAlignment.Left };
+        private Rectangle _stickyShadow = new();
 
         private const double HeadHeight = 44, RowHeight = 48, SelectWidth = 48;
         private static readonly CompareInfo Zh = CultureInfo.GetCultureInfo("zh-CN").CompareInfo;
@@ -258,12 +258,15 @@ namespace TesseraUI
                 var fill = Math.Max(w, e.NewSize.Width);
                 foreach (var child in scrollPanel.Children) if (child is FrameworkElement fe) fe.Width = fill;
             };
+            // 每次重建都新建：旧的阴影还挂在上一个网格里，不能直接复用
+            _stickyShadow = new Rectangle { Width = 10, IsHitTestVisible = false, Opacity = 0, HorizontalAlignment = HorizontalAlignment.Left };
             _stickyShadow.Fill = new LinearGradientBrush
             {
                 StartPoint = new Windows.Foundation.Point(0, 0), EndPoint = new Windows.Foundation.Point(1, 0),
                 GradientStops = { new GradientStop { Color = Microsoft.UI.ColorHelper.FromArgb(46, 31, 27, 22), Offset = 0 }, new GradientStop { Color = Microsoft.UI.ColorHelper.FromArgb(0, 31, 27, 22), Offset = 1 } },
             };
-            scroller.ViewChanged += (_, _) => _stickyShadow.Opacity = scroller.HorizontalOffset > 1 ? 1 : 0;
+            var shadow = _stickyShadow;
+            scroller.ViewChanged += (_, _) => shadow.Opacity = scroller.HorizontalOffset > 1 ? 1 : 0;
 
             var grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -271,7 +274,6 @@ namespace TesseraUI
             if (hasFixed) grid.Children.Add(fixedPanel);
             Grid.SetColumn(scroller, 1);
             grid.Children.Add(scroller);
-            if (_stickyShadow.Parent is Panel old) old.Children.Remove(_stickyShadow);
             Grid.SetColumn(_stickyShadow, 1);
             if (hasFixed) grid.Children.Add(_stickyShadow);
             return grid;

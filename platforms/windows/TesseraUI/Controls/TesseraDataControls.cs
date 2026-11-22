@@ -16,6 +16,20 @@ using Windows.System;
 
 namespace TesseraUI
 {
+    /// <summary>把同一个元素从上一次重建的容器移到新容器：WinUI 里不在可视树上的元素 Parent 可能是 null，所以记住上一次的容器</summary>
+    internal sealed class Reparent
+    {
+        private Panel? _host;
+
+        public void Into(Panel host, UIElement? el)
+        {
+            if (el == null) return;
+            _host?.Children.Remove(el);
+            host.Children.Add(el);
+            _host = host;
+        }
+    }
+
     // ------------------------------------------------------------------
     // 折叠面板 Accordion：系统 Expander 排成一列砖；圆融是一整块面板，展开的那一行底色加深
     // ------------------------------------------------------------------
@@ -414,6 +428,7 @@ namespace TesseraUI
     /// <summary>横幅：整块浅色底，图标 + 标题 + 正文 + 操作；Dismissible 时右侧有关闭按钮</summary>
     public sealed partial class TesseraBanner : ContentControl
     {
+        private readonly Reparent _actions = new();
         public string Text { get; set; } = "";
         public string? Title { get; set; }
         /// <summary>accent / success / warning / danger / neutral</summary>
@@ -447,7 +462,7 @@ namespace TesseraUI
             var body = new StackPanel { Spacing = 2 };
             if (Title != null) body.Children.Add(DataUtil.Text(Title, "TesseraLabelTextStyle"));
             body.Children.Add(DataUtil.Text(Text));
-            if (Actions is FrameworkElement a) { if (a.Parent is Panel p) p.Children.Remove(a); a.Margin = new Thickness(0, 10, 0, 0); body.Children.Add(a); }
+            if (Actions is FrameworkElement a) { a.Margin = new Thickness(0, 10, 0, 0); _actions.Into(body, a); }
             Grid.SetColumn(body, 1);
             g.Children.Add(body);
             if (Dismissible)
@@ -468,6 +483,7 @@ namespace TesseraUI
     /// <summary>结果页：一块大釉砖图标落下时轻轻弹一下。Status：success / error / info / notfound</summary>
     public sealed partial class TesseraResult : ContentControl
     {
+        private readonly Reparent _actions = new();
         public string Status { get; set; } = "success";
         public string Title { get; set; } = "";
         public string? Text { get; set; }
@@ -511,7 +527,7 @@ namespace TesseraUI
                 t.TextAlignment = TextAlignment.Center; t.MaxWidth = 420; t.HorizontalAlignment = HorizontalAlignment.Center; t.Margin = new Thickness(0, 0, 0, 16);
                 s.Children.Add(t);
             }
-            if (Actions is FrameworkElement a) { if (a.Parent is Panel p) p.Children.Remove(a); a.HorizontalAlignment = HorizontalAlignment.Center; s.Children.Add(a); }
+            if (Actions is FrameworkElement a) { a.HorizontalAlignment = HorizontalAlignment.Center; _actions.Into(s, a); }
             Content = s;
             Settle(tile);
         }
@@ -543,6 +559,7 @@ namespace TesseraUI
     /// <summary>空状态：一小片 3×3 马赛克，中间一块釉砖翘起来</summary>
     public sealed partial class TesseraEmptyState : ContentControl
     {
+        private readonly Reparent _actions = new();
         public string Title { get; set; } = "";
         public string? Text { get; set; }
         public UIElement? Action { get; set; }
@@ -583,7 +600,7 @@ namespace TesseraUI
                 t.HorizontalAlignment = HorizontalAlignment.Center; t.TextAlignment = TextAlignment.Center; t.MaxWidth = 360; t.Margin = new Thickness(0, 0, 0, 12);
                 s.Children.Add(t);
             }
-            if (Action is FrameworkElement a) { if (a.Parent is Panel p) p.Children.Remove(a); a.HorizontalAlignment = HorizontalAlignment.Center; s.Children.Add(a); }
+            if (Action is FrameworkElement a) { a.HorizontalAlignment = HorizontalAlignment.Center; _actions.Into(s, a); }
             Content = s;
         }
     }
@@ -713,6 +730,7 @@ namespace TesseraUI
 
     public sealed partial class TesseraPopoverPanel : ContentControl
     {
+        private readonly Reparent _actions = new();
         public string? Title { get; set; }
         public UIElement? Body { get; set; }
 
@@ -740,7 +758,7 @@ namespace TesseraUI
                 AutomationProperties.SetHeadingLevel(t, AutomationHeadingLevel.Level3);
                 s.Children.Add(t);
             }
-            if (Body is FrameworkElement b) { if (b.Parent is Panel p) p.Children.Remove(b); s.Children.Add(b); }
+            _actions.Into(s, Body);
             Content = s;
         }
     }
