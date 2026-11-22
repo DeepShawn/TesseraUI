@@ -7,6 +7,7 @@ import TesseraUI
 struct TesseraSampleApp: App {
     @State private var shape: TesseraShape = .tile
     @State private var scheme = 0
+    @State private var gallery = 0
 
     var body: some Scene {
         WindowGroup("TesseraUI 示例") {
@@ -16,11 +17,12 @@ struct TesseraSampleApp: App {
                         get: { shape == .tile ? 0 : shape == .round ? 1 : 2 },
                         set: { shape = [TesseraShape.tile, .round, .flow][$0] }))
                     TesseraSegmentedControl(["跟随系统", "浅色", "深色"], selection: $scheme)
+                    TesseraSegmentedControl(["首批组件", "表单与输入", "数据展示"], selection: $gallery)
                 }
                 .padding(TesseraSpace.s4)
-                TesseraGallery()
+                if gallery == 0 { TesseraGallery() } else if gallery == 1 { TesseraFormsGallery() } else { TesseraDataGallery() }
             }
-            .frame(minWidth: 460, minHeight: 760)
+            .frame(minWidth: 640, minHeight: 760)
             .background(TesseraColor.bgCanvas)
             .tesseraShape(shape)
             .preferredColorScheme(scheme == 1 ? .light : scheme == 2 ? .dark : nil)

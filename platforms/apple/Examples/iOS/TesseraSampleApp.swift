@@ -22,7 +22,7 @@ struct SampleRoot: View {
         fromTest = name != nil
         _shapeIndex = State(initialValue: ["tile", "round", "flow"].firstIndex(of: name ?? "tile") ?? 0)
         let g = args.firstIndex(of: "-tesseraGallery").map { args.index(after: $0) }.flatMap { $0 < args.count ? args[$0] : nil }
-        _gallery = State(initialValue: g == "forms" ? 1 : 0)
+        _gallery = State(initialValue: g == "forms" ? 1 : (g == "data" ? 2 : 0))
     }
 
     var body: some View {
@@ -30,11 +30,11 @@ struct SampleRoot: View {
             VStack(spacing: TesseraSpace.s2) {
                 TesseraSegmentedControl(["拼贴", "圆融", "流韵"], selection: $shapeIndex)
                 TesseraSegmentedControl(["跟随系统", "浅色", "深色"], selection: $scheme)
-                TesseraSegmentedControl(["首批组件", "表单与输入"], selection: $gallery)
+                TesseraSegmentedControl(["首批组件", "表单与输入", "数据展示"], selection: $gallery)
             }
             .padding(.horizontal, TesseraSpace.s4)
             .padding(.vertical, TesseraSpace.s2)
-            if gallery == 0 { TesseraGallery() } else { TesseraFormsGallery() }
+            if gallery == 0 { TesseraGallery() } else if gallery == 1 { TesseraFormsGallery() } else { TesseraDataGallery() }
         }
         .background(TesseraColor.bgCanvas)
         .tesseraShape(Self.shapes[shapeIndex], requireCapableDevice: !fromTest)

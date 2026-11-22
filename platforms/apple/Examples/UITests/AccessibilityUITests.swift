@@ -10,12 +10,12 @@ final class AccessibilityUITests: XCTestCase {
     func testLabelsAndSizes() throws {
         var problems: [String] = []
         var checked = 0
-        // 首批组件总览 + v0.5 表单与输入总览，各三种外观
-        for gallery in ["main", "forms"] { for shape in ["tile", "round", "flow"] {
+        // 首批组件、v0.5 表单与输入、v0.6 数据展示三个总览，各三种外观
+        for gallery in ["main", "forms", "data"] { for shape in ["tile", "round", "flow"] {
             let app = XCUIApplication()
             app.launchArguments = ["-tesseraShape", shape, "-tesseraGallery", gallery]
             app.launch()
-            let marker = gallery == "main" ? app.buttons["主要按钮"] : app.buttons["提交"]
+            let marker = gallery == "main" ? app.buttons["主要按钮"] : (gallery == "forms" ? app.buttons["提交"] : app.buttons["配送说明"])
             XCTAssertTrue(marker.waitForExistence(timeout: 10), "\(gallery) \(shape)：组件总览没有出现")
 
             let shot = XCTAttachment(screenshot: XCUIScreen.main.screenshot())

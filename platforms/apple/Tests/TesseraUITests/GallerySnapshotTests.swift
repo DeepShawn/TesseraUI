@@ -28,6 +28,11 @@ final class GallerySnapshotTests: XCTestCase {
         try shoot("forms") { AnyView(TesseraFormsGallery(scrolls: false)) }
     }
 
+    /// v0.6 数据展示组件
+    func testDataGallery() throws {
+        try shoot("data") { AnyView(TesseraDataGallery(scrolls: false)) }
+    }
+
     private func shoot(_ name: String, _ make: () -> AnyView) throws {
         let shapes: [(String, TesseraShape)] = [("tile", .tile), ("round", .round), ("flow", .flow)]
         let themes: [(String, NSAppearance.Name, ColorScheme)] = [
