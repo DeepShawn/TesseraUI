@@ -1,4 +1,4 @@
-// TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
+// TesseraUI v0.6.1 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。
 package com.tesseraui
 
 import androidx.compose.animation.core.CubicBezierEasing

@@ -1,4 +1,4 @@
-<!-- TesseraUI v0.6.0 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
+<!-- TesseraUI v0.6.1 — 由 scripts/build.mjs 从 tokens/*.json 生成，请勿手改。 -->
 <!-- 轻量样式：合并在 XamlControlsResources 与 TesseraTokens.xaml 之后，系统控件整体换成 TesseraUI 外观。 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
