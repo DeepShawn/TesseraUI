@@ -725,7 +725,9 @@ public struct TesseraHexView: View {
             HStack {
                 Text(copied ? "已复制 \(hi - lo + 1) 个字节" : tesseraHexDescribe(data, from: lo, to: hi, focus: focus, ranges: highlights))
                     .font(.system(size: 12, design: .monospaced)).foregroundStyle(TesseraColor.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 6)
                     .accessibilityAddTraits(.updatesFrequently)
                 TesseraIconButton(.copy, label: "复制选中的字节") { copy() }
             }
