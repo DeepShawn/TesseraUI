@@ -190,36 +190,21 @@ namespace TesseraUI
             Paint();
         }
 
-        private void Build()
+        // 版面只在第一次加载时搭一次；之后外观或主题变化只改颜色、圆角（WinUI 里把同一个元素移到新容器会出错）
+        private Grid? _root, _head, _hintWrap;
+
+        private void Layout()
         {
-            var round = TesseraResources.IsRound;
-            var mono = Application.Current?.Resources.TryGetValue("TesseraMonoFontFamily", out var f) == true && f is FontFamily ff ? ff : new FontFamily("Consolas");
-            Box.FontFamily = mono; _gutter.FontFamily = mono; _langText.FontFamily = mono; _pos.FontFamily = mono;
-            // RichEditBox 自己的底色、边框、焦点底色都换成透明：外框统一画凹槽与焦点光晕
-            foreach (var k in new[] { "TextControlBackground", "TextControlBackgroundPointerOver", "TextControlBackgroundFocused", "TextControlBorderBrush", "TextControlBorderBrushPointerOver", "TextControlBorderBrushFocused" })
-                Box.Resources[k] = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            Box.Resources["TextControlForeground"] = DataUtil.Res("TesseraTextPrimaryBrush");
-            Box.Resources["TextControlForegroundFocused"] = DataUtil.Res("TesseraTextPrimaryBrush");
-            Box.Resources["TextControlForegroundPointerOver"] = DataUtil.Res("TesseraTextPrimaryBrush");
-            ScrollViewer.SetVerticalScrollBarVisibility(Box, ScrollBarVisibility.Disabled);
-            ScrollViewer.SetVerticalScrollMode(Box, ScrollMode.Disabled);
-            ScrollViewer.SetHorizontalScrollBarVisibility(Box, ScrollBarVisibility.Disabled);
-            ScrollViewer.SetHorizontalScrollMode(Box, ScrollMode.Disabled);
-
-            var root = new Grid { CornerRadius = new CornerRadius(round ? (TesseraResources.IsFlow ? 18 : 22) : 14), Background = DataUtil.Res("TesseraFillDefaultBrush"), BorderThickness = new Thickness(round ? 0 : 1), BorderBrush = DataUtil.Res("TesseraBorderFieldBrush") };
-            for (var i = 0; i < 4; i++) root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            var head = new Grid { Padding = new Thickness(16, 8, 16, 8), BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush"), BorderThickness = new Thickness(0, 0, 0, round ? 0 : 1) };
-            _langText.Foreground = DataUtil.Res("TesseraTextSecondaryBrush"); _pos.Foreground = DataUtil.Res("TesseraTextSecondaryBrush");
-            Detach(_langText); Detach(_pos);
-            head.Children.Add(_langText); head.Children.Add(_pos);
+            _root = new Grid();
+            for (var i = 0; i < 4; i++) _root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            _head = new Grid { Padding = new Thickness(16, 8, 16, 8) };
+            _head.Children.Add(_langText);
+            _head.Children.Add(_pos);
             AutomationProperties.SetAccessibilityView(_pos, AccessibilityView.Raw);
-            root.Children.Add(head);
-
+            _root.Children.Add(_head);
             var body = new Grid();
             body.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
             body.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            Detach(_gutter); Detach(_bars); Detach(Box);
-            _gutter.Foreground = DataUtil.Res("TesseraTextSecondaryBrush");
             AutomationProperties.SetAccessibilityView(_gutter, AccessibilityView.Raw);
             body.Children.Add(_gutter);
             var stage = new Grid();
@@ -229,20 +214,44 @@ namespace TesseraUI
             body.Children.Add(stage);
             var scroller = new ScrollViewer { Content = body, MaxHeight = 360, HorizontalScrollMode = ScrollMode.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto, VerticalScrollMode = ScrollMode.Auto, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, IsTabStop = false };
             Grid.SetRow(scroller, 1);
-            root.Children.Add(scroller);
-
-            Detach(_hint);
-            _hint.Foreground = DataUtil.Res("TesseraTextSecondaryBrush");
-            var hintWrap = new Grid { BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush"), BorderThickness = new Thickness(0, round ? 0 : 1, 0, 0), Visibility = Box.IsReadOnly ? Visibility.Collapsed : Visibility.Visible };
-            hintWrap.Children.Add(_hint);
-            Grid.SetRow(hintWrap, 2);
-            root.Children.Add(hintWrap);
-            Detach(_diag);
-            _diag.Background = DataUtil.Res("TesseraDangerSubtleBrush");
+            _root.Children.Add(scroller);
+            _hintWrap = new Grid();
+            _hintWrap.Children.Add(_hint);
+            Grid.SetRow(_hintWrap, 2);
+            _root.Children.Add(_hintWrap);
             AutomationProperties.SetLiveSetting(_diag, AutomationLiveSetting.Polite);
             Grid.SetRow(_diag, 3);
-            root.Children.Add(_diag);
-            Content = root;
+            _root.Children.Add(_diag);
+            ScrollViewer.SetVerticalScrollBarVisibility(Box, ScrollBarVisibility.Disabled);
+            ScrollViewer.SetVerticalScrollMode(Box, ScrollMode.Disabled);
+            ScrollViewer.SetHorizontalScrollBarVisibility(Box, ScrollBarVisibility.Disabled);
+            ScrollViewer.SetHorizontalScrollMode(Box, ScrollMode.Disabled);
+            Content = _root;
+        }
+
+        private void Build()
+        {
+            if (_root == null) Layout();
+            var round = TesseraResources.IsRound;
+            var mono = Application.Current?.Resources.TryGetValue("TesseraMonoFontFamily", out var f) == true && f is FontFamily ff ? ff : new FontFamily("Consolas");
+            Box.FontFamily = mono; _gutter.FontFamily = mono; _langText.FontFamily = mono; _pos.FontFamily = mono;
+            // RichEditBox 自己的底色、边框、焦点底色都换成透明：外框统一画凹槽与焦点光晕
+            foreach (var k in new[] { "TextControlBackground", "TextControlBackgroundPointerOver", "TextControlBackgroundFocused", "TextControlBorderBrush", "TextControlBorderBrushPointerOver", "TextControlBorderBrushFocused" })
+                Box.Resources[k] = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            Box.Resources["TextControlForeground"] = DataUtil.Res("TesseraTextPrimaryBrush");
+            Box.Resources["TextControlForegroundFocused"] = DataUtil.Res("TesseraTextPrimaryBrush");
+            Box.Resources["TextControlForegroundPointerOver"] = DataUtil.Res("TesseraTextPrimaryBrush");
+            _root!.CornerRadius = new CornerRadius(round ? (TesseraResources.IsFlow ? 18 : 22) : 14);
+            _root.Background = DataUtil.Res("TesseraFillDefaultBrush");
+            _root.BorderThickness = new Thickness(round ? 0 : 1);
+            _root.BorderBrush = DataUtil.Res("TesseraBorderFieldBrush");
+            _head!.BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush");
+            _head.BorderThickness = new Thickness(0, 0, 0, round ? 0 : 1);
+            _hintWrap!.BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush");
+            _hintWrap.BorderThickness = new Thickness(0, round ? 0 : 1, 0, 0);
+            _hintWrap.Visibility = Box.IsReadOnly ? Visibility.Collapsed : Visibility.Visible;
+            foreach (var t in new[] { _langText, _pos, _gutter, _hint }) t.Foreground = DataUtil.Res("TesseraTextSecondaryBrush");
+            _diag.Background = DataUtil.Res("TesseraDangerSubtleBrush");
             if (_text.Length > 0 && ReadBox() != _text) SetBox(_text, 0);
             Restyle();
             Paint();
@@ -521,12 +530,41 @@ namespace TesseraUI
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        // 版面只搭一次（WinUI 里把同一个元素移到新容器会出错）；之后只换内容和颜色
+        private StackPanel? _root, _legend;
+        private Grid? _headWrap, _foot;
+
+        private void Layout()
+        {
+            _root = new StackPanel();
+            _headWrap = new Grid();
+            _headWrap.Children.Add(_head);
+            AutomationProperties.SetAccessibilityView(_head, AccessibilityView.Raw);
+            _root.Children.Add(_headWrap);
+            _root.Children.Add(_scroll);
+            _foot = new Grid();
+            _foot.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            _foot.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            AutomationProperties.SetLiveSetting(_status, AutomationLiveSetting.Polite);
+            _foot.Children.Add(_status);
+            var copy = DataUtil.IconButton("copy", "复制选中的字节");
+            copy.Click += (_, _) => Copy();
+            Grid.SetColumn(copy, 1);
+            _foot.Children.Add(copy);
+            _root.Children.Add(_foot);
+            _legend = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 16, Padding = new Thickness(14, 0, 14, 10) };
+            _root.Children.Add(_legend);
+            Content = _root;
+        }
+
         private void Rebuild()
         {
+            if (_root == null) Layout();
             _cols = Columns ?? (ActualWidth > 0 && ActualWidth < 560 ? 8 : 16);
             _mono = Application.Current?.Resources.TryGetValue("TesseraMonoFontFamily", out var f) == true && f is FontFamily ff ? ff : new FontFamily("Consolas");
             var round = TesseraResources.IsRound;
-            var root = new StackPanel { CornerRadius = new CornerRadius(round ? (TesseraResources.IsFlow ? 18 : 22) : 14), Background = DataUtil.Res("TesseraFillDefaultBrush") };
+            _root!.CornerRadius = new CornerRadius(round ? (TesseraResources.IsFlow ? 18 : 22) : 14);
+            _root.Background = DataUtil.Res("TesseraFillDefaultBrush");
             _head.Children.Clear();
             _head.Children.Add(MonoText("偏移", Off, 12, "TesseraTextSecondaryBrush"));
             for (var k = 0; k < _cols; k++)
@@ -537,44 +575,25 @@ namespace TesseraUI
             }
             _head.Children.Add(new Grid { Width = AsciiGap });
             _head.Children.Add(MonoText("ASCII", 60, 12, "TesseraTextSecondaryBrush"));
-            AutomationProperties.SetAccessibilityView(_head, AccessibilityView.Raw);
-            var headClip = new Grid { BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush"), BorderThickness = new Thickness(0, 0, 0, round ? 0 : 1) };
-            if (_head.Parent is Panel hp) hp.Children.Remove(_head);
-            headClip.Children.Add(_head);
-            headClip.Clip = null;
-            root.Children.Add(headClip);
+            _headWrap!.BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush");
+            _headWrap.BorderThickness = new Thickness(0, 0, 0, round ? 0 : 1);
             _scroll.Height = ViewHeight;
             _canvas.Width = ContentWidth;
             _canvas.Height = Math.Ceiling(_data.Length / (double)_cols) * RowH;
             _canvas.Background = new SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            if (_scroll.Parent is Panel sp) sp.Children.Remove(_scroll);
-            root.Children.Add(_scroll);
-            var foot = new Grid { BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush"), BorderThickness = new Thickness(0, round ? 0 : 1, 0, 0) };
-            foot.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            foot.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            _foot!.BorderBrush = DataUtil.Res("TesseraBorderSubtleBrush");
+            _foot.BorderThickness = new Thickness(0, round ? 0 : 1, 0, 0);
             _status.FontFamily = _mono;
             _status.Foreground = DataUtil.Res("TesseraTextSecondaryBrush");
-            AutomationProperties.SetLiveSetting(_status, AutomationLiveSetting.Polite);
-            if (_status.Parent is Panel stp) stp.Children.Remove(_status);
-            foot.Children.Add(_status);
-            var copy = DataUtil.IconButton("copy", "复制选中的字节");
-            copy.Click += (_, _) => Copy();
-            Grid.SetColumn(copy, 1);
-            foot.Children.Add(copy);
-            root.Children.Add(foot);
-            if (Highlights.Count > 0)
+            _legend!.Children.Clear();
+            _legend.Visibility = Highlights.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            foreach (var h in Highlights)
             {
-                var legend = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 16, Padding = new Thickness(14, 0, 14, 10) };
-                foreach (var h in Highlights)
-                {
-                    var item = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
-                    item.Children.Add(new Grid { Width = 10, Height = 10, CornerRadius = new CornerRadius(3), Background = ToneSolid(h.Tone), VerticalAlignment = VerticalAlignment.Center });
-                    item.Children.Add(new TextBlock { Text = $"{h.Label} {h.From}–{h.To - 1}", FontSize = 12, Foreground = DataUtil.Res("TesseraTextSecondaryBrush") });
-                    legend.Children.Add(item);
-                }
-                root.Children.Add(legend);
+                var item = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 6 };
+                item.Children.Add(new Grid { Width = 10, Height = 10, CornerRadius = new CornerRadius(3), Background = ToneSolid(h.Tone), VerticalAlignment = VerticalAlignment.Center });
+                item.Children.Add(new TextBlock { Text = $"{h.Label} {h.From}–{h.To - 1}", FontSize = 12, Foreground = DataUtil.Res("TesseraTextSecondaryBrush") });
+                _legend.Children.Add(item);
             }
-            Content = root;
             PaintRows();
             Describe();
         }

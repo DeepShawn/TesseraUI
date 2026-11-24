@@ -259,7 +259,7 @@ private struct StaticCode: View {
 // MARK: 原生文本视图（iOS：UITextView；macOS：NSTextView）
 
 #if canImport(UIKit)
-private struct NativeCodeView: UIViewRepresentable {
+struct NativeCodeView: UIViewRepresentable {
     @Binding var text: String
     let language: String
     let label: String
@@ -459,7 +459,7 @@ final class CodeTextView: UITextView {
     override func becomeFirstResponder() -> Bool { defer { refreshDecorations() }; return super.becomeFirstResponder() }
 }
 #elseif canImport(AppKit)
-private struct NativeCodeView: NSViewRepresentable {
+struct NativeCodeView: NSViewRepresentable {
     @Binding var text: String
     let language: String
     let label: String
