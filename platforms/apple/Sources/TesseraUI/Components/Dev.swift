@@ -228,6 +228,7 @@ private struct StaticCode: View {
                 .multilineTextAlignment(.trailing)
                 .foregroundStyle(TesseraColor.textSecondary)
                 .frame(minWidth: 26, alignment: .trailing)
+                .fixedSize()
                 .padding(.leading, 12).padding(.trailing, 10)
             LeadingClipLayout { Text(highlighted).fixedSize() }.clipped().padding(.leading, 4)
         }
@@ -720,7 +721,7 @@ public struct TesseraHexView: View {
         VStack(alignment: .leading, spacing: 0) {
             HexHeader(cols: cols)
                 .overlay(alignment: .bottom) { if !round { TesseraColor.borderSubtle.frame(height: 1) } }
-            rows.frame(height: height)
+            rows.frame(height: height, alignment: .topLeading)
             HStack {
                 Text(copied ? "已复制 \(hi - lo + 1) 个字节" : tesseraHexDescribe(data, from: lo, to: hi, focus: focus, ranges: highlights))
                     .font(.system(size: 12, design: .monospaced)).foregroundStyle(TesseraColor.textSecondary)
@@ -745,7 +746,18 @@ public struct TesseraHexView: View {
             }
         }
         if staticRender {
-            LeadingClipLayout { content.fixedSize() }.clipped()
+            // 截图：只画放得下的行，顶对齐裁切（ImageRenderer 画不出滚动视图）
+            let visible = min(count, Int(height / 26) + 1)
+            LeadingClipLayout {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(0..<visible, id: \.self) { r in
+                        HexRow(data: data, row: r, cols: cols, lo: lo, hi: hi, focus: focus, highlights: highlights) { _, _ in }
+                    }
+                }
+                .fixedSize()
+            }
+            .frame(height: height, alignment: .topLeading)
+            .clipped()
         } else {
             ScrollViewReader { proxy in
                 ScrollView([.vertical, .horizontal], showsIndicators: false) { content }
